@@ -1,0 +1,12 @@
+{
+  "name": "kalkulator-kpr-pro",
+  "version": "1.0.0",
+  "description": "Kalkulator KPR Pro — Simulasi Bunga Berjenjang & Pelunasan Dipercepat Sebagian",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Build OK'"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

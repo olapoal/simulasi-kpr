@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+.netlify/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+
+# Environment Variables
+.env
+.env.local
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
