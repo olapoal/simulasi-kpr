@@ -123,6 +123,7 @@ Aplikasi web ini telah dilengkapi dengan sistem **Lock Screen Eksklusif** yang t
   - ➕ Menambahkan pembeli manual (misal: pembeli via transfer bank manual atau WhatsApp).
   - 🔍 Pencarian instan berdasarkan email atau nama pembeli.
   - 🗑️ Mencabut lisensi / menghapus pembeli dengan 1 klik.
+  - 🔐 **Ganti Password Admin Langsung**: Dapat mengubah password admin sewaktu-waktu langsung dari dashboard tanpa perlu redeploy Netlify (tersimpan aman di Netlify Blobs).
 
 #### 5. Pengujian Lokal (Local Testing)
 - Saat membuka file `index.html`, `kalkulator_kpr.html`, atau `admin.html` langsung dari komputer lokal (`file:///`), sistem mendeteksi mode pengujian lokal dan mengizinkan pengetesan penuh tanpa error koneksi.

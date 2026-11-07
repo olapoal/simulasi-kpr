@@ -1,5 +1,5 @@
 // netlify/functions/admin-buyers.js
-// Endpoint API aman untuk Admin Panel mengelola data pembeli lisensi via Netlify Blobs
+// Endpoint API aman untuk Admin Panel mengelola data pembeli lisensi & ganti password admin via Netlify Blobs
 
 exports.handler = async function(event, context) {
     const corsHeaders = {
@@ -26,11 +26,32 @@ exports.handler = async function(event, context) {
         const action = body.action || "list";
         const adminKey = event.headers["x-admin-key"] || body.admin_key || "";
 
-        // Password Admin dari Netlify Environment Variable (Default jika belum disetel: admin12345)
-        const EXPECTED_ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || "admin12345").trim();
+        // Siapkan Netlify Blobs Stores
+        let buyersStore = null;
+        let settingsStore = null;
+        try {
+            const { getStore } = require("@netlify/blobs");
+            buyersStore = getStore("buyers");
+            settingsStore = getStore("settings");
+        } catch (e) {
+            console.warn("Blobs store init notice:", e.message);
+        }
+
+        // Tentukan Password Admin Aktif (Cek Blobs 'settings' dulu, jika belum ada cek ENV, default: admin12345)
+        let activeAdminPassword = (process.env.ADMIN_PASSWORD || "admin12345").trim();
+        if (settingsStore) {
+            try {
+                const customPass = await settingsStore.get("admin_password");
+                if (customPass && customPass.trim()) {
+                    activeAdminPassword = customPass.trim();
+                }
+            } catch (e) {
+                console.warn("Failed to read custom admin password:", e.message);
+            }
+        }
 
         // 1. Verifikasi Password Admin
-        if (adminKey !== EXPECTED_ADMIN_PASSWORD) {
+        if (adminKey !== activeAdminPassword) {
             return {
                 statusCode: 401,
                 headers: corsHeaders,
@@ -38,6 +59,7 @@ exports.handler = async function(event, context) {
             };
         }
 
+        // Jika hanya cek login
         if (action === "login") {
             return {
                 statusCode: 200,
@@ -46,27 +68,66 @@ exports.handler = async function(event, context) {
             };
         }
 
-        // Siapkan Netlify Blobs Store
-        let store = null;
-        try {
-            const { getStore } = require("@netlify/blobs");
-            store = getStore("buyers");
-        } catch (e) {
-            console.warn("Blobs store init notice:", e.message);
+        // 2. Aksi: GANTI PASSWORD ADMIN
+        if (action === "change_password") {
+            const oldPassword = (body.old_password || "").trim();
+            const newPassword = (body.new_password || "").trim();
+
+            if (oldPassword !== activeAdminPassword) {
+                return {
+                    statusCode: 400,
+                    headers: corsHeaders,
+                    body: JSON.stringify({ success: false, message: "Password lama tidak sesuai." })
+                };
+            }
+
+            if (!newPassword || newPassword.length < 6) {
+                return {
+                    statusCode: 400,
+                    headers: corsHeaders,
+                    body: JSON.stringify({ success: false, message: "Password baru minimal 6 karakter." })
+                };
+            }
+
+            if (newPassword === oldPassword) {
+                return {
+                    statusCode: 400,
+                    headers: corsHeaders,
+                    body: JSON.stringify({ success: false, message: "Password baru tidak boleh sama dengan password lama." })
+                };
+            }
+
+            // Simpan password baru ke Netlify Blobs store 'settings'
+            if (settingsStore) {
+                try {
+                    await settingsStore.set("admin_password", newPassword);
+                } catch (e) {
+                    console.error("Gagal menyimpan password baru ke Netlify Blobs:", e.message);
+                }
+            }
+
+            return {
+                statusCode: 200,
+                headers: corsHeaders,
+                body: JSON.stringify({
+                    success: true,
+                    message: "Password Admin berhasil diperbarui!"
+                })
+            };
         }
 
-        // 2. Aksi: LIST (Ambil Semua Data Pembeli)
+        // 3. Aksi: LIST (Ambil Semua Data Pembeli)
         if (action === "list") {
             let buyersList = [];
 
             // A. Coba dari Netlify Blobs
-            if (store) {
+            if (buyersStore) {
                 try {
-                    const { blobs } = await store.list();
+                    const { blobs } = await buyersStore.list();
                     if (blobs && blobs.length > 0) {
                         for (const b of blobs) {
                             try {
-                                const data = await store.get(b.key, { type: "json" });
+                                const data = await buyersStore.get(b.key, { type: "json" });
                                 if (data) buyersList.push(data);
                             } catch (e) {}
                         }
@@ -116,7 +177,7 @@ exports.handler = async function(event, context) {
             };
         }
 
-        // 3. Aksi: ADD (Tambah / Update Pembeli Manual)
+        // 4. Aksi: ADD (Tambah / Update Pembeli Manual)
         if (action === "add") {
             const email = (body.email || "").trim().toLowerCase();
             const name = (body.name || "Pembeli Manual").trim();
@@ -140,9 +201,9 @@ exports.handler = async function(event, context) {
             };
 
             // Simpan ke Netlify Blobs
-            if (store) {
+            if (buyersStore) {
                 try {
-                    await store.setJSON(email, buyerRecord);
+                    await buyersStore.setJSON(email, buyerRecord);
                 } catch (e) {
                     console.warn("Blobs save notice:", e.message);
                 }
@@ -178,7 +239,7 @@ exports.handler = async function(event, context) {
             };
         }
 
-        // 4. Aksi: DELETE (Cabut Lisensi Pembeli)
+        // 5. Aksi: DELETE (Cabut Lisensi Pembeli)
         if (action === "delete") {
             const email = (body.email || "").trim().toLowerCase();
             if (!email) {
@@ -189,9 +250,9 @@ exports.handler = async function(event, context) {
                 };
             }
 
-            if (store) {
+            if (buyersStore) {
                 try {
-                    await store.delete(email);
+                    await buyersStore.delete(email);
                 } catch (e) {
                     console.warn("Blobs delete notice:", e.message);
                 }

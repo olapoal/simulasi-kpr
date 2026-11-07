@@ -743,6 +743,50 @@
                 </table>
             </div>
         </div>
+
+        <!-- Card: Ganti Password Admin -->
+        <div class="card" style="border-color: rgba(59, 130, 246, 0.35); background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(17, 24, 39, 0.95) 100%);">
+            <div class="card-header">
+                <h3 class="card-title">🔐 Ganti Password Admin</h3>
+                <span style="font-size: 12px; color: var(--text-muted);">
+                    Perbarui password masuk dashboard admin Anda
+                </span>
+            </div>
+
+            <form id="changePasswordForm" onsubmit="event.preventDefault(); prosesGantiPassword();">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) auto; gap: 14px; align-items: flex-end;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Password Lama *</label>
+                        <div class="input-wrap">
+                            <input type="password" id="oldPassInput" class="input-field" placeholder="Password lama..." required>
+                            <button type="button" class="btn-eye" onclick="togglePassField('oldPassInput')" title="Lihat password">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Password Baru (min 6 karakter) *</label>
+                        <div class="input-wrap">
+                            <input type="password" id="newPassInput" class="input-field" placeholder="Password baru..." minlength="6" required>
+                            <button type="button" class="btn-eye" onclick="togglePassField('newPassInput')" title="Lihat password">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Konfirmasi Password Baru *</label>
+                        <div class="input-wrap">
+                            <input type="password" id="confirmPassInput" class="input-field" placeholder="Ulangi password baru..." minlength="6" required>
+                            <button type="button" class="btn-eye" onclick="togglePassField('confirmPassInput')" title="Lihat password">👁️</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnChangePassSubmit" class="btn-primary" style="height: 46px; padding: 0 22px; width: auto; white-space: nowrap; margin-top: 0;">
+                        <span id="changePassIcon">💾</span>
+                        <span id="changePassText">Simpan Password Baru</span>
+                    </button>
+                </div>
+            </form>
+            <div id="changePassAlert" class="alert-error" style="margin-top: 14px;"></div>
+        </div>
     </div>
 
     <!-- Toast Notification -->
@@ -801,8 +845,9 @@
                 let success = false;
 
                 if (isLocal) {
-                    // Verifikasi lokal
-                    if (password === 'admin12345' || password.length >= 6) {
+                    // Verifikasi lokal (mendukung password lokal yang baru diganti)
+                    const activeLocalPass = localStorage.getItem('kpr_admin_local_password') || 'admin12345';
+                    if (password === activeLocalPass || password === 'admin12345') {
                         success = true;
                     }
                 } else {
@@ -1047,6 +1092,109 @@
 
             } catch (err) {
                 showToast(err.message, 'error');
+            }
+        }
+
+        function togglePassField(fieldId) {
+            const input = document.getElementById(fieldId);
+            if (input) {
+                input.type = input.type === 'password' ? 'text' : 'password';
+            }
+        }
+
+        async function prosesGantiPassword() {
+            const oldPassInput = document.getElementById('oldPassInput');
+            const newPassInput = document.getElementById('newPassInput');
+            const confirmPassInput = document.getElementById('confirmPassInput');
+            const alertBox = document.getElementById('changePassAlert');
+            const btn = document.getElementById('btnChangePassSubmit');
+            const icon = document.getElementById('changePassIcon');
+            const text = document.getElementById('changePassText');
+
+            alertBox.style.display = 'none';
+
+            const oldPassword = (oldPassInput.value || '').trim();
+            const newPassword = (newPassInput.value || '').trim();
+            const confirmPassword = (confirmPassInput.value || '').trim();
+
+            if (!oldPassword || !newPassword || !confirmPassword) {
+                alertBox.textContent = 'Harap isi seluruh kolom password.';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alertBox.textContent = 'Password baru minimal 6 karakter.';
+                alertBox.style.display = 'block';
+                newPassInput.focus();
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alertBox.textContent = 'Konfirmasi password baru tidak cocok. Harap periksa kembali.';
+                alertBox.style.display = 'block';
+                confirmPassInput.focus();
+                return;
+            }
+
+            if (newPassword === oldPassword) {
+                alertBox.textContent = 'Password baru tidak boleh sama dengan password lama.';
+                alertBox.style.display = 'block';
+                newPassInput.focus();
+                return;
+            }
+
+            btn.disabled = true;
+            icon.innerHTML = '<span class="spinner"></span>';
+            text.textContent = 'Menyimpan...';
+
+            const token = getSavedAdminToken();
+            const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost';
+
+            try {
+                if (isLocal) {
+                    const currentLocalPass = localStorage.getItem('kpr_admin_local_password') || 'admin12345';
+                    if (oldPassword !== currentLocalPass && oldPassword !== token) {
+                        throw new Error('Password lama tidak sesuai.');
+                    }
+                    localStorage.setItem('kpr_admin_local_password', newPassword);
+                    setSavedAdminToken(newPassword);
+                    showToast('✅ Password Admin berhasil diperbarui!');
+                    oldPassInput.value = '';
+                    newPassInput.value = '';
+                    confirmPassInput.value = '';
+                } else {
+                    const res = await fetch('/.netlify/functions/admin-buyers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-admin-key': token
+                        },
+                        body: JSON.stringify({
+                            action: 'change_password',
+                            old_password: oldPassword,
+                            new_password: newPassword
+                        })
+                    });
+
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok || !data.success) {
+                        throw new Error(data.message || 'Gagal mengganti password.');
+                    }
+
+                    setSavedAdminToken(newPassword);
+                    showToast('✅ ' + (data.message || 'Password Admin berhasil diperbarui!'));
+                    oldPassInput.value = '';
+                    newPassInput.value = '';
+                    confirmPassInput.value = '';
+                }
+            } catch (err) {
+                alertBox.textContent = err.message;
+                alertBox.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                icon.textContent = '💾';
+                text.textContent = 'Simpan Password Baru';
             }
         }
 
