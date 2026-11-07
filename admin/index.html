@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Admin — Kelola Lisensi Pembeli Kalkulator KPR Pro</title>
+    <title>Portal Admin — Kelola Lisensi Pembeli Simulasi KPR Pro</title>
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -588,8 +588,8 @@
             </div>
         </div>
         <div class="nav-actions">
-            <a href="/" class="btn-nav" title="Buka Aplikasi Kalkulator KPR">
-                ⬅️ Ke Kalkulator
+            <a href="/" class="btn-nav" title="Buka Aplikasi Simulasi KPR Pro">
+                ⬅️ Ke Simulasi
             </a>
             <button id="btnLogoutAdmin" class="btn-nav btn-nav-danger" onclick="logoutAdmin()" style="display: none;">
                 🚪 Keluar
@@ -1058,7 +1058,7 @@
 
         async function konfirmasiCabutLisensi(email) {
             const confirmed = confirm(
-                `PERINGATAN:\nApakah Anda yakin ingin MENCABUT LISENSI pembeli ini?\n\nEmail: ${email}\n\nPembeli tidak akan bisa lagi membuka kalkulator KPR.`
+                `PERINGATAN:\nApakah Anda yakin ingin MENCABUT LISENSI pembeli ini?\n\nEmail: ${email}\n\nPembeli tidak akan bisa lagi membuka aplikasi Simulasi KPR Pro.`
             );
             if (!confirmed) return;
 
