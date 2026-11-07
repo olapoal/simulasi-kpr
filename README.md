@@ -84,31 +84,67 @@ Aplikasi web ini telah dilengkapi dengan sistem **Lock Screen Eksklusif** yang t
 
 #### 1. Konfigurasi di Dashboard Lynk.id
 - Toko Produk Lynk.id: **[https://lynk.id/olapoal](https://lynk.id/olapoal)**
-- Masuk ke dashboard Lynk.id Anda.
-- Buka menu **Settings** / **Integrations** / **Webhooks**.
-- Masukkan URL Webhook:
-  `https://<nama-aplikasi>.netlify.app/.netlify/functions/lynk-webhook`
-- Event yang diaktifkan: `Payment Success` / `Order Paid`.
+- **Format Nama Produk**: Berikan awalan **`[KPR]`**, contoh: **`[KPR] Kalkulator KPR Pro`**.
+  *(Fungsi: Memastikan script dan webhook hanya memproses pembeli produk KPR, tidak tercampur dengan produk lain di toko Anda).*
+- Buka menu **Settings** / **Integrations** / **Webhooks** (jika menggunakan webhook Lynk.id):
+  - URL Webhook: `https://<nama-aplikasi>.netlify.app/.netlify/functions/lynk-webhook`
+  - Event: `Payment Success` / `Order Paid`.
 - Pada pengaturan produk Lynk.id (Thank You / Redirect URL):
   Arahkan pembeli ke URL website Anda:
   `https://<nama-aplikasi>.netlify.app/?email={buyer_email}` *(opsional, jika Lynk.id mendukung parameter email, website akan langsung auto-fill & auto-unlock tanpa pembeli mengetik apa pun!)*
 
-#### 2. Konfigurasi Database Supabase (Gratis & Ringan)
-- Buat proyek gratis di [Supabase.com](https://supabase.com).
-- Masuk ke **SQL Editor** dan jalankan query berikut untuk membuat tabel `buyers`:
-  ```sql
-  CREATE TABLE buyers (
-      id BIGSERIAL PRIMARY KEY,
-      email TEXT UNIQUE NOT NULL,
-      name TEXT,
-      phone TEXT,
-      order_id TEXT,
-      created_at TIMESTAMPTZ DEFAULT NOW()
-  );
-  ```
-- Ambil **Project URL** dan **anon public key** dari menu **Settings -> API**.
+#### 2. Otomasi Membaca Email Masuk Lynk.id via Google Apps Script (100% Gratis)
+Jika Lynk.id Anda tidak menggunakan webhook, pasang script otomatis ini di **[script.google.com](https://script.google.com)** (jalan di cloud Google 24 jam nonstop):
+```javascript
+const NETLIFY_WEBHOOK_URL = "https://<nama-aplikasi-anda>.netlify.app/.netlify/functions/lynk-webhook";
 
-#### 3. Konfigurasi Environment Variables di Netlify
+function periksaEmailPembelianLynkId() {
+  // Hanya mencari email Lynk.id yang memuat nama produk [KPR]
+  const query = 'from:(lynk.id) "[KPR]" -label:KPR-PROCESSED';
+  const threads = GmailApp.search(query, 0, 10);
+  if (threads.length === 0) return;
+
+  let label = GmailApp.getUserLabelByName("KPR-PROCESSED") || GmailApp.createLabel("KPR-PROCESSED");
+
+  threads.forEach(thread => {
+    thread.getMessages().forEach(message => {
+      const body = message.getPlainBody();
+      const subject = message.getSubject();
+      
+      // Validasi ketat bahwa ini memang produk [KPR]
+      if (subject.includes("[KPR]") || body.includes("[KPR]")) {
+        const emailMatches = body.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+        if (emailMatches) {
+          const buyerEmail = emailMatches.find(e => 
+            !e.includes("lynk.id") && !e.includes("google.com") && 
+            e.toLowerCase() !== Session.getActiveUser().getEmail().toLowerCase()
+          );
+
+          if (buyerEmail) {
+            UrlFetchApp.fetch(NETLIFY_WEBHOOK_URL, {
+              method: "post",
+              contentType: "application/json",
+              payload: JSON.stringify({
+                customer_email: buyerEmail,
+                customer_name: "Pembeli Lynk.id",
+                product_name: "[KPR] Kalkulator KPR Pro",
+                order_id: "LYNK-" + message.getDate().getTime()
+              })
+            });
+          }
+        }
+      }
+    });
+    thread.addLabel(label);
+  });
+}
+```
+
+#### 3. Database Penyimpanan: Netlify Blobs (Bawaan Netlify)
+- Sistem sekarang menggunakan **Netlify Blobs** secara otomatis.
+- **Tidak perlu setup Supabase lagi!** Data pembeli tersimpan permanen di cloud Netlify Anda dan tidak ada risiko database tertidur (*auto-pause*).
+
+#### 4. Konfigurasi Environment Variables di Netlify
 - Masuk ke Dashboard Netlify -> **Site configuration** -> **Environment variables**.
 - Tambahkan variabel berikut:
   - `SUPABASE_URL`: `https://xxxx.supabase.co`

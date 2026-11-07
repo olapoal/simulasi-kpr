@@ -62,6 +62,30 @@ exports.handler = async function(event, context) {
             ""
         );
 
+        const productName = (
+            payload.product_name ||
+            payload.product ||
+            payload.title ||
+            payload.item_name ||
+            payload.data?.product_name ||
+            payload.data?.title ||
+            ""
+        );
+
+        // Filter Proteksi Multi-Produk: Jika ada nama produk tapi bukan produk [KPR], lewati transaksi ini
+        if (productName && !productName.toUpperCase().includes("[KPR]") && !productName.toLowerCase().includes("kpr")) {
+            console.log(`Transaksi diabaikan karena bukan produk KPR: ${productName}`);
+            return {
+                statusCode: 200,
+                headers: corsHeaders,
+                body: JSON.stringify({
+                    success: false,
+                    ignored: true,
+                    message: `Transaksi diabaikan: produk '${productName}' bukan produk KPR.`
+                })
+            };
+        }
+
         if (!email || !email.includes("@")) {
             return {
                 statusCode: 400,
@@ -74,7 +98,7 @@ exports.handler = async function(event, context) {
             email: email,
             name: name,
             phone: phone,
-            order_id: String(orderId),
+            order_id: productName ? `[KPR] ${orderId}` : String(orderId),
             created_at: new Date().toISOString()
         };
 
