@@ -73,7 +73,7 @@
             background: rgba(17, 24, 39, 0.95);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-light);
-            padding: 14px 28px;
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -81,16 +81,19 @@
             top: 0;
             z-index: 50;
             width: 100%;
+            box-sizing: border-box;
+            gap: 16px;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
+            flex-shrink: 0;
         }
 
         .brand-logo-wrap {
-            height: 44px;
+            height: 40px;
             background: transparent !important;
             padding: 0 !important;
             border: none !important;
@@ -99,6 +102,7 @@
             align-items: center;
             justify-content: center;
             transition: transform 0.2s ease;
+            flex-shrink: 0;
         }
 
         .brand-logo-wrap:hover {
@@ -106,58 +110,86 @@
         }
 
         .brand-img {
-            height: 42px;
-            max-width: 170px;
+            height: 38px;
+            max-width: 160px;
             width: auto;
             object-fit: contain;
             display: block;
             filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
         }
 
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
         .brand-text h1 {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
             color: #FFFFFF;
+            white-space: nowrap !important;
+            letter-spacing: 0.3px;
+            margin: 0;
+            line-height: 1.2;
         }
 
         .brand-text p {
-            font-size: 11px;
+            font-size: 10.5px;
             color: var(--text-muted);
+            white-space: nowrap !important;
+            margin: 2px 0 0 0;
+            line-height: 1.2;
         }
 
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: nowrap;
+            flex-shrink: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
 
-        @media (max-width: 1200px) {
+        .nav-actions::-webkit-scrollbar {
+            display: none;
+        }
+
+        @media (max-width: 1280px) {
+            .brand-text p {
+                display: none;
+            }
+        }
+
+        @media (max-width: 992px) {
             nav {
                 flex-wrap: wrap;
-                padding: 10px 16px;
-                gap: 12px;
+                padding: 10px 14px;
+                gap: 10px;
             }
             .nav-actions {
-                flex-wrap: wrap;
                 width: 100%;
-                justify-content: flex-end;
+                justify-content: flex-start;
+                padding-bottom: 2px;
             }
         }
 
         /* Navbar Uniform Button System (Rapi, Sejajar, Bebas Text-Wrap) */
         .btn-nav, .nav-status-badge {
-            height: 36px;
-            padding: 0 12px;
-            font-size: 11.5px;
+            height: 34px;
+            padding: 0 10px;
+            font-size: 11px;
             font-weight: 700;
-            border-radius: 8px;
+            border-radius: 7px;
             white-space: nowrap !important;
             flex-shrink: 0;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             box-sizing: border-box;
             transition: all 0.2s ease;
             text-decoration: none;
@@ -2277,15 +2309,15 @@
 
         /* Navbar License Badge */
         .nav-license-badge {
-            height: 36px;
-            padding: 0 8px 0 12px;
+            height: 34px;
+            padding: 0 8px 0 10px;
             background: rgba(37, 99, 235, 0.12);
             border: 1px solid rgba(59, 130, 246, 0.35);
-            border-radius: 8px;
+            border-radius: 7px;
             display: inline-flex;
             align-items: center;
-            gap: 7px;
-            font-size: 11.5px;
+            gap: 6px;
+            font-size: 11px;
             font-weight: 700;
             color: #93C5FD;
             white-space: nowrap;
@@ -2299,12 +2331,14 @@
             border-radius: 50%;
             background: #10B981;
             box-shadow: 0 0 6px #10B981;
+            flex-shrink: 0;
         }
 
         .nav-license-email {
-            max-width: 150px;
+            max-width: 140px;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
             color: #F1F5F9;
         }
 
@@ -2362,7 +2396,6 @@
         <!-- 👤 BADGE LISENSI PEMBELI AKTIF 👤 -->
         <div id="navLicenseBadge" class="nav-license-badge" style="display: none;" title="Status Lisensi Aktif">
             <span class="nav-license-dot"></span>
-            <span style="color: #94A3B8; font-weight: 600;">Lisensi:</span>
             <span id="navLicenseEmail" class="nav-license-email">-</span>
             <button type="button" class="btn-license-logout" onclick="logoutLisensi()" title="Keluar / Ganti Akun Lisensi">✕</button>
         </div>
@@ -2371,16 +2404,12 @@
             💾 Tersimpan
         </span>
         <input type="file" id="jsonFileInput" accept=".json,application/json" style="display:none;" onchange="handleJSONFileSelect(event)">
-        <button type="button" class="btn-nav" onclick="openJSONFile()" title="Buka file simulasi .json yang tersimpan">📂 Buka JSON</button>
-        <button type="button" class="btn-nav" onclick="exportToJSON()" title="Simpan konfigurasi simulasi ini ke file .json">💾 Simpan JSON</button>
-        <button type="button" class="btn-nav btn-nav-danger" onclick="hapusSemuaData()" title="Hapus semua data simulasi">🗑️ Hapus Data</button>
-        <button type="button" class="btn-nav btn-nav-excel" onclick="downloadExcel()" title="Download Laporan Excel (.xlsx)">📊 Download Excel</button>
+        <button type="button" class="btn-nav" onclick="openJSONFile()" title="Buka file simulasi .json yang tersimpan">📂 Buka</button>
+        <button type="button" class="btn-nav" onclick="exportToJSON()" title="Simpan konfigurasi simulasi ini ke file .json">💾 Simpan</button>
+        <button type="button" class="btn-nav btn-nav-danger" onclick="hapusSemuaData()" title="Hapus semua data simulasi">🗑️ Hapus</button>
+        <button type="button" class="btn-nav btn-nav-excel" onclick="downloadExcel()" title="Download Laporan Excel (.xlsx)">📊 Excel</button>
         <button type="button" class="btn-nav" onclick="cetakLaporan()" title="Cetak Dokumen Resmi / Simpan PDF">🖨️ Cetak</button>
         <button type="button" class="btn-nav btn-nav-donasi" onclick="bukaModalDonasi()" title="Beri donasi & dukung pengembangan aplikasi">☕ Donasi</button>
-        <a href="https://wa.me/6285388597684?text=Halo%20Admin%2C%20saya%20ingin%20tanya-tanya%20seputar%20Aplikasi%20Kalkulator%20KPR%20Pro" target="_blank" rel="noopener noreferrer" class="btn-nav btn-nav-wa" title="Tanya Pengembang via WhatsApp (0853-8859-7684)">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-            <span>Tanya WA</span>
-        </a>
     </div>
 </nav>
 
