@@ -2462,6 +2462,10 @@
                 <strong>Tgl Jatuh Tempo 1</strong>
                 <span id="printStartVal">-</span>
             </div>
+            <div class="print-meta-item">
+                <strong>Skema Suku Bunga</strong>
+                <span id="printSkemaVal">Suku Bunga Berjenjang</span>
+            </div>
         </div>
     </div>
 
@@ -2502,48 +2506,110 @@
                 <label title="Pilih Metode Perhitungan Suku Bunga">Skema Suku Bunga</label>
                 <select id="jenisCicilan" onchange="toggleJenisCicilan()">
                     <option value="BERJENJANG" selected>✨ Suku Bunga Berjenjang (Step-up)</option>
+                    <option value="FLOATING">🌊 Suku Bunga Floating (Mengambang)</option>
                     <option value="ANUITAS">📊 Anuitas Efektif (Bunga Tetap)</option>
                     <option value="EFEKTIF">📉 Efektif (Pokok Tetap)</option>
                     <option value="FLAT">➖ Suku Bunga Flat</option>
                 </select>
-            </div>
-            <div class="form-group" id="singleRateGroup" style="display:none; grid-column:span 5;">
-                <label>Suku Bunga (% p.a.)</label>
-                <input type="number" id="singleRate" value="" placeholder="Contoh: 7.50" step="0.01" style="max-width:200px;">
             </div>
         </div>
 
         <!-- BARIS 2: SPLIT 50% : 50% -->
         <div class="tier-extra-grid">
             
-            <!-- PANEL 2: BUNGA BERJENJANG -->
+            <!-- PANEL 2: PARAMETER SUKU BUNGA (DINAMIS SESUAI SKEMA) -->
             <div class="sub-panel" id="tierCard">
                 <div class="sub-panel-header">
-                    <span class="sub-panel-title" style="color:#60A5FA;">2. Periode Bunga Berjenjang</span>
-                    <div style="display:flex; gap:6px;">
+                    <span class="sub-panel-title" id="panel2Title" style="color:#60A5FA;">2. Periode Bunga Berjenjang</span>
+                    <div id="tierCardButtons" style="display:flex; gap:6px;">
                         <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="background:rgba(96,165,250,0.12); color:#93C5FD; border-color:rgba(96,165,250,0.3); font-size:11px;" title="Muat template 3 tier standar">↺ Reset Tier</button>
                         <button type="button" class="btn btn-sm" onclick="addTierRow()">+ Tambah Periode</button>
                     </div>
                 </div>
-                <table class="config-table">
-                    <thead>
-                        <tr>
-                            <th style="width:85px;">Mulai Bln</th>
-                            <th style="width:85px;">S/D Bln</th>
-                            <th style="width:105px;">Bunga (% p.a.)</th>
-                            <th>Keterangan / Nama Tier</th>
-                            <th style="width:36px; text-align:center;">Hapus</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tierTbody">
-                        <tr id="emptyTierRow">
-                            <td colspan="5" style="text-align:center; padding:22px 14px; color:#94A3B8; font-size:12px;">
-                                Belum ada periode suku bunga.<br>
-                                <span style="color:#64748B; font-size:11px;">Klik <button type="button" class="btn btn-sm" onclick="addTierRow()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex;">+ Tambah Periode</button> atau <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex; background:rgba(96,165,250,0.15); color:#93C5FD; border-color:rgba(96,165,250,0.35);">↺ Pakai Template Default</button></span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+
+                <!-- VIEW A: TABLE TIERS (Untuk BERJENJANG) -->
+                <div id="tierTableView">
+                    <table class="config-table">
+                        <thead>
+                            <tr>
+                                <th style="width:85px;">Mulai Bln</th>
+                                <th style="width:85px;">S/D Bln</th>
+                                <th style="width:105px;">Bunga (% p.a.)</th>
+                                <th>Keterangan / Nama Tier</th>
+                                <th style="width:36px; text-align:center;">Hapus</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tierTbody">
+                            <tr id="emptyTierRow">
+                                <td colspan="5" style="text-align:center; padding:22px 14px; color:#94A3B8; font-size:12px;">
+                                    Belum ada periode suku bunga.<br>
+                                    <span style="color:#64748B; font-size:11px;">Klik <button type="button" class="btn btn-sm" onclick="addTierRow()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex;">+ Tambah Periode</button> atau <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex; background:rgba(96,165,250,0.15); color:#93C5FD; border-color:rgba(96,165,250,0.35);">↺ Pakai Template Default</button></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- VIEW B: FLOATING VIEW (Untuk FLOATING) -->
+                <div id="floatingCardView" style="display:none; padding:10px 2px; flex-direction:column; gap:14px;">
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
+                        <div class="form-group" style="margin:0;">
+                            <label style="color:#93C5FD; font-weight:700;">🌊 Suku Bunga Floating Acuan (% p.a.)</label>
+                            <div class="stepper-wrap" style="width:100%;">
+                                <input type="number" id="floatingRate" class="stepper-input" value="11.00" step="0.25" min="0" placeholder="Contoh: 11.00" style="width:calc(100% - 24px); text-align:center;" oninput="onSchemeParamChange()">
+                                <div class="stepper-btns">
+                                    <button type="button" class="stepper-btn" onclick="stepElFloatDirect('floatingRate', 0.25)">▲</button>
+                                    <button type="button" class="stepper-btn down" onclick="stepElFloatDirect('floatingRate', -0.25)">▼</button>
+                                </div>
+                            </div>
+                            <span style="font-size:11px; color:#64748B; margin-top:4px; display:block;">Suku bunga mengambang acuan pasar (SBDK/BI-Rate).</span>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="color:#F8FAFC;">Masa Fixed Promo Awal (Bulan)</label>
+                            <div class="stepper-wrap" style="width:100%;">
+                                <input type="number" id="floatingFixedMonths" class="stepper-input" value="0" step="12" min="0" placeholder="0 = Floating Penuh" style="width:calc(100% - 24px); text-align:center;" oninput="onFloatingFixedChange()">
+                                <div class="stepper-btns">
+                                    <button type="button" class="stepper-btn" onclick="stepNumberDirect('floatingFixedMonths', 12, 0)">▲</button>
+                                    <button type="button" class="stepper-btn down" onclick="stepNumberDirect('floatingFixedMonths', -12, 0)">▼</button>
+                                </div>
+                            </div>
+                            <span style="font-size:11px; color:#64748B; margin-top:4px; display:block;">0 = Floating Penuh, atau isi misal 36 (3 Thn promo).</span>
+                        </div>
+                    </div>
+                    
+                    <div id="floatingFixedRateWrap" style="display:none;" class="form-group">
+                        <label style="color:#FDE68A;">⭐ Suku Bunga Fixed Promo (% p.a.)</label>
+                        <div class="stepper-wrap" style="max-width:240px;">
+                            <input type="number" id="floatingFixedRate" class="stepper-input" value="5.75" step="0.25" min="0" placeholder="Contoh: 5.75" style="width:calc(100% - 24px); text-align:center;" oninput="onSchemeParamChange()">
+                            <div class="stepper-btns">
+                                <button type="button" class="stepper-btn" onclick="stepElFloatDirect('floatingFixedRate', 0.25)">▲</button>
+                                <button type="button" class="stepper-btn down" onclick="stepElFloatDirect('floatingFixedRate', -0.25)">▼</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background:rgba(59,130,246,0.1); border-left:3px solid #3B82F6; padding:10px 12px; border-radius:6px; font-size:12px; color:#BFDBFE; line-height:1.5;">
+                        🌊 <strong>Karakteristik Suku Bunga Floating:</strong> Menggunakan metode <em>Anuitas Mengambang</em>. Suku bunga mengambang dapat ditinjau berkala mengikuti suku bunga acuan pasar atau kebijakan perbankan.
+                    </div>
+                </div>
+
+                <!-- VIEW C: SINGLE RATE VIEW (Untuk ANUITAS, EFEKTIF, FLAT) -->
+                <div id="singleRateCardView" style="display:none; padding:10px 2px; flex-direction:column; gap:14px;">
+                    <div class="form-group" style="margin:0; max-width:280px;">
+                        <label id="singleRateLabel" style="color:#60A5FA; font-weight:700;">Suku Bunga (% p.a.)</label>
+                        <div class="stepper-wrap" style="width:100%;">
+                            <input type="number" id="singleRate" class="stepper-input" value="7.50" step="0.25" min="0" placeholder="Contoh: 7.50" style="width:calc(100% - 24px); text-align:center;" oninput="onSchemeParamChange()">
+                            <div class="stepper-btns">
+                                <button type="button" class="stepper-btn" onclick="stepElFloatDirect('singleRate', 0.25)">▲</button>
+                                <button type="button" class="stepper-btn down" onclick="stepElFloatDirect('singleRate', -0.25)">▼</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="singleRateExplainer" style="padding:10px 12px; border-radius:6px; font-size:12px; line-height:1.5;">
+                        <!-- Konten penjelasan otomatis berganti sesuai skema -->
+                    </div>
+                </div>
             </div>
 
             <!-- PANEL 3: PELUNASAN DIPERCEPAT SEBAGIAN -->
@@ -2649,14 +2715,12 @@
         </div>
 
         <!-- Timeline Quick-Jump Milestone Navigation Bar -->
-        <div class="timeline-nav">
+        <div class="timeline-nav" id="timelineNavContainer">
             <span class="timeline-label">⚡ Lompat Cepat:</span>
-            <div class="timeline-pill" onclick="jumpToMonth(1)">🚀 Awal (Bln 1)</div>
-            <div class="timeline-pill pill-extra" onclick="jumpToMonth(18)">⚡ Pelunasan Ekstra (Bln 18)</div>
-            <div class="timeline-pill" onclick="jumpToMonth(37)">📈 Tier 2 (Bln 37)</div>
-            <div class="timeline-pill" onclick="jumpToMonth(73)">📈 Tier 3 (Bln 73)</div>
-            <div class="timeline-pill" onclick="jumpToMonth(120)">📅 Thn 10 (Bln 120)</div>
-            <div class="timeline-pill pill-lunas" onclick="jumpToLastRow()">🎉 Lunas Akhir</div>
+            <div id="timelinePills" style="display:inline-flex; flex-wrap:wrap; gap:6px;">
+                <div class="timeline-pill" onclick="jumpToMonth(1)">🚀 Awal (Bln 1)</div>
+                <div class="timeline-pill pill-lunas" onclick="jumpToLastRow()">🎉 Lunas Akhir</div>
+            </div>
         </div>
 
         <!-- Scroll Progress Bar -->
@@ -2802,25 +2866,76 @@
         const plafon = parseRp(document.getElementById('plafon')?.value) || 0;
         const tenor = parseInt(document.getElementById('tenor')?.value) || 180;
         const jenis = document.getElementById('jenisCicilan')?.value || 'BERJENJANG';
-        const singleRate = parseFloat(document.getElementById('singleRate')?.value) || 8.5;
+        const singleRate = parseFloat(document.getElementById('singleRate')?.value) || 7.5;
+        const floatingRate = parseFloat(document.getElementById('floatingRate')?.value) || 11.0;
+        const floatingFixedMonths = parseInt(document.getElementById('floatingFixedMonths')?.value) || 0;
+        const floatingFixedRate = parseFloat(document.getElementById('floatingFixedRate')?.value) || 5.75;
         if (plafon <= 0 || tenor <= 0) return 0;
 
         if (jenis === 'FLAT') {
             return (plafon / tenor) + ((plafon * (singleRate / 100)) / 12);
         }
 
+        if (jenis === 'EFEKTIF') {
+            const pokokBln = plafon / tenor;
+            const saldoM = Math.max(0, plafon - ((mTarget - 1) * pokokBln));
+            return pokokBln + (saldoM * (singleRate / 100) / 12);
+        }
+
         let rPa = singleRate;
         if (jenis === 'BERJENJANG') {
-            const trs = document.querySelectorAll('#tierTbody tr');
+            const trs = document.querySelectorAll('#tierTbody tr:not(#emptyTierRow)');
             trs.forEach(tr => {
                 const s = parseInt(tr.querySelector('.t-start')?.value) || 0;
                 const e = parseInt(tr.querySelector('.t-end')?.value) || 0;
                 const r = parseFloat(tr.querySelector('.t-rate')?.value) || 0;
                 if (mTarget >= s && mTarget <= e) rPa = r;
             });
+        } else if (jenis === 'FLOATING') {
+            if (floatingFixedMonths > 0 && mTarget <= floatingFixedMonths) {
+                rPa = floatingFixedRate;
+            } else {
+                rPa = floatingRate;
+            }
         }
         const rMo = (rPa / 100) / 12;
         return hitungPMT(plafon, rMo, tenor);
+    }
+
+    function stepElFloatDirect(id, delta) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        let val = parseFloat(el.value) || 0;
+        val = Math.max(0, val + delta);
+        el.value = val.toFixed(2);
+        onSchemeParamChange();
+    }
+
+    function stepNumberDirect(id, delta, minVal = 0) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        let val = parseInt(el.value) || 0;
+        val = Math.max(minVal, val + delta);
+        el.value = val;
+        if (id === 'floatingFixedMonths') {
+            onFloatingFixedChange();
+        } else {
+            onSchemeParamChange();
+        }
+    }
+
+    function onFloatingFixedChange() {
+        const months = parseInt(document.getElementById('floatingFixedMonths')?.value) || 0;
+        const wrap = document.getElementById('floatingFixedRateWrap');
+        if (wrap) {
+            wrap.style.display = months > 0 ? 'block' : 'none';
+        }
+        onSchemeParamChange();
+    }
+
+    function onSchemeParamChange() {
+        saveToLocalStorage();
+        hitungKPR();
     }
 
     function onMultiplierInput(inputEl) {
@@ -2881,15 +2996,91 @@
 
     function toggleJenisCicilan() {
         const jenis = document.getElementById('jenisCicilan').value;
-        const tierCard = document.getElementById('tierCard');
-        const singleGroup = document.getElementById('singleRateGroup');
+        const titleEl = document.getElementById('panel2Title');
+        const btnsEl = document.getElementById('tierCardButtons');
+        const viewTier = document.getElementById('tierTableView');
+        const viewFloating = document.getElementById('floatingCardView');
+        const viewSingle = document.getElementById('singleRateCardView');
+        const singleRateInput = document.getElementById('singleRate');
+        const singleRateLabel = document.getElementById('singleRateLabel');
+        const singleExplainer = document.getElementById('singleRateExplainer');
+
         if (jenis === 'BERJENJANG') {
-            tierCard.style.display = 'flex';
-            singleGroup.style.display = 'none';
+            if (titleEl) titleEl.innerText = '2. Periode Bunga Berjenjang (Step-up)';
+            if (btnsEl) btnsEl.style.display = 'flex';
+            if (viewTier) viewTier.style.display = 'block';
+            if (viewFloating) viewFloating.style.display = 'none';
+            if (viewSingle) viewSingle.style.display = 'none';
+
+            const trs = document.querySelectorAll('#tierTbody tr:not(#emptyTierRow)');
+            if (trs.length === 0) {
+                const t = parseInt(document.getElementById('tenor')?.value) || 180;
+                muatDefaultTiers(t);
+            }
+        } else if (jenis === 'FLOATING') {
+            if (titleEl) titleEl.innerText = '2. Suku Bunga Floating (Mengambang)';
+            if (btnsEl) btnsEl.style.display = 'none';
+            if (viewTier) viewTier.style.display = 'none';
+            if (viewFloating) viewFloating.style.display = 'flex';
+            if (viewSingle) viewSingle.style.display = 'none';
+
+            const fInput = document.getElementById('floatingRate');
+            if (fInput && (!fInput.value || parseFloat(fInput.value) <= 0)) {
+                fInput.value = '11.00';
+            }
+            const months = parseInt(document.getElementById('floatingFixedMonths')?.value) || 0;
+            const wrap = document.getElementById('floatingFixedRateWrap');
+            if (wrap) {
+                wrap.style.display = months > 0 ? 'block' : 'none';
+            }
         } else {
-            tierCard.style.display = 'none';
-            singleGroup.style.display = 'flex';
+            // ANUITAS, EFEKTIF, FLAT
+            if (btnsEl) btnsEl.style.display = 'none';
+            if (viewTier) viewTier.style.display = 'none';
+            if (viewFloating) viewFloating.style.display = 'none';
+            if (viewSingle) viewSingle.style.display = 'flex';
+
+            if (jenis === 'ANUITAS') {
+                if (titleEl) titleEl.innerText = '2. Suku Bunga Anuitas Efektif (Bunga Tetap)';
+                if (singleRateLabel) singleRateLabel.innerText = '📊 Suku Bunga Anuitas Tetap (% p.a.)';
+                if (singleRateInput && (!singleRateInput.value || parseFloat(singleRateInput.value) <= 0)) {
+                    singleRateInput.value = '7.50';
+                }
+                if (singleExplainer) {
+                    singleExplainer.style.background = 'rgba(59,130,246,0.1)';
+                    singleExplainer.style.borderLeft = '3px solid #3B82F6';
+                    singleExplainer.style.color = '#BFDBFE';
+                    singleExplainer.innerHTML = '📊 <strong>Karakteristik Anuitas Efektif:</strong> Jumlah total angsuran per bulan <strong>selalu sama persis</strong> setiap bulan. Di awal masa kredit porsi pembayaran bunga lebih besar, lalu seiring berjalannya waktu dan saldo pokok yang terus berkurang, porsi pokok akan semakin membesar.';
+                }
+            } else if (jenis === 'EFEKTIF') {
+                if (titleEl) titleEl.innerText = '2. Suku Bunga Efektif (Pokok Tetap)';
+                if (singleRateLabel) singleRateLabel.innerText = '📉 Suku Bunga Efektif (% p.a.)';
+                if (singleRateInput && (!singleRateInput.value || parseFloat(singleRateInput.value) <= 0)) {
+                    singleRateInput.value = '7.50';
+                }
+                if (singleExplainer) {
+                    singleExplainer.style.background = 'rgba(16,185,129,0.1)';
+                    singleExplainer.style.borderLeft = '3px solid #10B981';
+                    singleExplainer.style.color = '#A7F3D0';
+                    singleExplainer.innerHTML = '📉 <strong>Karakteristik Efektif (Pokok Tetap):</strong> Porsi angsuran pokok dibagi rata sama persis setiap bulan (<em>Plafon / Tenor</em>). Bunga dihitung dari sisa saldo pokok, sehingga <strong>total angsuran bulanan akan terus MENURUN</strong> setiap bulan (awal cicilan paling tinggi, akhir cicilan paling rendah). Total bunga keseluruhan lebih hemat daripada Anuitas.';
+                }
+            } else if (jenis === 'FLAT') {
+                if (titleEl) titleEl.innerText = '2. Suku Bunga Flat';
+                if (singleRateLabel) singleRateLabel.innerText = '➖ Suku Bunga Flat (% p.a.)';
+                if (singleRateInput && (!singleRateInput.value || parseFloat(singleRateInput.value) <= 0)) {
+                    singleRateInput.value = '5.00';
+                }
+                if (singleExplainer) {
+                    singleExplainer.style.background = 'rgba(245,158,11,0.1)';
+                    singleExplainer.style.borderLeft = '3px solid #F59E0B';
+                    singleExplainer.style.color = '#FDE68A';
+                    singleExplainer.innerHTML = '➖ <strong>Karakteristik Suku Bunga Flat:</strong> Porsi pokok dan bunga dihitung tetap dari <strong>total plafon awal pinjaman</strong> (bukan dari sisa saldo). Total angsuran flat tetap sama setiap bulan, namun total akumulasi bunga yang dibayarkan jauh lebih besar dibanding skema lainnya.';
+                }
+            }
         }
+
+        saveToLocalStorage();
+        hitungKPR();
     }
 
     function muatDefaultTiers(targetTenor) {
@@ -3175,6 +3366,29 @@
     function extractInstallmentPeriods(rows, actualMonths, hematBulan) {
         if (!rows || rows.length <= 1) return [];
 
+        const jenis = document.getElementById('jenisCicilan')?.value || 'BERJENJANG';
+        const singleRate = parseFloat(document.getElementById('singleRate')?.value) || 7.5;
+        const plafon = parseRp(document.getElementById('plafon')?.value) || 0;
+        const tenor = parseInt(document.getElementById('tenor')?.value) || 180;
+        const pokokTetap = tenor > 0 ? Math.round(plafon / tenor) : 0;
+
+        if (jenis === 'EFEKTIF') {
+            const p1 = rows[1];
+            const pLast = rows[rows.length - 1];
+            const extrasInRows = rows.filter(r => r.ekstra > 0);
+            return [{
+                startMonth: 1,
+                endMonth: actualMonths,
+                rate: singleRate,
+                pmt: p1 ? p1.total : 0,
+                endPmt: pLast ? pLast.total : 0,
+                isEfektif: true,
+                pokokPerBulan: pokokTetap,
+                extras: extrasInRows.map(r => ({ bulan: r.bulan, amount: r.ekstra })),
+                isLunas: true
+            }];
+        }
+
         const periods = [];
         let curPeriod = null;
 
@@ -3257,7 +3471,9 @@
                 });
             }
 
-            if (idx > 0 && p.pmt < periods[idx - 1].pmt - 500) {
+            if (p.isEfektif) {
+                tagsHtml += `<span class="period-tag tag-normal">📉 Angsuran Menurun (Pokok Tetap ${formatRp(p.pokokPerBulan)}/bln)</span>`;
+            } else if (idx > 0 && p.pmt < periods[idx - 1].pmt - 500) {
                 const dropAmt = periods[idx - 1].pmt - p.pmt;
                 tagsHtml += `<span class="period-tag tag-dropped">📉 Turun ${formatRp(dropAmt)}/bln</span>`;
             }
@@ -3268,6 +3484,10 @@
                 tagsHtml = `<span class="period-tag tag-normal">Sesuai Skema Bunga</span>`;
             }
 
+            const pmtDisplay = p.isEfektif 
+                ? `${formatRp(p.pmt)} <span style="font-size:11px; font-weight:normal; color:#94A3B8;">↘</span> ${formatRp(p.endPmt)}`
+                : formatRp(p.pmt);
+
             const card = document.createElement('div');
             card.className = 'period-card-item';
             card.innerHTML = `
@@ -3277,7 +3497,7 @@
                         <span class="period-card-rate">${p.rate.toFixed(2)}% p.a.</span>
                     </div>
                     <div class="period-card-months">${monthDesc}</div>
-                    <div class="period-card-pmt">${formatRp(p.pmt)} <span class="unit">/ bln</span></div>
+                    <div class="period-card-pmt">${pmtDisplay} <span class="unit">/ bln</span></div>
                 </div>
                 <div class="period-card-tags">
                     ${tagsHtml}
@@ -3303,12 +3523,16 @@
 
                 const rowItem = document.createElement('div');
                 rowItem.className = 'extra-period-item';
+                const pmtDesc = p.isEfektif
+                    ? `${formatRp(p.pmt)} ↘ ${formatRp(p.endPmt)}`
+                    : formatRp(p.pmt);
+
                 rowItem.innerHTML = `
                     <span style="color:${isLunasEnd ? '#34D399' : '#93C5FD'}; font-weight:600;">
                         ${yearTitle} <span style="font-size:10px; color:#94A3B8;">${monthRange}</span>
                     </span>
                     <span style="font-weight:700; color:${isLunasEnd ? '#34D399' : '#FFFFFF'};">
-                        ${formatRp(p.pmt)} <span style="font-size:10px; color:#94A3B8;">/bln</span>
+                        ${pmtDesc} <span style="font-size:10px; color:#94A3B8;">/bln</span>
                         ${isLunasEnd ? '<span style="font-size:9px; background:rgba(16,185,129,0.25); color:#6EE7B7; padding:1px 4px; border-radius:3px; margin-left:4px;">LUNAS</span>' : ''}
                     </span>
                 `;
@@ -3324,14 +3548,72 @@
         return pv * (r * factor) / (factor - 1);
     }
 
+    function updateTimelineNav(rows) {
+        const container = document.getElementById('timelinePills');
+        if (!container || !rows || rows.length <= 1) return;
+        container.innerHTML = '';
+
+        // 1. Awal (Bln 1)
+        const pAwal = document.createElement('div');
+        pAwal.className = 'timeline-pill';
+        pAwal.innerHTML = '🚀 Awal (Bln 1)';
+        pAwal.onclick = () => jumpToMonth(1);
+        container.appendChild(pAwal);
+
+        // 2. Extra payments
+        rows.forEach(r => {
+            if (r.ekstra > 0 && r.bulan > 0) {
+                const pEx = document.createElement('div');
+                pEx.className = 'timeline-pill pill-extra';
+                pEx.innerHTML = `⚡ Pelunasan (Bln ${r.bulan})`;
+                pEx.onclick = () => jumpToMonth(r.bulan);
+                container.appendChild(pEx);
+            }
+        });
+
+        // 3. Tier changes / Floating switch
+        rows.forEach(r => {
+            if (r.isTierChange && r.bulan > 1) {
+                const pTier = document.createElement('div');
+                pTier.className = 'timeline-pill';
+                const label = r.keterangan ? r.keterangan.split('•')[0].trim().replace(/\(.*?\)/g, '') : `Tier`;
+                pTier.innerHTML = `📈 ${label} (Bln ${r.bulan})`;
+                pTier.onclick = () => jumpToMonth(r.bulan);
+                container.appendChild(pTier);
+            }
+        });
+
+        // 4. Milestone tahunan (Thn 5 / Thn 10) jika sesuai
+        const lastMonth = rows[rows.length - 1].bulan;
+        [60, 120].forEach(mTarget => {
+            if (mTarget < lastMonth - 6 && !rows.some(r => r.ekstra > 0 && r.bulan === mTarget)) {
+                const pMid = document.createElement('div');
+                pMid.className = 'timeline-pill';
+                pMid.innerHTML = `📅 Thn ${mTarget / 12} (Bln ${mTarget})`;
+                pMid.onclick = () => jumpToMonth(mTarget);
+                container.appendChild(pMid);
+            }
+        });
+
+        // 5. Lunas Akhir
+        const pLunas = document.createElement('div');
+        pLunas.className = 'timeline-pill pill-lunas';
+        pLunas.innerHTML = `🎉 Lunas (Bln ${lastMonth})`;
+        pLunas.onclick = () => jumpToLastRow();
+        container.appendChild(pLunas);
+    }
+
     function hitungKPR() {
         const plafon = parseRp(document.getElementById('plafon').value);
         const tenor = parseInt(document.getElementById('tenor').value) || 0;
         const today = new Date();
         const defDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         const startDateStr = document.getElementById('startDate').value || defDate;
-        const jenis = document.getElementById('jenisCicilan').value;
-        const singleRate = parseFloat(document.getElementById('singleRate').value) || 0;
+        const jenis = document.getElementById('jenisCicilan').value || 'BERJENJANG';
+        const singleRate = parseFloat(document.getElementById('singleRate')?.value) || 7.5;
+        const floatingRate = parseFloat(document.getElementById('floatingRate')?.value) || 11.0;
+        const floatingFixedMonths = parseInt(document.getElementById('floatingFixedMonths')?.value) || 0;
+        const floatingFixedRate = parseFloat(document.getElementById('floatingFixedRate')?.value) || 5.75;
 
         if (plafon <= 0 || tenor <= 0) {
             document.getElementById('resPmt1').innerText = 'Rp 0';
@@ -3408,7 +3690,12 @@
                     if (m >= t.start && m <= t.end) return t.rate;
                 }
                 if (tiers.length > 0) return tiers[tiers.length - 1].rate;
-                return singleRate > 0 ? singleRate : 10.0;
+                return 10.0;
+            } else if (jenis === 'FLOATING') {
+                if (floatingFixedMonths > 0 && m <= floatingFixedMonths) {
+                    return floatingFixedRate;
+                }
+                return floatingRate;
             }
             return singleRate;
         }
@@ -3434,8 +3721,22 @@
                     currTierIdx = tIdx;
                     currStdPmt = hitungPMT(saldoStd, rMo, sisaTenorStd);
                 }
-            } else {
+            } else if (jenis === 'FLOATING') {
+                if (floatingFixedMonths > 0) {
+                    if (mStd === 1) {
+                        currStdPmt = hitungPMT(saldoStd, (floatingFixedRate / 100) / 12, tenor);
+                    } else if (mStd === floatingFixedMonths + 1) {
+                        currStdPmt = hitungPMT(saldoStd, (floatingRate / 100) / 12, sisaTenorStd);
+                    }
+                } else {
+                    if (mStd === 1) currStdPmt = hitungPMT(saldoStd, (floatingRate / 100) / 12, tenor);
+                }
+            } else if (jenis === 'ANUITAS') {
                 if (mStd === 1) currStdPmt = hitungPMT(saldoStd, rMo, sisaTenorStd);
+            } else if (jenis === 'EFEKTIF') {
+                currStdPmt = (plafon / tenor) + (saldoStd * rMo);
+            } else if (jenis === 'FLAT') {
+                currStdPmt = (plafon / tenor) + ((plafon * (singleRate / 100)) / 12);
             }
             stdPmtMap[mStd] = currStdPmt;
             let bungaStd = 0;
@@ -3506,11 +3807,29 @@
                         currentPmt = stdPmtMap[m] || hitungPMT(saldo, rateMo, sisaTenor);
                     }
                 }
-            } else if (jenis === 'ANUITAS') {
-                if (m === 1) {
-                    currentPmt = hitungPMT(saldo, rateMo, sisaTenor);
-                    tierLabel = `Fixed (${singleRate}%)`;
+            } else if (jenis === 'FLOATING') {
+                if (floatingFixedMonths > 0) {
+                    if (m <= floatingFixedMonths) {
+                        tierLabel = `Fixed Promo (${floatingFixedRate.toFixed(2)}%)`;
+                        if (m === 1) currentPmt = stdPmtMap[1];
+                    } else {
+                        tierLabel = `🌊 Floating (${floatingRate.toFixed(2)}%)`;
+                        if (m === floatingFixedMonths + 1) {
+                            isTierChange = true;
+                            currentPmt = modeKurangiAngsuranAktif ? hitungPMT(saldo, rateMo, sisaTenor) : stdPmtMap[m];
+                        }
+                    }
+                } else {
+                    tierLabel = `🌊 Floating (${floatingRate.toFixed(2)}%)`;
+                    if (m === 1) currentPmt = stdPmtMap[1];
                 }
+            } else if (jenis === 'ANUITAS') {
+                tierLabel = `Fixed (${singleRate.toFixed(2)}%)`;
+                if (m === 1) currentPmt = stdPmtMap[1];
+            } else if (jenis === 'EFEKTIF') {
+                tierLabel = `Efektif (${singleRate.toFixed(2)}%)`;
+            } else if (jenis === 'FLAT') {
+                tierLabel = `Flat (${singleRate.toFixed(2)}%)`;
             }
 
             let bungaBln = 0;
@@ -3519,7 +3838,7 @@
 
             if (jenis === 'FLAT') {
                 bungaBln = bungaFlat;
-                pokokBln = pokokTetap;
+                pokokBln = Math.min(pokokTetap, saldo);
                 totalAngsuran = pokokBln + bungaBln;
             } else if (jenis === 'EFEKTIF') {
                 bungaBln = saldo * rateMo;
@@ -3577,7 +3896,7 @@
 
                 if (extraEffect === 'KURANGI_ANGSURAN') {
                     modeKurangiAngsuranAktif = true;
-                    if ((jenis === 'ANUITAS' || jenis === 'BERJENJANG') && saldo > 0 && sisaTenor > 1) {
+                    if ((jenis === 'ANUITAS' || jenis === 'BERJENJANG' || jenis === 'FLOATING') && saldo > 0 && sisaTenor > 1) {
                         const nextRateMo = (getRate(m + 1) / 100) / 12;
                         currentPmt = hitungPMT(saldo, nextRateMo, sisaTenor - 1);
                     }
@@ -3720,6 +4039,7 @@
         });
 
         updateChart(rows);
+        updateTimelineNav(rows);
         handleTableScroll();
     }
 
@@ -3864,7 +4184,10 @@
         document.getElementById('tenor').value = '';
         document.getElementById('startDate').value = '';
         document.getElementById('jenisCicilan').value = 'BERJENJANG';
-        document.getElementById('singleRate').value = '';
+        if (document.getElementById('singleRate')) document.getElementById('singleRate').value = '';
+        if (document.getElementById('floatingRate')) document.getElementById('floatingRate').value = '11.00';
+        if (document.getElementById('floatingFixedMonths')) document.getElementById('floatingFixedMonths').value = '0';
+        if (document.getElementById('floatingFixedRate')) document.getElementById('floatingFixedRate').value = '5.75';
 
         tampilkanEmptyTierPrompt();
         tampilkanEmptyExtraPrompt();
@@ -3922,7 +4245,10 @@
             tenor: document.getElementById('tenor').value,
             startDate: document.getElementById('startDate').value,
             jenisCicilan: document.getElementById('jenisCicilan').value,
-            singleRate: document.getElementById('singleRate').value,
+            singleRate: document.getElementById('singleRate')?.value || '',
+            floatingRate: document.getElementById('floatingRate')?.value || '11.00',
+            floatingFixedMonths: document.getElementById('floatingFixedMonths')?.value || '0',
+            floatingFixedRate: document.getElementById('floatingFixedRate')?.value || '5.75',
             tiers: [],
             extras: []
         };
@@ -3958,7 +4284,10 @@
         document.getElementById('tenor').value = data.tenor || '';
         document.getElementById('startDate').value = data.startDate || '';
         document.getElementById('jenisCicilan').value = data.jenisCicilan || 'BERJENJANG';
-        document.getElementById('singleRate').value = data.singleRate || '';
+        if (document.getElementById('singleRate')) document.getElementById('singleRate').value = data.singleRate || '';
+        if (document.getElementById('floatingRate')) document.getElementById('floatingRate').value = data.floatingRate || '11.00';
+        if (document.getElementById('floatingFixedMonths')) document.getElementById('floatingFixedMonths').value = (typeof data.floatingFixedMonths !== 'undefined') ? data.floatingFixedMonths : '0';
+        if (document.getElementById('floatingFixedRate')) document.getElementById('floatingFixedRate').value = data.floatingFixedRate || '5.75';
 
         // Restore Tiers
         const tbodyTiers = document.getElementById('tierTbody');
@@ -4336,6 +4665,13 @@
                 elStart.innerText = startInput.value;
             }
         }
+
+        const elSkema = document.getElementById('printSkemaVal');
+        const jenisSelect = document.getElementById('jenisCicilan');
+        if (elSkema && jenisSelect) {
+            elSkema.innerText = jenisSelect.options[jenisSelect.selectedIndex]?.text || 'Suku Bunga Berjenjang';
+        }
+
         if (typeof amortizationChart !== 'undefined' && amortizationChart) {
             try { amortizationChart.resize(); } catch(e) {}
         }
