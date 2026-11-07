@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Admin — Kelola Lisensi Pembeli Kalkulator KPR Pro</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="/assets/favicon.png">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <style>
+        :root {
+            --bg-body: #0B0F19;
+            --surface: #111827;
+            --surface-card: #1E293B;
+            --surface-input: #0F172A;
+            --primary: #2563EB;
+            --primary-gradient: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            --accent-green: #10B981;
+            --accent-amber: #F59E0B;
+            --accent-red: #EF4444;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --text-white: #FFFFFF;
+            --border: #334155;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navbar */
+        nav {
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo-wrap {
+            height: 38px;
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-img {
+            height: 36px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .brand-text h1 {
+            font-size: 15px;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.2px;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            height: 36px;
+            padding: 0 14px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            border: 1px solid var(--border-light);
+            background: #1E293B;
+            color: #F1F5F9;
+        }
+
+        .btn-nav:hover {
+            background: #334155;
+            color: #FFFFFF;
+            transform: translateY(-1px);
+        }
+
+        .btn-nav-danger {
+            background: rgba(239, 68, 68, 0.14);
+            border-color: rgba(239, 68, 68, 0.35);
+            color: #FCA5A5;
+        }
+
+        .btn-nav-danger:hover {
+            background: rgba(239, 68, 68, 0.28);
+            color: #FFFFFF;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 24px auto;
+            padding: 0 24px;
+            flex: 1;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ================= LOGIN VIEW ================= */
+        #viewLogin {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            border-radius: 20px;
+            padding: 34px 28px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(37, 99, 235, 0.2);
+            position: relative;
+        }
+
+        .login-icon-wrap {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(30, 58, 138, 0.45) 100%);
+            border: 1.5px solid rgba(96, 165, 250, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .login-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin-bottom: 6px;
+        }
+
+        .login-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #CBD5E1;
+            margin-bottom: 8px;
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-field {
+            width: 100%;
+            height: 46px;
+            background: var(--surface-input);
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            padding: 0 42px 0 14px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFFFFF;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn-eye {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #64748B;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .btn-eye:hover {
+            color: #CBD5E1;
+        }
+
+        .btn-primary {
+            width: 100%;
+            height: 46px;
+            background: var(--primary-gradient);
+            border: 1px solid rgba(96, 165, 250, 0.35);
+            border-radius: 10px;
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.14);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #FCA5A5;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-top: 14px;
+            display: none;
+            text-align: left;
+        }
+
+        /* ================= DASHBOARD VIEW ================= */
+        #viewDashboard {
+            display: none;
+        }
+
+        /* Metrics Row */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .metric-blue::after { background: #3B82F6; }
+        .metric-green::after { background: #10B981; }
+        .metric-purple::after { background: #8B5CF6; }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .metric-blue .metric-icon { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .metric-green .metric-icon { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .metric-purple .metric-icon { background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); }
+
+        .metric-info h4 {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: #FFFFFF;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Add Buyer Form Grid */
+        .add-buyer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1.5fr auto;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        @media (max-width: 900px) {
+            .add-buyer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn-add {
+            height: 46px;
+            padding: 0 20px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 10px;
+            color: #FFFFFF;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-add:hover {
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* Search & Actions Bar */
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
+            max-width: 380px;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 38px;
+            background: var(--surface-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0 12px 0 34px;
+            font-size: 12.5px;
+            color: #FFFFFF;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748B;
+            font-size: 14px;
+        }
+
+        /* Table */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        thead th {
+            background: #0F172A;
+            color: #94A3B8;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #F1F5F9;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34D399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge-active::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10B981;
+        }
+
+        .btn-revoke {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #FCA5A5;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-revoke:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.6);
+            color: #FFFFFF;
+        }
+
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1E293B;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 14px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            color: #FFFFFF;
+            font-size: 13px;
+            display: none;
+            z-index: 9999;
+            animation: toastSlideIn 0.3s ease;
+        }
+
+        @keyframes toastSlideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast-success { border-color: #10B981; color: #6EE7B7; }
+        .toast-error { border-color: #EF4444; color: #FCA5A5; }
+
+        /* Spinner */
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navbar -->
+    <nav>
+        <div class="brand">
+            <div class="brand-logo-wrap">
+                <img src="/assets/logo.png" alt="Logo" class="brand-img">
+            </div>
+            <div class="brand-text">
+                <h1>PORTAL ADMIN KPR PRO</h1>
+                <p>Manajemen Lisensi Pembeli & Integrasi Lynk.id</p>
+            </div>
+        </div>
+        <div class="nav-actions">
+            <a href="/" class="btn-nav" title="Buka Aplikasi Kalkulator KPR">
+                ⬅️ Ke Kalkulator
+            </a>
+            <button id="btnLogoutAdmin" class="btn-nav btn-nav-danger" onclick="logoutAdmin()" style="display: none;">
+                🚪 Keluar
+            </button>
+        </div>
+    </nav>
+
+    <!-- ================= VIEW 1: LOGIN ADMIN ================= -->
+    <div id="viewLogin">
+        <div class="login-card">
+            <div class="login-icon-wrap">🛡️</div>
+            <h2 class="login-title">Autentikasi Admin</h2>
+            <p class="login-desc">
+                Masukkan Password Admin Anda untuk mengakses database pembeli & manajemen lisensi.
+            </p>
+
+            <form onsubmit="event.preventDefault(); prosesLoginAdmin();">
+                <div class="form-group">
+                    <label for="adminPassInput" class="form-label">Password Admin</label>
+                    <div class="input-wrap">
+                        <input 
+                            type="password" 
+                            id="adminPassInput" 
+                            class="input-field" 
+                            placeholder="Ketik password admin..." 
+                            required 
+                            autofocus
+                        >
+                        <button type="button" class="btn-eye" onclick="togglePasswordVisibility()" title="Tampilkan / Sembunyikan Password">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnLoginSubmit" class="btn-primary">
+                    <span id="loginBtnIcon">🔓</span>
+                    <span id="loginBtnText">Masuk ke Dashboard Admin</span>
+                </button>
+            </form>
+
+            <div id="loginAlert" class="alert-error"></div>
+
+            <div style="margin-top: 20px; font-size: 11.5px; color: #64748B;">
+                💡 Password default: <code>admin12345</code> (bisa Anda ubah di Environment Variable Netlify: <code>ADMIN_PASSWORD</code>).
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= VIEW 2: DASHBOARD ADMIN ================= -->
+    <div id="viewDashboard" class="container">
+        <!-- Metrics Row -->
+        <div class="metrics-grid">
+            <div class="metric-card metric-blue">
+                <div class="metric-icon">👥</div>
+                <div class="metric-info">
+                    <h4>Total Pembeli Terdaftar</h4>
+                    <div id="metricTotalBuyers" class="metric-value">0</div>
+                </div>
+            </div>
+
+            <div class="metric-card metric-green">
+                <div class="metric-icon">⚡</div>
+                <div class="metric-info">
+                    <h4>Status Webhook Lynk.id</h4>
+                    <div style="font-size: 14px; font-weight: 800; color: #34D399; margin-top: 4px;">Aktif & Siap Terima</div>
+                </div>
+            </div>
+
+            <div class="metric-card metric-purple">
+                <div class="metric-icon">🔗</div>
+                <div class="metric-info">
+                    <h4>Toko Lynk.id</h4>
+                    <a href="https://lynk.id/olapoal" target="_blank" style="font-size: 13px; font-weight: 700; color: #A78BFA; text-decoration: none;">
+                        lynk.id/olapoal ↗
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Tambah Pembeli Manual -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">➕ Berikan Akses Lisensi Baru (Manual)</h3>
+                <span style="font-size: 12px; color: var(--text-muted);">
+                    Gunakan ini jika ada pembeli yang transfer langsung / via WA
+                </span>
+            </div>
+
+            <form id="addBuyerForm" onsubmit="event.preventDefault(); prosesTambahPembeli();">
+                <div class="add-buyer-grid">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Alamat Email Pembeli *</label>
+                        <input type="email" id="newEmail" class="input-field" placeholder="contoh@gmail.com" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Nama Pembeli</label>
+                        <input type="text" id="newName" class="input-field" placeholder="Nama Lengkap">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Sumber / Keterangan</label>
+                        <input type="text" id="newNotes" class="input-field" placeholder="Contoh: Transfer BCA / WA">
+                    </div>
+
+                    <button type="submit" id="btnAddBuyer" class="btn-add">
+                        <span id="addIcon">➕</span>
+                        <span>Beri Akses</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Card: Daftar Pembeli -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">📋 Daftar Pembeli & Lisensi Aktif</h3>
+                <button type="button" class="btn-nav" onclick="muatDataPembeli()" title="Muat Ulang Data">
+                    🔄 Refresh
+                </button>
+            </div>
+
+            <div class="table-toolbar">
+                <div class="search-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Cari email atau nama pembeli..." oninput="filterTabelPembeli()">
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted);">
+                    Menampilkan <strong id="buyerCountDisplay" style="color: #fff;">0</strong> pembeli
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No</th>
+                            <th>Email Pembeli</th>
+                            <th>Nama</th>
+                            <th>Order ID / Keterangan</th>
+                            <th>Tanggal Ditambahkan</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="buyersTableBody">
+                        <tr>
+                            <td colspan="7" class="empty-state">Memuat data pembeli...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Card: Ganti Password Admin -->
+        <div class="card" style="border-color: rgba(59, 130, 246, 0.35); background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(17, 24, 39, 0.95) 100%);">
+            <div class="card-header">
+                <h3 class="card-title">🔐 Ganti Password Admin</h3>
+                <span style="font-size: 12px; color: var(--text-muted);">
+                    Perbarui password masuk dashboard admin Anda
+                </span>
+            </div>
+
+            <form id="changePasswordForm" onsubmit="event.preventDefault(); prosesGantiPassword();">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) auto; gap: 14px; align-items: flex-end;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Password Lama *</label>
+                        <div class="input-wrap">
+                            <input type="password" id="oldPassInput" class="input-field" placeholder="Password lama..." required>
+                            <button type="button" class="btn-eye" onclick="togglePassField('oldPassInput')" title="Lihat password">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Password Baru (min 6 karakter) *</label>
+                        <div class="input-wrap">
+                            <input type="password" id="newPassInput" class="input-field" placeholder="Password baru..." minlength="6" required>
+                            <button type="button" class="btn-eye" onclick="togglePassField('newPassInput')" title="Lihat password">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Konfirmasi Password Baru *</label>
+                        <div class="input-wrap">
+                            <input type="password" id="confirmPassInput" class="input-field" placeholder="Ulangi password baru..." minlength="6" required>
+                            <button type="button" class="btn-eye" onclick="togglePassField('confirmPassInput')" title="Lihat password">👁️</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnChangePassSubmit" class="btn-primary" style="height: 46px; padding: 0 22px; width: auto; white-space: nowrap; margin-top: 0;">
+                        <span id="changePassIcon">💾</span>
+                        <span id="changePassText">Simpan Password Baru</span>
+                    </button>
+                </div>
+            </form>
+            <div id="changePassAlert" class="alert-error" style="margin-top: 14px;"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const STORAGE_KEY_ADMIN_TOKEN = 'kpr_admin_token';
+        let allBuyersData = [];
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast toast-' + type;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3500);
+        }
+
+        function togglePasswordVisibility() {
+            const input = document.getElementById('adminPassInput');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function getSavedAdminToken() {
+            return sessionStorage.getItem(STORAGE_KEY_ADMIN_TOKEN) || localStorage.getItem(STORAGE_KEY_ADMIN_TOKEN) || '';
+        }
+
+        function setSavedAdminToken(token) {
+            sessionStorage.setItem(STORAGE_KEY_ADMIN_TOKEN, token);
+        }
+
+        function clearSavedAdminToken() {
+            sessionStorage.removeItem(STORAGE_KEY_ADMIN_TOKEN);
+            localStorage.removeItem(STORAGE_KEY_ADMIN_TOKEN);
+        }
+
+        async function prosesLoginAdmin() {
+            const passInput = document.getElementById('adminPassInput');
+            const alertBox = document.getElementById('loginAlert');
+            const btn = document.getElementById('btnLoginSubmit');
+            const btnIcon = document.getElementById('loginBtnIcon');
+            const btnText = document.getElementById('loginBtnText');
+
+            const password = (passInput.value || '').trim();
+            if (!password) return;
+
+            alertBox.style.display = 'none';
+            btn.disabled = true;
+            btnIcon.innerHTML = '<span class="spinner"></span>';
+            btnText.textContent = 'Memverifikasi...';
+
+            const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost';
+
+            try {
+                let success = false;
+
+                if (isLocal) {
+                    // Verifikasi lokal (mendukung password lokal yang baru diganti)
+                    const activeLocalPass = localStorage.getItem('kpr_admin_local_password') || 'admin12345';
+                    if (password === activeLocalPass || password === 'admin12345') {
+                        success = true;
+                    }
+                } else {
+                    const res = await fetch('/.netlify/functions/admin-buyers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-admin-key': password
+                        },
+                        body: JSON.stringify({ action: 'login' })
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (res.ok && data.success) {
+                        success = true;
+                    }
+                }
+
+                if (success) {
+                    setSavedAdminToken(password);
+                    tampilkanDashboard();
+                    muatDataPembeli();
+                } else {
+                    alertBox.textContent = 'Password Admin salah. Silakan coba lagi.';
+                    alertBox.style.display = 'block';
+                    passInput.focus();
+                }
+            } catch (err) {
+                if (isLocal) {
+                    setSavedAdminToken(password);
+                    tampilkanDashboard();
+                    muatDataPembeli();
+                } else {
+                    alertBox.textContent = 'Gagal menghubungi server: ' + err.message;
+                    alertBox.style.display = 'block';
+                }
+            } finally {
+                btn.disabled = false;
+                btnIcon.textContent = '🔓';
+                btnText.textContent = 'Masuk ke Dashboard Admin';
+            }
+        }
+
+        function logoutAdmin() {
+            if (confirm('Keluar dari Portal Admin?')) {
+                clearSavedAdminToken();
+                location.reload();
+            }
+        }
+
+        function tampilkanDashboard() {
+            document.getElementById('viewLogin').style.display = 'none';
+            document.getElementById('viewDashboard').style.display = 'block';
+            document.getElementById('btnLogoutAdmin').style.display = 'inline-flex';
+        }
+
+        async function muatDataPembeli() {
+            const token = getSavedAdminToken();
+            const tbody = document.getElementById('buyersTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><span class="spinner"></span> Mengambil data terbaru...</td></tr>';
+
+            const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost';
+
+            try {
+                let buyers = [];
+
+                if (isLocal) {
+                    // Ambil dari localStorage saat testing di komputer lokal
+                    const localData = localStorage.getItem('kpr_local_buyers_db');
+                    if (localData) {
+                        buyers = JSON.parse(localData);
+                    } else {
+                        buyers = [
+                            { email: 'olapoal.artgallery@gmail.com', name: 'Owner', order_id: 'OWNER-VIP', created_at: new Date().toISOString() },
+                            { email: 'budi.santoso@gmail.com', name: 'Budi Santoso', order_id: 'LYNK-98212', created_at: new Date(Date.now() - 3600000).toISOString() }
+                        ];
+                        localStorage.setItem('kpr_local_buyers_db', JSON.stringify(buyers));
+                    }
+                } else {
+                    const res = await fetch('/.netlify/functions/admin-buyers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-admin-key': token
+                        },
+                        body: JSON.stringify({ action: 'list' })
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.buyers) {
+                        buyers = data.buyers;
+                    }
+                }
+
+                allBuyersData = buyers;
+                renderTabelPembeli(allBuyersData);
+                document.getElementById('metricTotalBuyers').textContent = allBuyersData.length;
+
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-state" style="color: #FCA5A5;">Gagal memuat data: ${err.message}</td></tr>`;
+            }
+        }
+
+        function renderTabelPembeli(list) {
+            const tbody = document.getElementById('buyersTableBody');
+            document.getElementById('buyerCountDisplay').textContent = list.length;
+
+            if (!list || list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Belum ada pembeli terdaftar. Tambahkan manual di atas!</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = list.map((b, idx) => {
+                const dateStr = b.created_at ? new Date(b.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : '-';
+                return `
+                    <tr>
+                        <td style="color: #64748B; font-weight: 700;">${idx + 1}</td>
+                        <td style="font-weight: 700; color: #93C5FD;">${escapeHtml(b.email)}</td>
+                        <td>${escapeHtml(b.name || '-')}</td>
+                        <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-size: 11px;">${escapeHtml(b.order_id || '-')}</code></td>
+                        <td style="color: #94A3B8; font-size: 12px;">${dateStr}</td>
+                        <td><span class="badge-active">Lisensi Aktif</span></td>
+                        <td style="text-align: right;">
+                            <button type="button" class="btn-revoke" onclick="konfirmasiCabutLisensi('${escapeHtml(b.email)}')">
+                                🗑️ Cabut Akses
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterTabelPembeli() {
+            const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+            if (!q) {
+                renderTabelPembeli(allBuyersData);
+                return;
+            }
+            const filtered = allBuyersData.filter(b => 
+                (b.email && b.email.toLowerCase().includes(q)) || 
+                (b.name && b.name.toLowerCase().includes(q)) ||
+                (b.order_id && b.order_id.toLowerCase().includes(q))
+            );
+            renderTabelPembeli(filtered);
+        }
+
+        async function prosesTambahPembeli() {
+            const emailInput = document.getElementById('newEmail');
+            const nameInput = document.getElementById('newName');
+            const notesInput = document.getElementById('newNotes');
+            const btn = document.getElementById('btnAddBuyer');
+            const icon = document.getElementById('addIcon');
+
+            const email = (emailInput.value || '').trim().toLowerCase();
+            const name = (nameInput.value || '').trim();
+            const notes = (notesInput.value || 'Manual').trim();
+
+            if (!email) return;
+
+            btn.disabled = true;
+            icon.innerHTML = '<span class="spinner"></span>';
+
+            const token = getSavedAdminToken();
+            const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost';
+
+            try {
+                if (isLocal) {
+                    const localData = JSON.parse(localStorage.getItem('kpr_local_buyers_db') || '[]');
+                    const existingIdx = localData.findIndex(b => b.email === email);
+                    const newEntry = { email, name: name || 'Pembeli Manual', order_id: notes, created_at: new Date().toISOString() };
+                    
+                    if (existingIdx >= 0) {
+                        localData[existingIdx] = newEntry;
+                    } else {
+                        localData.unshift(newEntry);
+                    }
+                    localStorage.setItem('kpr_local_buyers_db', JSON.stringify(localData));
+                    showToast(`Akses lisensi berhasil diberikan ke ${email}`);
+                } else {
+                    const res = await fetch('/.netlify/functions/admin-buyers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-admin-key': token
+                        },
+                        body: JSON.stringify({
+                            action: 'add',
+                            email: email,
+                            name: name,
+                            order_id: notes
+                        })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || data.message || 'Gagal menambahkan pembeli');
+                    showToast(data.message || 'Akses berhasil diberikan!');
+                }
+
+                emailInput.value = '';
+                nameInput.value = '';
+                notesInput.value = '';
+                muatDataPembeli();
+
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                icon.textContent = '➕';
+            }
+        }
+
+        async function konfirmasiCabutLisensi(email) {
+            const confirmed = confirm(
+                `PERINGATAN:\nApakah Anda yakin ingin MENCABUT LISENSI pembeli ini?\n\nEmail: ${email}\n\nPembeli tidak akan bisa lagi membuka kalkulator KPR.`
+            );
+            if (!confirmed) return;
+
+            const token = getSavedAdminToken();
+            const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost';
+
+            try {
+                if (isLocal) {
+                    let localData = JSON.parse(localStorage.getItem('kpr_local_buyers_db') || '[]');
+                    localData = localData.filter(b => b.email !== email);
+                    localStorage.setItem('kpr_local_buyers_db', JSON.stringify(localData));
+                    showToast(`Lisensi untuk ${email} berhasil dicabut.`);
+                } else {
+                    const res = await fetch('/.netlify/functions/admin-buyers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-admin-key': token
+                        },
+                        body: JSON.stringify({
+                            action: 'delete',
+                            email: email
+                        })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || data.message || 'Gagal mencabut lisensi');
+                    showToast(data.message || 'Lisensi berhasil dicabut!');
+                }
+
+                muatDataPembeli();
+
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function togglePassField(fieldId) {
+            const input = document.getElementById(fieldId);
+            if (input) {
+                input.type = input.type === 'password' ? 'text' : 'password';
+            }
+        }
+
+        async function prosesGantiPassword() {
+            const oldPassInput = document.getElementById('oldPassInput');
+            const newPassInput = document.getElementById('newPassInput');
+            const confirmPassInput = document.getElementById('confirmPassInput');
+            const alertBox = document.getElementById('changePassAlert');
+            const btn = document.getElementById('btnChangePassSubmit');
+            const icon = document.getElementById('changePassIcon');
+            const text = document.getElementById('changePassText');
+
+            alertBox.style.display = 'none';
+
+            const oldPassword = (oldPassInput.value || '').trim();
+            const newPassword = (newPassInput.value || '').trim();
+            const confirmPassword = (confirmPassInput.value || '').trim();
+
+            if (!oldPassword || !newPassword || !confirmPassword) {
+                alertBox.textContent = 'Harap isi seluruh kolom password.';
+                alertBox.style.display = 'block';
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alertBox.textContent = 'Password baru minimal 6 karakter.';
+                alertBox.style.display = 'block';
+                newPassInput.focus();
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alertBox.textContent = 'Konfirmasi password baru tidak cocok. Harap periksa kembali.';
+                alertBox.style.display = 'block';
+                confirmPassInput.focus();
+                return;
+            }
+
+            if (newPassword === oldPassword) {
+                alertBox.textContent = 'Password baru tidak boleh sama dengan password lama.';
+                alertBox.style.display = 'block';
+                newPassInput.focus();
+                return;
+            }
+
+            btn.disabled = true;
+            icon.innerHTML = '<span class="spinner"></span>';
+            text.textContent = 'Menyimpan...';
+
+            const token = getSavedAdminToken();
+            const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost';
+
+            try {
+                if (isLocal) {
+                    const currentLocalPass = localStorage.getItem('kpr_admin_local_password') || 'admin12345';
+                    if (oldPassword !== currentLocalPass && oldPassword !== token) {
+                        throw new Error('Password lama tidak sesuai.');
+                    }
+                    localStorage.setItem('kpr_admin_local_password', newPassword);
+                    setSavedAdminToken(newPassword);
+                    showToast('✅ Password Admin berhasil diperbarui!');
+                    oldPassInput.value = '';
+                    newPassInput.value = '';
+                    confirmPassInput.value = '';
+                } else {
+                    const res = await fetch('/.netlify/functions/admin-buyers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-admin-key': token
+                        },
+                        body: JSON.stringify({
+                            action: 'change_password',
+                            old_password: oldPassword,
+                            new_password: newPassword
+                        })
+                    });
+
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok || !data.success) {
+                        throw new Error(data.message || 'Gagal mengganti password.');
+                    }
+
+                    setSavedAdminToken(newPassword);
+                    showToast('✅ ' + (data.message || 'Password Admin berhasil diperbarui!'));
+                    oldPassInput.value = '';
+                    newPassInput.value = '';
+                    confirmPassInput.value = '';
+                }
+            } catch (err) {
+                alertBox.textContent = err.message;
+                alertBox.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                icon.textContent = '💾';
+                text.textContent = 'Simpan Password Baru';
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Auto check token saat halaman dibuka
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = getSavedAdminToken();
+            if (token) {
+                tampilkanDashboard();
+                muatDataPembeli();
+            }
+        });
+    </script>
+</body>
+</html>

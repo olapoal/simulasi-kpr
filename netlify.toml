@@ -2,17 +2,24 @@
   publish = "."
   functions = "netlify/functions"
 
+# Routing Canonical Admin: /admin/
 [[redirects]]
-  from = "/admin"
-  to = "/admin.html"
-  status = 200
+  from = "/admin.html"
+  to = "/admin/"
+  status = 301
 
 [[redirects]]
+  from = "/admin"
+  to = "/admin/"
+  status = 301
+
+# Routing Canonical Home: /
+[[redirects]]
   from = "/kalkulator_kpr"
-  to = "/index.html"
-  status = 200
+  to = "/"
+  status = 301
 
 [[redirects]]
   from = "/kalkulator_kpr.html"
-  to = "/index.html"
-  status = 200
+  to = "/"
+  status = 301
