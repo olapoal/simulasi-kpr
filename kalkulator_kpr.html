@@ -332,7 +332,7 @@
         .form-group {
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            justify-content: flex-start;
             width: 100%;
         }
 
@@ -2573,9 +2573,9 @@
 
                 <!-- VIEW B: FLOATING VIEW (Untuk FLOATING) -->
                 <div id="floatingCardView" style="display:none; padding:10px 2px; flex-direction:column; gap:14px;">
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
-                        <div class="form-group" style="margin:0;">
-                            <label style="color:#93C5FD; font-weight:700;">🌊 Suku Bunga Floating Acuan (% p.a.)</label>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px; align-items:start;">
+                        <div class="form-group" style="margin:0; justify-content:flex-start;">
+                            <label style="color:#93C5FD; font-weight:700;">🌊 Suku Bunga Floating (% p.a.)</label>
                             <div class="stepper-wrap" style="width:100%;">
                                 <input type="number" id="floatingRate" class="stepper-input" value="11.00" step="0.25" min="0" placeholder="Contoh: 11.00" style="width:calc(100% - 24px); text-align:center;" oninput="onSchemeParamChange()">
                                 <div class="stepper-btns">
@@ -2583,10 +2583,10 @@
                                     <button type="button" class="stepper-btn down" onclick="stepElFloatDirect('floatingRate', -0.25)">▼</button>
                                 </div>
                             </div>
-                            <span style="font-size:11px; color:#64748B; margin-top:4px; display:block;">Suku bunga mengambang acuan pasar (SBDK/BI-Rate).</span>
+                            <span style="font-size:11px; color:#64748B; margin-top:6px; display:block; min-height:28px; line-height:1.35;">Suku bunga acuan pasar berjalan (SBDK/BI-Rate).</span>
                         </div>
-                        <div class="form-group" style="margin:0;">
-                            <label style="color:#F8FAFC;">Masa Fixed Promo Awal (Bulan)</label>
+                        <div class="form-group" style="margin:0; justify-content:flex-start;">
+                            <label style="color:#93C5FD; font-weight:700;">⏳ Masa Fixed Promo (Bulan)</label>
                             <div class="stepper-wrap" style="width:100%;">
                                 <input type="number" id="floatingFixedMonths" class="stepper-input" value="0" step="12" min="0" placeholder="0 = Floating Penuh" style="width:calc(100% - 24px); text-align:center;" oninput="onFloatingFixedChange()">
                                 <div class="stepper-btns">
@@ -2594,12 +2594,12 @@
                                     <button type="button" class="stepper-btn down" onclick="stepNumberDirect('floatingFixedMonths', -12, 0)">▼</button>
                                 </div>
                             </div>
-                            <span style="font-size:11px; color:#64748B; margin-top:4px; display:block;">0 = Floating Penuh, atau isi misal 36 (3 Thn promo).</span>
+                            <span style="font-size:11px; color:#64748B; margin-top:6px; display:block; min-height:28px; line-height:1.35;">0 = Floating Penuh, atau isi durasi promo (contoh: 36 bln).</span>
                         </div>
                     </div>
                     
-                    <div id="floatingFixedRateWrap" style="display:none;" class="form-group">
-                        <label style="color:#FDE68A;">⭐ Suku Bunga Fixed Promo (% p.a.)</label>
+                    <div id="floatingFixedRateWrap" style="display:none; justify-content:flex-start;" class="form-group">
+                        <label style="color:#FDE68A; font-weight:700;">⭐ Suku Bunga Fixed Promo (% p.a.)</label>
                         <div class="stepper-wrap" style="max-width:240px;">
                             <input type="number" id="floatingFixedRate" class="stepper-input" value="5.75" step="0.25" min="0" placeholder="Contoh: 5.75" style="width:calc(100% - 24px); text-align:center;" oninput="onSchemeParamChange()">
                             <div class="stepper-btns">
@@ -2607,6 +2607,7 @@
                                 <button type="button" class="stepper-btn down" onclick="stepElFloatDirect('floatingFixedRate', -0.25)">▼</button>
                             </div>
                         </div>
+                        <span style="font-size:11px; color:#64748B; margin-top:6px; display:block;">Suku bunga promo yang berlaku selama periode fixed awal.</span>
                     </div>
 
                     <div style="background:rgba(59,130,246,0.1); border-left:3px solid #3B82F6; padding:10px 12px; border-radius:6px; font-size:12px; color:#BFDBFE; line-height:1.5;">
