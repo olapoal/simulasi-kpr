@@ -1045,10 +1045,24 @@
             font-size: 13px;
         }
 
+        /* Sembunyikan badge/drawer kolaborasi bawaan Netlify agar tidak menutupi UI */
+        #netlify-feedback-drawer,
+        [data-netlify-drawer],
+        .netlify-badge,
+        iframe[id*="netlify"],
+        iframe[src*="netlify"],
+        div[class*="netlify-feedback"],
+        div[class*="netlify-drawer"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
         #btnBackToTop {
             position: fixed;
-            bottom: 78px;
-            right: 28px;
+            bottom: 138px;
+            right: 24px;
             background: var(--primary-gradient);
             color: white;
             border: 1px solid rgba(255,255,255,0.2);
@@ -1058,7 +1072,7 @@
             font-weight: 700;
             box-shadow: 0 4px 15px rgba(37, 99, 235, 0.5);
             cursor: pointer;
-            z-index: 99;
+            z-index: 99998;
             display: none;
             align-items: center;
             gap: 6px;
@@ -1072,8 +1086,8 @@
         /* 💬 WhatsApp Floating Action Button */
         .whatsapp-float-btn {
             position: fixed;
-            bottom: 24px;
-            right: 28px;
+            bottom: 82px;
+            right: 24px;
             background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
             color: #FFFFFF !important;
             border: 1px solid rgba(255, 255, 255, 0.25);
@@ -1086,7 +1100,7 @@
             gap: 8px;
             text-decoration: none !important;
             box-shadow: 0 4px 20px rgba(37, 211, 102, 0.45);
-            z-index: 99;
+            z-index: 99999;
             cursor: pointer;
             transition: all 0.25s ease;
         }
