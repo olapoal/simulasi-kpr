@@ -2523,7 +2523,6 @@
                 <div class="sub-panel-header">
                     <span class="sub-panel-title" id="panel2Title" style="color:#60A5FA;">2. Parameter Suku Bunga</span>
                     <div id="tierCardButtons" style="display:none; gap:6px;">
-                        <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="background:rgba(96,165,250,0.12); color:#93C5FD; border-color:rgba(96,165,250,0.3); font-size:11px;" title="Muat template 3 tier standar">↺ Reset Tier</button>
                         <button type="button" class="btn btn-sm" onclick="addTierRow()">+ Tambah Periode</button>
                     </div>
                 </div>
@@ -2551,7 +2550,7 @@
                             <tr id="emptyTierRow">
                                 <td colspan="5" style="text-align:center; padding:22px 14px; color:#94A3B8; font-size:12px;">
                                     Belum ada periode suku bunga.<br>
-                                    <span style="color:#64748B; font-size:11px;">Klik <button type="button" class="btn btn-sm" onclick="addTierRow()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex;">+ Tambah Periode</button> atau <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex; background:rgba(96,165,250,0.15); color:#93C5FD; border-color:rgba(96,165,250,0.35);">↺ Pakai Template Default</button></span>
+                                    <span style="color:#64748B; font-size:11px;">Klik <button type="button" class="btn btn-sm" onclick="addTierRow()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex;">+ Tambah Periode</button> untuk menambahkan periode suku bunga.</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -3031,8 +3030,7 @@
 
             const trs = document.querySelectorAll('#tierTbody tr:not(#emptyTierRow)');
             if (trs.length === 0) {
-                const t = parseInt(document.getElementById('tenor')?.value) || 180;
-                muatDefaultTiers(t);
+                tampilkanEmptyTierPrompt();
             }
         } else if (jenis === 'FLOATING') {
             if (titleEl) titleEl.innerText = '2. Suku Bunga Floating (Mengambang)';
@@ -3210,7 +3208,7 @@
             <tr id="emptyTierRow">
                 <td colspan="5" style="text-align:center; padding:22px 14px; color:#94A3B8; font-size:12px;">
                     Belum ada periode suku bunga.<br>
-                    <span style="color:#64748B; font-size:11px;">Klik <button type="button" class="btn btn-sm" onclick="addTierRow()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex;">+ Tambah Periode</button> atau <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex; background:rgba(96,165,250,0.15); color:#93C5FD; border-color:rgba(96,165,250,0.35);">↺ Pakai Template Default</button></span>
+                    <span style="color:#64748B; font-size:11px;">Klik <button type="button" class="btn btn-sm" onclick="addTierRow()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex;">+ Tambah Periode</button> untuk menambahkan periode suku bunga.</span>
                 </td>
             </tr>
         `;
@@ -3241,11 +3239,24 @@
         const emptyRow = document.getElementById('emptyTierRow');
         if (emptyRow) emptyRow.remove();
 
+        const trs = tbody.querySelectorAll('tr:not(#emptyTierRow)');
+        const tenor = parseInt(document.getElementById('tenor')?.value) || 180;
+        let defStart = 1;
+        let defEnd = tenor;
+        let defName = '';
+
+        if (trs.length > 0) {
+            const lastTr = trs[trs.length - 1];
+            const prevEnd = parseInt(lastTr.querySelector('.t-end')?.value) || 0;
+            defStart = prevEnd + 1;
+            defEnd = Math.max(defStart, tenor);
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
                 <div class="stepper-wrap">
-                    <input type="number" class="t-start stepper-input" value="" min="1" placeholder="Mulai">
+                    <input type="number" class="t-start stepper-input" value="${defStart}" min="1" placeholder="Mulai">
                     <div class="stepper-btns">
                         <button type="button" class="stepper-btn" onclick="stepEl(this, 1)">▲</button>
                         <button type="button" class="stepper-btn down" onclick="stepEl(this, -1)">▼</button>
@@ -3254,7 +3265,7 @@
             </td>
             <td>
                 <div class="stepper-wrap">
-                    <input type="number" class="t-end stepper-input" value="" min="1" placeholder="S/D">
+                    <input type="number" class="t-end stepper-input" value="${defEnd}" min="1" placeholder="S/D">
                     <div class="stepper-btns">
                         <button type="button" class="stepper-btn" onclick="stepEl(this, 1)">▲</button>
                         <button type="button" class="stepper-btn down" onclick="stepEl(this, -1)">▼</button>
@@ -3270,13 +3281,13 @@
                     </div>
                 </div>
             </td>
-            <td><input type="text" class="t-name" value="" placeholder="Keterangan / Nama Tier (Opsional)"></td>
+            <td><input type="text" class="t-name" value="${defName}" placeholder="Keterangan / Nama Tier (Opsional)"></td>
             <td style="text-align:center;"><button class="btn-del" onclick="deleteRow(this)">✕</button></td>
         `;
         tbody.appendChild(tr);
         saveToLocalStorage();
         hitungKPR();
-        tr.querySelector('.t-start')?.focus();
+        tr.querySelector('.t-rate')?.focus();
     }
 
     function sortExtraRows(triggerRow = null) {
@@ -3701,7 +3712,7 @@
                 document.getElementById('resHematBulan').innerText = '-';
                 document.getElementById('resTotalBunga').innerText = 'Rp 0';
                 document.getElementById('resTotalBayar').innerText = 'Rp 0';
-                document.getElementById('scheduleTbody').innerHTML = '<tr><td colspan="9" style="text-align:center; padding:35px; color:#F59E0B; font-size:13px;">⚠️ Silakan tambahkan minimal satu Periode Bunga Berjenjang (klik <strong>+ Tambah Periode</strong>) atau gunakan <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex; background:rgba(96,165,250,0.15); color:#93C5FD; border-color:rgba(96,165,250,0.35);">↺ Reset Tier</button>.</td></tr>';
+                document.getElementById('scheduleTbody').innerHTML = '<tr><td colspan="9" style="text-align:center; padding:35px; color:#F59E0B; font-size:13px;">⚠️ Silakan tambahkan minimal satu Periode Bunga Berjenjang (klik <strong>+ Tambah Periode</strong>).</td></tr>';
                 return;
             }
         }
