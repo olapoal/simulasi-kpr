@@ -2505,7 +2505,8 @@
             <div class="form-group">
                 <label title="Pilih Metode Perhitungan Suku Bunga">Skema Suku Bunga</label>
                 <select id="jenisCicilan" onchange="toggleJenisCicilan()">
-                    <option value="BERJENJANG" selected>✨ Suku Bunga Berjenjang (Step-up)</option>
+                    <option value="" selected>-- Pilih Skema Suku Bunga --</option>
+                    <option value="BERJENJANG">✨ Suku Bunga Berjenjang (Step-up)</option>
                     <option value="FLOATING">🌊 Suku Bunga Floating (Mengambang)</option>
                     <option value="ANUITAS">📊 Anuitas Efektif (Bunga Tetap)</option>
                     <option value="EFEKTIF">📉 Efektif (Pokok Tetap)</option>
@@ -2520,15 +2521,22 @@
             <!-- PANEL 2: PARAMETER SUKU BUNGA (DINAMIS SESUAI SKEMA) -->
             <div class="sub-panel" id="tierCard">
                 <div class="sub-panel-header">
-                    <span class="sub-panel-title" id="panel2Title" style="color:#60A5FA;">2. Periode Bunga Berjenjang</span>
-                    <div id="tierCardButtons" style="display:flex; gap:6px;">
+                    <span class="sub-panel-title" id="panel2Title" style="color:#60A5FA;">2. Parameter Suku Bunga</span>
+                    <div id="tierCardButtons" style="display:none; gap:6px;">
                         <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="background:rgba(96,165,250,0.12); color:#93C5FD; border-color:rgba(96,165,250,0.3); font-size:11px;" title="Muat template 3 tier standar">↺ Reset Tier</button>
                         <button type="button" class="btn btn-sm" onclick="addTierRow()">+ Tambah Periode</button>
                     </div>
                 </div>
 
+                <!-- VIEW 0: PROMPT PILIH SKEMA (Ketika belum memilih skema / data awal kosong) -->
+                <div id="noSchemeCardView" style="display:flex; padding:38px 16px; text-align:center; color:#94A3B8; font-size:13px; flex-direction:column; align-items:center; justify-content:center; gap:8px;">
+                    <span style="font-size:28px;">🎯</span>
+                    <strong style="color:#E2E8F0; font-size:14px;">Belum Ada Skema Suku Bunga Terpilih</strong>
+                    <span style="color:#64748B; font-size:12px; max-width:360px; line-height:1.5;">Silakan pilih salah satu <strong>Skema Suku Bunga</strong> pada menu di atas terlebih dahulu untuk menentukan metode perhitungan pinjaman Anda.</span>
+                </div>
+
                 <!-- VIEW A: TABLE TIERS (Untuk BERJENJANG) -->
-                <div id="tierTableView">
+                <div id="tierTableView" style="display:none;">
                     <table class="config-table">
                         <thead>
                             <tr>
@@ -2865,12 +2873,12 @@
 
         const plafon = parseRp(document.getElementById('plafon')?.value) || 0;
         const tenor = parseInt(document.getElementById('tenor')?.value) || 180;
-        const jenis = document.getElementById('jenisCicilan')?.value || 'BERJENJANG';
+        const jenis = document.getElementById('jenisCicilan')?.value || '';
         const singleRate = parseFloat(document.getElementById('singleRate')?.value) || 7.5;
         const floatingRate = parseFloat(document.getElementById('floatingRate')?.value) || 11.0;
         const floatingFixedMonths = parseInt(document.getElementById('floatingFixedMonths')?.value) || 0;
         const floatingFixedRate = parseFloat(document.getElementById('floatingFixedRate')?.value) || 5.75;
-        if (plafon <= 0 || tenor <= 0) return 0;
+        if (!jenis || plafon <= 0 || tenor <= 0) return 0;
 
         if (jenis === 'FLAT') {
             return (plafon / tenor) + ((plafon * (singleRate / 100)) / 12);
@@ -3001,16 +3009,25 @@
         const viewTier = document.getElementById('tierTableView');
         const viewFloating = document.getElementById('floatingCardView');
         const viewSingle = document.getElementById('singleRateCardView');
+        const viewNoScheme = document.getElementById('noSchemeCardView');
         const singleRateInput = document.getElementById('singleRate');
         const singleRateLabel = document.getElementById('singleRateLabel');
         const singleExplainer = document.getElementById('singleRateExplainer');
 
-        if (jenis === 'BERJENJANG') {
+        if (!jenis || jenis === '') {
+            if (titleEl) titleEl.innerText = '2. Parameter Suku Bunga';
+            if (btnsEl) btnsEl.style.display = 'none';
+            if (viewTier) viewTier.style.display = 'none';
+            if (viewFloating) viewFloating.style.display = 'none';
+            if (viewSingle) viewSingle.style.display = 'none';
+            if (viewNoScheme) viewNoScheme.style.display = 'flex';
+        } else if (jenis === 'BERJENJANG') {
             if (titleEl) titleEl.innerText = '2. Periode Bunga Berjenjang (Step-up)';
             if (btnsEl) btnsEl.style.display = 'flex';
             if (viewTier) viewTier.style.display = 'block';
             if (viewFloating) viewFloating.style.display = 'none';
             if (viewSingle) viewSingle.style.display = 'none';
+            if (viewNoScheme) viewNoScheme.style.display = 'none';
 
             const trs = document.querySelectorAll('#tierTbody tr:not(#emptyTierRow)');
             if (trs.length === 0) {
@@ -3023,6 +3040,7 @@
             if (viewTier) viewTier.style.display = 'none';
             if (viewFloating) viewFloating.style.display = 'flex';
             if (viewSingle) viewSingle.style.display = 'none';
+            if (viewNoScheme) viewNoScheme.style.display = 'none';
 
             const fInput = document.getElementById('floatingRate');
             if (fInput && (!fInput.value || parseFloat(fInput.value) <= 0)) {
@@ -3039,6 +3057,7 @@
             if (viewTier) viewTier.style.display = 'none';
             if (viewFloating) viewFloating.style.display = 'none';
             if (viewSingle) viewSingle.style.display = 'flex';
+            if (viewNoScheme) viewNoScheme.style.display = 'none';
 
             if (jenis === 'ANUITAS') {
                 if (titleEl) titleEl.innerText = '2. Suku Bunga Anuitas Efektif (Bunga Tetap)';
@@ -3366,7 +3385,7 @@
     function extractInstallmentPeriods(rows, actualMonths, hematBulan) {
         if (!rows || rows.length <= 1) return [];
 
-        const jenis = document.getElementById('jenisCicilan')?.value || 'BERJENJANG';
+        const jenis = document.getElementById('jenisCicilan')?.value || '';
         const singleRate = parseFloat(document.getElementById('singleRate')?.value) || 7.5;
         const plafon = parseRp(document.getElementById('plafon')?.value) || 0;
         const tenor = parseInt(document.getElementById('tenor')?.value) || 180;
@@ -3609,11 +3628,40 @@
         const today = new Date();
         const defDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         const startDateStr = document.getElementById('startDate').value || defDate;
-        const jenis = document.getElementById('jenisCicilan').value || 'BERJENJANG';
+        const jenis = document.getElementById('jenisCicilan').value;
         const singleRate = parseFloat(document.getElementById('singleRate')?.value) || 7.5;
         const floatingRate = parseFloat(document.getElementById('floatingRate')?.value) || 11.0;
         const floatingFixedMonths = parseInt(document.getElementById('floatingFixedMonths')?.value) || 0;
         const floatingFixedRate = parseFloat(document.getElementById('floatingFixedRate')?.value) || 5.75;
+
+        if (!jenis || jenis === '') {
+            document.getElementById('resPmt1').innerText = 'Rp 0';
+            const elTgl1 = document.getElementById('resTgl1');
+            if (elTgl1) elTgl1.innerText = '-';
+            document.getElementById('resTenorAktual').innerText = '0 Bulan';
+            document.getElementById('resHematBulan').innerText = '-';
+            document.getElementById('resTotalBunga').innerText = 'Rp 0';
+            const elBungaNormal = document.getElementById('resBungaNormalSub');
+            if (elBungaNormal) elBungaNormal.innerText = '-';
+            const elHematRp = document.getElementById('resHematBungaRp');
+            if (elHematRp) elHematRp.innerText = 'Rp 0';
+            const elHematSub = document.getElementById('resHematBungaSub');
+            if (elHematSub) elHematSub.innerText = '-';
+            document.getElementById('resTotalBayar').innerText = 'Rp 0';
+            const elTglLunas = document.getElementById('resTglLunas');
+            if (elTglLunas) elTglLunas.innerText = 'Est. Lunas: -';
+            document.getElementById('scheduleTbody').innerHTML = '<tr><td colspan="9" style="text-align:center; padding:35px; color:#94A3B8; font-size:13px;">Silakan pilih <strong>Skema Suku Bunga</strong> pada menu di atas untuk memulai simulasi pinjaman.</td></tr>';
+            const gridEl = document.getElementById('periodSummaryGrid');
+            if (gridEl) gridEl.innerHTML = '<div style="color:#94A3B8; font-size:12px; grid-column:1/-1; padding:10px 0;">Belum ada skema suku bunga terpilih. Pilih skema di atas untuk melihat proyeksi angsuran.</div>';
+            const badgeEl = document.getElementById('periodSummaryBadge');
+            if (badgeEl) badgeEl.innerText = '0 Periode';
+            const extraListEl = document.getElementById('extraInfoPeriodsList');
+            if (extraListEl) extraListEl.innerHTML = '';
+            const timelinePills = document.getElementById('timelinePills');
+            if (timelinePills) timelinePills.innerHTML = '<div class="timeline-pill" style="opacity:0.5; cursor:default;">Pilih skema bunga terlebih dahulu</div>';
+            if (myChart) { myChart.destroy(); myChart = null; }
+            return;
+        }
 
         if (plafon <= 0 || tenor <= 0) {
             document.getElementById('resPmt1').innerText = 'Rp 0';
@@ -4183,7 +4231,7 @@
         document.getElementById('plafon').value = '';
         document.getElementById('tenor').value = '';
         document.getElementById('startDate').value = '';
-        document.getElementById('jenisCicilan').value = 'BERJENJANG';
+        document.getElementById('jenisCicilan').value = '';
         if (document.getElementById('singleRate')) document.getElementById('singleRate').value = '';
         if (document.getElementById('floatingRate')) document.getElementById('floatingRate').value = '11.00';
         if (document.getElementById('floatingFixedMonths')) document.getElementById('floatingFixedMonths').value = '0';
@@ -4283,7 +4331,7 @@
         document.getElementById('plafon').value = data.plafon || '';
         document.getElementById('tenor').value = data.tenor || '';
         document.getElementById('startDate').value = data.startDate || '';
-        document.getElementById('jenisCicilan').value = data.jenisCicilan || 'BERJENJANG';
+        document.getElementById('jenisCicilan').value = data.jenisCicilan || '';
         if (document.getElementById('singleRate')) document.getElementById('singleRate').value = data.singleRate || '';
         if (document.getElementById('floatingRate')) document.getElementById('floatingRate').value = data.floatingRate || '11.00';
         if (document.getElementById('floatingFixedMonths')) document.getElementById('floatingFixedMonths').value = (typeof data.floatingFixedMonths !== 'undefined') ? data.floatingFixedMonths : '0';
@@ -4669,7 +4717,7 @@
         const elSkema = document.getElementById('printSkemaVal');
         const jenisSelect = document.getElementById('jenisCicilan');
         if (elSkema && jenisSelect) {
-            elSkema.innerText = jenisSelect.options[jenisSelect.selectedIndex]?.text || 'Suku Bunga Berjenjang';
+            elSkema.innerText = (jenisSelect.value && jenisSelect.options[jenisSelect.selectedIndex]?.text) || '-';
         }
 
         if (typeof amortizationChart !== 'undefined' && amortizationChart) {
