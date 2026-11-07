@@ -2478,16 +2478,16 @@
         <div class="param-bar">
             <div class="form-group">
                 <label title="Nama Bank atau Keterangan Pinjaman">Nama Bank / Label</label>
-                <input type="text" id="bankName" value="KPR Bank">
+                <input type="text" id="bankName" value="" placeholder="Contoh: Bank Mandiri / BCA / dll.">
             </div>
             <div class="form-group">
                 <label title="Jumlah Pokok Pinjaman Awal">Plafon Pokok (Rp)</label>
-                <input type="text" id="plafon" value="676,000,000" onkeyup="formatRupiahInput(this)">
+                <input type="text" id="plafon" value="" placeholder="Contoh: 500.000.000" onkeyup="formatRupiahInput(this)">
             </div>
             <div class="form-group">
                 <label title="Jangka Waktu Pinjaman dalam Bulan">Tenor (Bulan)</label>
                 <div class="stepper-wrap">
-                    <input type="number" id="tenor" class="stepper-input" value="180" min="1" max="600" style="width:calc(100% - 24px); text-align:center;">
+                    <input type="number" id="tenor" class="stepper-input" value="" min="1" max="600" placeholder="Contoh: 180" style="width:calc(100% - 24px); text-align:center;">
                     <div class="stepper-btns">
                         <button type="button" class="stepper-btn" onclick="stepNumber('tenor', 12)" title="Tambah 12 Bulan (1 Tahun)">▲</button>
                         <button type="button" class="stepper-btn down" onclick="stepNumber('tenor', -12)" title="Kurang 12 Bulan (1 Tahun)">▼</button>
@@ -2496,7 +2496,7 @@
             </div>
             <div class="form-group">
                 <label title="Tanggal Jatuh Tempo Angsuran Pertama">Tgl Jatuh Tempo 1</label>
-                <input type="date" id="startDate" value="2025-05-28">
+                <input type="date" id="startDate" value="">
             </div>
             <div class="form-group">
                 <label title="Pilih Metode Perhitungan Suku Bunga">Skema Suku Bunga</label>
@@ -2509,7 +2509,7 @@
             </div>
             <div class="form-group" id="singleRateGroup" style="display:none; grid-column:span 5;">
                 <label>Suku Bunga (% p.a.)</label>
-                <input type="number" id="singleRate" value="7.5" step="0.01" style="max-width:200px;">
+                <input type="number" id="singleRate" value="" placeholder="Contoh: 7.50" step="0.01" style="max-width:200px;">
             </div>
         </div>
 
@@ -2521,7 +2521,7 @@
                 <div class="sub-panel-header">
                     <span class="sub-panel-title" style="color:#60A5FA;">2. Periode Bunga Berjenjang</span>
                     <div style="display:flex; gap:6px;">
-                        <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="background:rgba(96,165,250,0.12); color:#93C5FD; border-color:rgba(96,165,250,0.3); font-size:11px;" title="Kembalikan skema 3 tier standar">↺ Reset Tier</button>
+                        <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="background:rgba(96,165,250,0.12); color:#93C5FD; border-color:rgba(96,165,250,0.3); font-size:11px;" title="Muat template 3 tier standar">↺ Reset Tier</button>
                         <button type="button" class="btn btn-sm" onclick="addTierRow()">+ Tambah Periode</button>
                     </div>
                 </div>
@@ -2536,98 +2536,11 @@
                         </tr>
                     </thead>
                     <tbody id="tierTbody">
-                        <tr>
-                            <td>
-                                <div class="stepper-wrap">
-                                    <input type="number" class="t-start stepper-input" value="1" min="1">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepEl(this, 1)">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepEl(this, -1)">▼</button>
-                                    </div>
-                                </div>
+                        <tr id="emptyTierRow">
+                            <td colspan="5" style="text-align:center; padding:22px 14px; color:#94A3B8; font-size:12px;">
+                                Belum ada periode suku bunga.<br>
+                                <span style="color:#64748B; font-size:11px;">Klik <button type="button" class="btn btn-sm" onclick="addTierRow()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex;">+ Tambah Periode</button> atau <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex; background:rgba(96,165,250,0.15); color:#93C5FD; border-color:rgba(96,165,250,0.35);">↺ Pakai Template Default</button></span>
                             </td>
-                            <td>
-                                <div class="stepper-wrap">
-                                    <input type="number" class="t-end stepper-input" value="36" min="1">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepEl(this, 1)">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepEl(this, -1)">▼</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="stepper-wrap" style="width:88px;">
-                                    <input type="number" class="t-rate stepper-input" value="5.75" step="0.25" style="width:64px;">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepElFloat(this, 0.25)">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepElFloat(this, -0.25)">▼</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><input type="text" class="t-name" value="Tahun 1-3 (5.75% Fixed)"></td>
-                            <td style="text-align:center;"><button class="btn-del" onclick="deleteRow(this)">✕</button></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="stepper-wrap">
-                                    <input type="number" class="t-start stepper-input" value="37" min="1">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepEl(this, 1)">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepEl(this, -1)">▼</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="stepper-wrap">
-                                    <input type="number" class="t-end stepper-input" value="72" min="1">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepEl(this, 1)">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepEl(this, -1)">▼</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="stepper-wrap" style="width:88px;">
-                                    <input type="number" class="t-rate stepper-input" value="8.50" step="0.25" style="width:64px;">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepElFloat(this, 0.25)">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepElFloat(this, -0.25)">▼</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><input type="text" class="t-name" value="Tahun 4-6 (8.50% Fixed)"></td>
-                            <td style="text-align:center;"><button class="btn-del" onclick="deleteRow(this)">✕</button></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="stepper-wrap">
-                                    <input type="number" class="t-start stepper-input" value="73" min="1">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepEl(this, 1)">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepEl(this, -1)">▼</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="stepper-wrap">
-                                    <input type="number" class="t-end stepper-input" value="180" min="1">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepEl(this, 1)">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepEl(this, -1)">▼</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="stepper-wrap" style="width:88px;">
-                                    <input type="number" class="t-rate stepper-input" value="10.50" step="0.25" style="width:64px;">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepElFloat(this, 0.25)">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepElFloat(this, -0.25)">▼</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><input type="text" class="t-name" value="Tahun 7-15 (10.50% Floating)"></td>
-                            <td style="text-align:center;"><button class="btn-del" onclick="deleteRow(this)">✕</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -2650,41 +2563,17 @@
                         </tr>
                     </thead>
                     <tbody id="extraTbody">
-                        <tr>
-                            <td>
-                                <!-- ✨ STEPPER BULAN KE DENGAN DESAIN FINTECH MODERN ✨ -->
-                                <div class="stepper-wrap">
-                                    <input type="number" class="e-month stepper-input" value="18" min="1" max="600" title="Jatuh tempo: 28 Oktober 2026">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepEl(this, 1)" title="Tambah 1 Bulan">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepEl(this, -1)" title="Kurang 1 Bulan">▼</button>
-                                    </div>
-                                </div>
+                        <tr id="emptyExtraRow">
+                            <td colspan="5" style="text-align:center; padding:22px 14px; color:#94A3B8; font-size:12px;">
+                                Belum ada pelunasan sebagian.<br>
+                                <span style="color:#64748B; font-size:11px;">Klik <button type="button" class="btn btn-sm" onclick="addExtraRow()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex; background:rgba(16,185,129,0.15); color:#34D399; border-color:rgba(16,185,129,0.35);">+ Tambah Pelunasan</button> jika Anda ingin menyimulasikan percepatan cicilan.</span>
                             </td>
-                            <td>
-                                <div class="stepper-wrap" style="width:100%;">
-                                    <input type="number" class="e-mult stepper-input" value="6" min="1" max="120" placeholder="x Kali" oninput="onMultiplierInput(this)" title="Kelipatan angsuran bulanan (misal: 6 = 6x cicilan)">
-                                    <div class="stepper-btns">
-                                        <button type="button" class="stepper-btn" onclick="stepMultiplier(this, 1)" title="Tambah 1x Angsuran">▲</button>
-                                        <button type="button" class="stepper-btn down" onclick="stepMultiplier(this, -1)" title="Kurang 1x Angsuran">▼</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><input type="text" class="e-amount" value="33,681,432" onkeyup="formatRupiahInput(this)" placeholder="Rp 0"></td>
-                            <td>
-                                <select class="e-effect">
-                                    <option value="" disabled>-- Pilih Efek Pelunasan --</option>
-                                    <option value="KURANGI_TENOR" selected>Kurangi Tenor (Hemat Waktu & Bunga)</option>
-                                    <option value="KURANGI_ANGSURAN">Kurangi Angsuran Bulanan</option>
-                                </select>
-                            </td>
-                            <td style="text-align:center;"><button class="btn-del" onclick="deleteRow(this)">✕</button></td>
                         </tr>
                     </tbody>
                 </table>
-                <div id="extraInfoBox" style="background:rgba(245, 158, 11, 0.1); border-left:3px solid #F59E0B; padding:8px 12px; border-radius:4px; margin-top:auto; transition: all 0.3s ease;">
-                    <p id="extraInfoText" style="font-size:11px; color:#FDE68A; line-height:1.4;">
-                        💡 <strong>Efek Kurangi Tenor:</strong> Angsuran bulanan tetap normal, pinjaman selesai <strong>LEBIH AWAL</strong> (lunas di bulan 164!).
+                <div id="extraInfoBox" style="background:rgba(148, 163, 184, 0.08); border-left:3px solid #64748B; padding:8px 12px; border-radius:4px; margin-top:auto; transition: all 0.3s ease;">
+                    <p id="extraInfoText" style="font-size:11px; color:#94A3B8; line-height:1.4;">
+                        💡 <strong>Status Pelunasan:</strong> Belum ada pelunasan sebagian yang aktif. Tambahkan nominal pelunasan di atas untuk melihat efek percepatan tenor atau penurunan angsuran.
                     </p>
                     <div id="extraInfoPeriodsList" class="extra-period-list"></div>
                 </div>
@@ -2698,13 +2587,13 @@
         <div class="stat-card blue">
             <div class="stat-title">Cicilan Awal (Bulan ke-1)</div>
             <div class="stat-value" id="resPmt1">Rp 0</div>
-            <div class="stat-sub" id="resTgl1" style="color:var(--text-muted);">28 Mei 2025</div>
+            <div class="stat-sub" id="resTgl1" style="color:var(--text-muted);">-</div>
         </div>
 
         <div class="stat-card green">
             <div class="stat-title">Tenor Aktual & Waktu Hemat</div>
             <div class="stat-value" id="resTenorAktual">0 Bulan</div>
-            <div class="stat-sub" id="resHematBulan">🚀 Pinjaman Lunas Lebih Cepat!</div>
+            <div class="stat-sub" id="resHematBulan">-</div>
         </div>
 
         <div class="stat-card amber">
@@ -2864,8 +2753,12 @@
 
     function stepNumber(id, delta) {
         const input = document.getElementById(id);
-        let val = parseInt(input.value) || 0;
-        val = Math.max(1, val + delta);
+        let val = parseInt(input.value);
+        if (isNaN(val) || val <= 0) {
+            val = delta > 0 ? (id === 'tenor' ? 180 : delta) : 1;
+        } else {
+            val = Math.max(1, val + delta);
+        }
         input.value = val;
         saveToLocalStorage();
         hitungKPR();
@@ -3098,6 +2991,32 @@
         `;
     }
 
+    function tampilkanEmptyTierPrompt() {
+        const tbody = document.getElementById('tierTbody');
+        if (!tbody) return;
+        tbody.innerHTML = `
+            <tr id="emptyTierRow">
+                <td colspan="5" style="text-align:center; padding:22px 14px; color:#94A3B8; font-size:12px;">
+                    Belum ada periode suku bunga.<br>
+                    <span style="color:#64748B; font-size:11px;">Klik <button type="button" class="btn btn-sm" onclick="addTierRow()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex;">+ Tambah Periode</button> atau <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex; background:rgba(96,165,250,0.15); color:#93C5FD; border-color:rgba(96,165,250,0.35);">↺ Pakai Template Default</button></span>
+                </td>
+            </tr>
+        `;
+    }
+
+    function tampilkanEmptyExtraPrompt() {
+        const tbody = document.getElementById('extraTbody');
+        if (!tbody) return;
+        tbody.innerHTML = `
+            <tr id="emptyExtraRow">
+                <td colspan="5" style="text-align:center; padding:22px 14px; color:#94A3B8; font-size:12px;">
+                    Belum ada pelunasan sebagian.<br>
+                    <span style="color:#64748B; font-size:11px;">Klik <button type="button" class="btn btn-sm" onclick="addExtraRow()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex; background:rgba(16,185,129,0.15); color:#34D399; border-color:rgba(16,185,129,0.35);">+ Tambah Pelunasan</button> jika Anda ingin menyimulasikan percepatan cicilan.</span>
+                </td>
+            </tr>
+        `;
+    }
+
     function resetDefaultTiers() {
         const t = parseInt(document.getElementById('tenor')?.value) || 180;
         muatDefaultTiers(t);
@@ -3107,6 +3026,9 @@
 
     function addTierRow() {
         const tbody = document.getElementById('tierTbody');
+        const emptyRow = document.getElementById('emptyTierRow');
+        if (emptyRow) emptyRow.remove();
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
@@ -3148,7 +3070,7 @@
     function sortExtraRows(triggerRow = null) {
         const tbody = document.getElementById('extraTbody');
         if (!tbody) return;
-        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const rows = Array.from(tbody.querySelectorAll('tr:not(#emptyExtraRow)'));
         if (rows.length <= 1) return;
 
         // Cek apakah urutan baris sudah ascending berdasarkan Bulan Ke
@@ -3192,6 +3114,9 @@
     function addExtraRow() {
         sortExtraRows();
         const tbody = document.getElementById('extraTbody');
+        const emptyRow = document.getElementById('emptyExtraRow');
+        if (emptyRow) emptyRow.remove();
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
@@ -3229,7 +3154,18 @@
     }
 
     function deleteRow(btn) {
-        btn.closest('tr').remove();
+        const tr = btn.closest('tr');
+        const tbody = tr ? tr.parentElement : null;
+        if (tr) tr.remove();
+
+        if (tbody) {
+            if (tbody.id === 'tierTbody' && tbody.querySelectorAll('tr').length === 0) {
+                tampilkanEmptyTierPrompt();
+            } else if (tbody.id === 'extraTbody' && tbody.querySelectorAll('tr').length === 0) {
+                tampilkanEmptyExtraPrompt();
+            }
+        }
+
         saveToLocalStorage();
         hitungKPR();
     }
@@ -3389,12 +3325,16 @@
     function hitungKPR() {
         const plafon = parseRp(document.getElementById('plafon').value);
         const tenor = parseInt(document.getElementById('tenor').value) || 0;
-        const startDateStr = document.getElementById('startDate').value || '2025-05-28';
+        const today = new Date();
+        const defDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        const startDateStr = document.getElementById('startDate').value || defDate;
         const jenis = document.getElementById('jenisCicilan').value;
         const singleRate = parseFloat(document.getElementById('singleRate').value) || 0;
 
         if (plafon <= 0 || tenor <= 0) {
             document.getElementById('resPmt1').innerText = 'Rp 0';
+            const elTgl1 = document.getElementById('resTgl1');
+            if (elTgl1) elTgl1.innerText = '-';
             document.getElementById('resTenorAktual').innerText = '0 Bulan';
             document.getElementById('resHematBulan').innerText = '-';
             document.getElementById('resTotalBunga').innerText = 'Rp 0';
@@ -3405,13 +3345,15 @@
             const elHematSub = document.getElementById('resHematBungaSub');
             if (elHematSub) elHematSub.innerText = '-';
             document.getElementById('resTotalBayar').innerText = 'Rp 0';
+            const elTglLunas = document.getElementById('resTglLunas');
+            if (elTglLunas) elTglLunas.innerText = 'Est. Lunas: -';
             document.getElementById('scheduleTbody').innerHTML = '<tr><td colspan="9" style="text-align:center; padding:35px; color:#94A3B8; font-size:13px;">Silakan masukkan Plafon Pokok dan Tenor Pinjaman untuk menghitung simulasi.</td></tr>';
             return;
         }
 
         let tiers = [];
         if (jenis === 'BERJENJANG') {
-            const trs = document.querySelectorAll('#tierTbody tr');
+            const trs = document.querySelectorAll('#tierTbody tr:not(#emptyTierRow)');
             trs.forEach(tr => {
                 const s = parseInt(tr.querySelector('.t-start')?.value) || 0;
                 const e = parseInt(tr.querySelector('.t-end')?.value) || 0;
@@ -3421,26 +3363,21 @@
             });
             tiers.sort((a,b) => a.start - b.start);
 
-            // JIKA TIERS KOSONG: Pulihkan tier default agar kalkulasi selalu valid & tidak rusak
             if (tiers.length === 0) {
-                const safeTenor = tenor > 0 ? tenor : 180;
-                if (safeTenor <= 36) {
-                    tiers.push({ start: 1, end: safeTenor, rate: 5.75, name: `Tahun 1-${Math.ceil(safeTenor/12)} (5.75% Fixed)` });
-                } else if (safeTenor <= 72) {
-                    tiers.push({ start: 1, end: 36, rate: 5.75, name: 'Tahun 1-3 (5.75% Fixed)' });
-                    tiers.push({ start: 37, end: safeTenor, rate: 8.50, name: `Tahun 4-${Math.ceil(safeTenor/12)} (8.50% Fixed)` });
-                } else {
-                    tiers.push({ start: 1, end: 36, rate: 5.75, name: 'Tahun 1-3 (5.75% Fixed)' });
-                    tiers.push({ start: 37, end: 72, rate: 8.50, name: 'Tahun 4-6 (8.50% Fixed)' });
-                    tiers.push({ start: 73, end: safeTenor, rate: 10.50, name: `Tahun 7-${Math.ceil(safeTenor/12)} (10.50% Floating)` });
-                }
+                document.getElementById('resPmt1').innerText = 'Rp 0';
+                document.getElementById('resTenorAktual').innerText = '0 Bulan';
+                document.getElementById('resHematBulan').innerText = '-';
+                document.getElementById('resTotalBunga').innerText = 'Rp 0';
+                document.getElementById('resTotalBayar').innerText = 'Rp 0';
+                document.getElementById('scheduleTbody').innerHTML = '<tr><td colspan="9" style="text-align:center; padding:35px; color:#F59E0B; font-size:13px;">⚠️ Silakan tambahkan minimal satu Periode Bunga Berjenjang (klik <strong>+ Tambah Periode</strong>) atau gunakan <button type="button" class="btn btn-sm" onclick="resetDefaultTiers()" style="padding:2px 8px; font-size:11px; margin:0 4px; display:inline-flex; background:rgba(96,165,250,0.15); color:#93C5FD; border-color:rgba(96,165,250,0.35);">↺ Reset Tier</button>.</td></tr>';
+                return;
             }
         }
 
         let hasIncompleteExtra = false;
         let incompleteExtraMonth = 0;
         const extraRowConfigs = [];
-        document.querySelectorAll('#extraTbody tr').forEach(tr => {
+        document.querySelectorAll('#extraTbody tr:not(#emptyExtraRow)').forEach(tr => {
             const m = parseInt(tr.querySelector('.e-month')?.value) || 0;
             const multVal = parseFloat(tr.querySelector('.e-mult')?.value);
             const amtInput = tr.querySelector('.e-amount');
@@ -3910,8 +3847,71 @@
         XLSX.writeFile(wb, `Simulasi_KPR_${bank.replace(/\\s+/g, '_')}.xlsx`);
     }
 
-    /* LOCAL STORAGE & JSON IMPORT/EXPORT PERSISTENCE */
-    const STORAGE_KEY = 'kpr_simulasi_user_data_v1';
+    /* LOCAL STORAGE & JSON IMPORT/EXPORT PERSISTENCE (PER-USER ISOLATED) */
+    function getSimulationStorageKey() {
+        try {
+            const em = (localStorage.getItem('kpr_user_email') || '').trim().toLowerCase();
+            if (em) return 'kpr_simulasi_user_' + encodeURIComponent(em);
+        } catch (e) {}
+        return 'kpr_simulasi_user_data_v1';
+    }
+
+    function resetFormToEmpty() {
+        document.getElementById('bankName').value = '';
+        document.getElementById('plafon').value = '';
+        document.getElementById('tenor').value = '';
+        document.getElementById('startDate').value = '';
+        document.getElementById('jenisCicilan').value = 'BERJENJANG';
+        document.getElementById('singleRate').value = '';
+
+        tampilkanEmptyTierPrompt();
+        tampilkanEmptyExtraPrompt();
+        toggleJenisCicilan();
+
+        // Reset ringkasan statistik
+        document.getElementById('resPmt1').innerText = 'Rp 0';
+        const elTgl1 = document.getElementById('resTgl1');
+        if (elTgl1) elTgl1.innerText = '-';
+        document.getElementById('resTenorAktual').innerText = '0 Bulan';
+        document.getElementById('resHematBulan').innerText = '-';
+        document.getElementById('resTotalBunga').innerText = 'Rp 0';
+        const elBungaNormal = document.getElementById('resBungaNormalSub');
+        if (elBungaNormal) elBungaNormal.innerText = '-';
+        const elHematRp = document.getElementById('resHematBungaRp');
+        if (elHematRp) elHematRp.innerText = 'Rp 0';
+        const elHematSub = document.getElementById('resHematBungaSub');
+        if (elHematSub) elHematSub.innerText = '-';
+        document.getElementById('resTotalBayar').innerText = 'Rp 0';
+        const elTglLunas = document.getElementById('resTglLunas');
+        if (elTglLunas) elTglLunas.innerText = 'Est. Lunas: -';
+
+        // Reset tabel amortisasi
+        document.getElementById('scheduleTbody').innerHTML = '<tr><td colspan="9" style="text-align:center; padding:35px; color:#94A3B8; font-size:13px;">Silakan masukkan Plafon Pokok dan Tenor Pinjaman untuk menghitung simulasi.</td></tr>';
+
+        // Reset Info Box Pelunasan
+        const boxEl = document.getElementById('extraInfoBox');
+        const textEl = document.getElementById('extraInfoText');
+        if (boxEl && textEl) {
+            boxEl.style.background = 'rgba(148, 163, 184, 0.08)';
+            boxEl.style.borderLeft = '3px solid #64748B';
+            textEl.style.color = '#94A3B8';
+            textEl.innerHTML = '💡 <strong>Status Pelunasan:</strong> Belum ada pelunasan sebagian yang aktif. Tambahkan nominal pelunasan di atas untuk melihat efek percepatan tenor atau penurunan angsuran.';
+        }
+        const extraListEl = document.getElementById('extraInfoPeriodsList');
+        if (extraListEl) extraListEl.innerHTML = '';
+        const gridEl = document.getElementById('periodSummaryGrid');
+        if (gridEl) gridEl.innerHTML = '<div style="color:#94A3B8; font-size:12px; grid-column:1/-1; padding:10px 0;">Belum ada simulasi aktif. Masukkan Plafon Pokok untuk melihat proyeksi angsuran.</div>';
+        const badgeEl = document.getElementById('periodSummaryBadge');
+        if (badgeEl) badgeEl.innerText = '0 Periode';
+
+        const statusEl = document.getElementById('saveStatus');
+        if (statusEl) {
+            statusEl.innerHTML = '💾 Siap';
+            statusEl.style.color = '#94A3B8';
+            statusEl.style.borderColor = 'rgba(148, 163, 184, 0.3)';
+            statusEl.style.background = 'rgba(148, 163, 184, 0.1)';
+        }
+    }
 
     function getCurrentSimulationData() {
         const data = {
@@ -3925,7 +3925,7 @@
             extras: []
         };
 
-        document.querySelectorAll('#tierTbody tr').forEach(tr => {
+        document.querySelectorAll('#tierTbody tr:not(#emptyTierRow)').forEach(tr => {
             const s = tr.querySelector('.t-start')?.value || '';
             const e = tr.querySelector('.t-end')?.value || '';
             const r = tr.querySelector('.t-rate')?.value || '';
@@ -3935,12 +3935,12 @@
             }
         });
 
-        document.querySelectorAll('#extraTbody tr').forEach(tr => {
+        document.querySelectorAll('#extraTbody tr:not(#emptyExtraRow)').forEach(tr => {
             const m = tr.querySelector('.e-month')?.value || '';
             const mult = tr.querySelector('.e-mult')?.value || '';
             const a = tr.querySelector('.e-amount')?.value || '';
             const eff = tr.querySelector('.e-effect')?.value || '';
-            if (m && a) {
+            if (m && (a || mult)) {
                 data.extras.push({ month: m, multiplier: mult, amount: a, effect: eff });
             }
         });
@@ -3951,17 +3951,17 @@
     function applySimulationData(data) {
         if (!data) return false;
 
-        if (data.bankName !== undefined) document.getElementById('bankName').value = data.bankName;
-        if (data.plafon !== undefined) document.getElementById('plafon').value = data.plafon;
-        if (data.tenor !== undefined) document.getElementById('tenor').value = data.tenor;
-        if (data.startDate !== undefined) document.getElementById('startDate').value = data.startDate;
-        if (data.jenisCicilan !== undefined) document.getElementById('jenisCicilan').value = data.jenisCicilan;
-        if (data.singleRate !== undefined) document.getElementById('singleRate').value = data.singleRate;
+        document.getElementById('bankName').value = data.bankName || '';
+        document.getElementById('plafon').value = data.plafon || '';
+        document.getElementById('tenor').value = data.tenor || '';
+        document.getElementById('startDate').value = data.startDate || '';
+        document.getElementById('jenisCicilan').value = data.jenisCicilan || 'BERJENJANG';
+        document.getElementById('singleRate').value = data.singleRate || '';
 
         // Restore Tiers
-        if (data.tiers && Array.isArray(data.tiers)) {
-            const tbody = document.getElementById('tierTbody');
-            tbody.innerHTML = '';
+        const tbodyTiers = document.getElementById('tierTbody');
+        if (data.tiers && Array.isArray(data.tiers) && data.tiers.length > 0) {
+            tbodyTiers.innerHTML = '';
             data.tiers.forEach(t => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -3992,17 +3992,19 @@
                             </div>
                         </div>
                     </td>
-                    <td><input type="text" class="t-name" value="${t.name}"></td>
+                    <td><input type="text" class="t-name" value="${t.name || ''}"></td>
                     <td style="text-align:center;"><button class="btn-del" onclick="deleteRow(this)">✕</button></td>
                 `;
-                tbody.appendChild(tr);
+                tbodyTiers.appendChild(tr);
             });
+        } else {
+            tampilkanEmptyTierPrompt();
         }
 
         // Restore Extras
-        if (data.extras && Array.isArray(data.extras)) {
-            const tbody = document.getElementById('extraTbody');
-            tbody.innerHTML = '';
+        const tbodyExtras = document.getElementById('extraTbody');
+        if (data.extras && Array.isArray(data.extras) && data.extras.length > 0) {
+            tbodyExtras.innerHTML = '';
             data.extras.forEach(e => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -4034,9 +4036,11 @@
                     </td>
                     <td style="text-align:center;"><button class="btn-del" onclick="deleteRow(this)">✕</button></td>
                 `;
-                tbody.appendChild(tr);
+                tbodyExtras.appendChild(tr);
             });
             sortExtraRows();
+        } else {
+            tampilkanEmptyExtraPrompt();
         }
 
         toggleJenisCicilan();
@@ -4045,8 +4049,9 @@
 
     function saveToLocalStorage() {
         try {
+            const key = getSimulationStorageKey();
             const data = getCurrentSimulationData();
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            localStorage.setItem(key, JSON.stringify(data));
             const statusEl = document.getElementById('saveStatus');
             if (statusEl) {
                 statusEl.innerHTML = '💾 Tersimpan';
@@ -4061,24 +4066,18 @@
 
     function loadFromLocalStorage() {
         try {
-            const raw = localStorage.getItem(STORAGE_KEY);
+            const key = getSimulationStorageKey();
+            const raw = localStorage.getItem(key);
             if (!raw) {
-                if (document.querySelectorAll('#tierTbody tr').length === 0) {
-                    muatDefaultTiers(180);
-                }
+                resetFormToEmpty();
                 return false;
             }
             const data = JSON.parse(raw);
             const applied = applySimulationData(data);
-            if (document.querySelectorAll('#tierTbody tr').length === 0) {
-                muatDefaultTiers(parseInt(document.getElementById('tenor')?.value) || 180);
-            }
             return applied;
         } catch (e) {
             console.warn('Gagal memuat dari localStorage:', e);
-            if (document.querySelectorAll('#tierTbody tr').length === 0) {
-                muatDefaultTiers(180);
-            }
+            resetFormToEmpty();
             return false;
         }
     }
@@ -4137,9 +4136,6 @@
                     throw new Error("Format data JSON tidak valid.");
                 }
                 applySimulationData(data);
-                if (document.querySelectorAll('#tierTbody tr').length === 0) {
-                    muatDefaultTiers(parseInt(document.getElementById('tenor')?.value) || 180);
-                }
                 saveToLocalStorage();
                 hitungKPR();
 
@@ -4180,49 +4176,10 @@
 
     function eksekusiHapusSemuaData() {
         tutupModalHapus();
-        localStorage.removeItem(STORAGE_KEY);
-
-        // Kosongkan formulir utama dengan nilai awal yang aman
-        document.getElementById('bankName').value = 'KPR Bank';
-        document.getElementById('plafon').value = '';
-        document.getElementById('tenor').value = '180';
-        document.getElementById('singleRate').value = '8.50';
-
-        // Pulihkan tier default agar tidak kosong dan kalkulasi langsung bekerja saat user mengisi data
-        muatDefaultTiers(180);
-        document.getElementById('extraTbody').innerHTML = '';
-
-        // Reset ringkasan statistik
-        document.getElementById('resPmt1').innerText = 'Rp 0';
-        document.getElementById('resTenorAktual').innerText = '0 Bulan';
-        document.getElementById('resHematBulan').innerText = '-';
-        document.getElementById('resTotalBunga').innerText = 'Rp 0';
-        const elBungaNormal = document.getElementById('resBungaNormalSub');
-        if (elBungaNormal) elBungaNormal.innerText = '-';
-        const elHematRp = document.getElementById('resHematBungaRp');
-        if (elHematRp) elHematRp.innerText = 'Rp 0';
-        const elHematSub = document.getElementById('resHematBungaSub');
-        if (elHematSub) elHematSub.innerText = '-';
-        document.getElementById('resTotalBayar').innerText = 'Rp 0';
-
-        // Reset tabel amortisasi
-        document.getElementById('scheduleTbody').innerHTML = '<tr><td colspan="9" style="text-align:center; padding:35px; color:#94A3B8; font-size:13px;">Data telah dikosongkan. Masukkan Plafon Pokok lalu klik <strong>⚡ HITUNG ULANG SIMULASI</strong> atau tambah pelunasan dipercepat.</td></tr>';
-
-        // Reset Info Box Pelunasan
-        const boxEl = document.getElementById('extraInfoBox');
-        const textEl = document.getElementById('extraInfoText');
-        if (boxEl && textEl) {
-            boxEl.style.background = 'rgba(148, 163, 184, 0.08)';
-            boxEl.style.borderLeft = '3px solid #64748B';
-            textEl.style.color = '#94A3B8';
-            textEl.innerHTML = '💡 <strong>Status Pelunasan:</strong> Belum ada pelunasan sebagian yang aktif. Tambahkan nominal pelunasan di atas untuk melihat efek percepatan tenor atau penurunan angsuran.';
-        }
-        const extraListEl = document.getElementById('extraInfoPeriodsList');
-        if (extraListEl) extraListEl.innerHTML = '';
-        const gridEl = document.getElementById('periodSummaryGrid');
-        if (gridEl) gridEl.innerHTML = '<div style="color:#94A3B8; font-size:12px; grid-column:1/-1; padding:10px 0;">Belum ada simulasi aktif. Masukkan Plafon Pokok untuk melihat proyeksi angsuran.</div>';
-        const badgeEl = document.getElementById('periodSummaryBadge');
-        if (badgeEl) badgeEl.innerText = '0 Periode';
+        const key = getSimulationStorageKey();
+        localStorage.removeItem(key);
+        resetFormToEmpty();
+        hitungKPR();
 
         const statusEl = document.getElementById('saveStatus');
         if (statusEl) {
@@ -4794,6 +4751,8 @@ async function prosesVerifikasiEmail() {
 
             setTimeout(() => {
                 updateLicenseUIState(email);
+                loadFromLocalStorage();
+                hitungKPR();
                 hideLockAlert();
                 if (btn) btn.disabled = false;
                 if (btnIcon) btnIcon.textContent = '🔓';
@@ -4815,6 +4774,8 @@ async function prosesVerifikasiEmail() {
         if (isLocal) {
             setLicenseEmail(email);
             updateLicenseUIState(email);
+            loadFromLocalStorage();
+            hitungKPR();
         } else {
             showLockAlert(
                 `Gagal menghubungi server verifikasi. Periksa koneksi internet Anda atau hubungi ` +
@@ -4836,6 +4797,8 @@ function logoutLisensi() {
     if (confirmed) {
         clearLicenseEmail();
         updateLicenseUIState('');
+        resetFormToEmpty();
+        hitungKPR();
     }
 }
 
