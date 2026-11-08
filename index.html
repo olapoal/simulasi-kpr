@@ -2643,6 +2643,30 @@
         .ai-opt-badge.badge-blue { background: rgba(59, 130, 246, 0.2); color: #93C5FD; border: 1px solid rgba(59, 130, 246, 0.4); }
         .ai-opt-badge.badge-purple { background: rgba(139, 92, 246, 0.2); color: #C4B5FD; border: 1px solid rgba(139, 92, 246, 0.4); }
         .ai-opt-badge.badge-amber { background: rgba(245, 158, 11, 0.2); color: #FCD34D; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .ai-opt-badge.badge-emerald { background: rgba(16, 185, 129, 0.2); color: #6EE7B7; border: 1px solid rgba(16, 185, 129, 0.45); }
+        .ai-opt-badge.badge-rose { background: rgba(244, 63, 94, 0.2); color: #FDA4AF; border: 1px solid rgba(244, 63, 94, 0.45); }
+
+        .ai-advisor-insight {
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.78) 0%, rgba(15, 23, 42, 0.94) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.35);
+            border-left: 3.5px solid #A855F7;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #CBD5E1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+        .ai-advisor-insight-title {
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #E9D5FF;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
         .ai-opt-desc {
             font-size: 11px;
@@ -3027,12 +3051,12 @@
 
                         <!-- Quick Inspiration Chips -->
                         <div class="ai-chips-bar">
-                            <span class="ai-chips-tag">Inspirasi Target:</span>
+                            <span class="ai-chips-tag">Inspirasi Cerdas:</span>
                             <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('saya mau kpr lunas 10 tahun')">🎯 Lunas 10 Tahun</button>
-                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('saya mau angsuran tahun ke 4 dan seterusnya menjadi sekitar 3 juta')">📉 Angsuran Thn 4 Jadi ~3 Jt</button>
-                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('mau lunas 7 tahun pakai bonus tahunan')">⚡ Lunas 7 Tahun (Tahunan)</button>
-                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('angsuran mulai tahun ke 5 sekitar 4 juta')">💸 Angsuran Thn 5 Jadi ~4 Jt</button>
-                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('lunas 5 tahun lebih cepat')">⏩ Pangkas Tenor 5 Thn</button>
+                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('saya mau angsuran tahun ke 4 dan seterusnya menjadi sekitar 3 juta')">📉 Angsuran Thn 4 Seterusnya ~3 Jt</button>
+                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('jaga agar angsuran tidak pernah naik saat bunga naik')">🛡️ Anti Naik (Cicilan Flat)</button>
+                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('saya punya budget ekstra 25 juta per tahun, berikan opsi terbaik')">💰 Punya Dana 25 Jt/Thn</button>
+                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('rekomendasi strategi paling untung agar cicilan ringan dan cepat lunas')">❄️ Hybrid (Turun Cicilan + Cepat Lunas)</button>
                         </div>
 
                         <!-- Area Hasil Opsi AI (Otomatis Muncul) -->
@@ -3041,6 +3065,7 @@
                                 <span class="ai-results-title">💡 Rekomendasi Strategi Pelunasan AI:</span>
                                 <span class="ai-results-target" id="aiDetectedTargetText">-</span>
                             </div>
+                            <div id="aiAdvisorInsightBox" class="ai-advisor-insight" style="display:none;"></div>
                             <div id="aiCardsGrid" class="ai-cards-grid">
                                 <!-- Kartu-kartu opsi strategi AI di-generate otomatis via JS -->
                             </div>
@@ -4259,6 +4284,7 @@
         let pokokTetap = tenor > 0 ? (plafon / tenor) : 0;
         let bungaFlat = (plafon * (singleRate / 100)) / 12;
         let modeKurangiAngsuranAktif = false;
+        let saldoBasisAngsuran = saldo;
 
         let m = 1;
         while (m <= tenor && saldo > 0.01) {
@@ -4282,7 +4308,7 @@
                     currentTierIndex = newIdx;
                     isTierChange = (m > 1);
                     if (modeKurangiAngsuranAktif) {
-                        currentPmt = hitungPMT(saldo, rateMo, sisaTenor);
+                        currentPmt = hitungPMT(Math.max(saldo, saldoBasisAngsuran), rateMo, sisaTenor);
                     } else {
                         currentPmt = stdPmtMap[m] || hitungPMT(saldo, rateMo, sisaTenor);
                     }
@@ -4296,7 +4322,7 @@
                         tierLabel = `🌊 Floating (${floatingRate.toFixed(2)}%)`;
                         if (m === floatingFixedMonths + 1) {
                             isTierChange = true;
-                            currentPmt = modeKurangiAngsuranAktif ? hitungPMT(saldo, rateMo, sisaTenor) : stdPmtMap[m];
+                            currentPmt = modeKurangiAngsuranAktif ? hitungPMT(Math.max(saldo, saldoBasisAngsuran), rateMo, sisaTenor) : stdPmtMap[m];
                         }
                     }
                 } else {
@@ -4334,6 +4360,10 @@
                     totalAngsuran = currentPmt;
                 }
             }
+
+            const bungaBasis = saldoBasisAngsuran * rateMo;
+            const pokokBasis = (jenis === 'FLAT' || jenis === 'EFEKTIF') ? pokokTetap : Math.max(0, currentPmt - bungaBasis);
+            saldoBasisAngsuran = Math.max(0, saldoBasisAngsuran - Math.min(saldoBasisAngsuran, pokokBasis));
 
             let matchingExtras = extraRowConfigs.filter(x => x.month === m);
             let extraAmt = 0;
@@ -4376,6 +4406,7 @@
 
                 if (extraEffect === 'KURANGI_ANGSURAN') {
                     modeKurangiAngsuranAktif = true;
+                    saldoBasisAngsuran = saldo;
                     if ((jenis === 'ANUITAS' || jenis === 'BERJENJANG' || jenis === 'FLOATING') && saldo > 0 && sisaTenor > 1) {
                         const nextRateMo = (getRate(m + 1) / 100) / 12;
                         currentPmt = hitungPMT(saldo, nextRateMo, sisaTenor - 1);
@@ -4597,88 +4628,136 @@
         }
     }
 
-    function parseAiTarget(inputStr, currentTenorMonths, tiers, floatingFixedMonths) {
+    function parseAiTarget(inputStr, currentTenorMonths, tiers, floatingFixedMonths, baseFirstPmt) {
         const s = (inputStr || '').toLowerCase().trim();
 
-        // 1. Cek apakah ada indikasi nominal angsuran / cicilan
-        const hasAngsuranKeyword = /angsuran|cicilan|tagihan|bayar bulanan|per bulan|sebulan|cicil/i.test(s);
-        
-        let targetNominal = null;
-        // Cari "3 juta", "3jt", "3.5 juta", "3,5 jt"
+        // Cari titik lonjakan bunga pertama (default Bulan 37 / Tahun ke-4)
+        let defaultJumpMonth = 37;
+        if (tiers && tiers.length > 1 && tiers[1].start > 1) {
+            defaultJumpMonth = tiers[1].start;
+        } else if (floatingFixedMonths && floatingFixedMonths > 0) {
+            defaultJumpMonth = floatingFixedMonths + 1;
+        }
+        const defaultJumpYear = Math.ceil(defaultJumpMonth / 12);
+
+        // Ekstraksi angka nominal uang ("3 juta", "25 jt", "Rp 50.000.000")
+        let extractedNominal = null;
         const mJuta = s.match(/(\d+(?:[.,]\d+)?)\s*(?:juta|jt)\b/i);
         if (mJuta) {
-            targetNominal = parseFloat(mJuta[1].replace(',', '.')) * 1000000;
+            extractedNominal = Math.round(parseFloat(mJuta[1].replace(',', '.')) * 1000000);
         } else {
-            // Cari format rupiah panjang: 3.000.000 atau Rp 3000000
             const mRp = s.match(/(?:rp\.?|rupiah\s*)?\s*(\d{1,3}(?:\.\d{3}){2,3})/i);
             if (mRp) {
-                targetNominal = parseRp(mRp[1]);
+                extractedNominal = parseRp(mRp[1]);
             } else {
-                const mPlainNum = s.match(/(?:jadi|menjadi|sekitar|sebesar)\s*(\d{7,9})\b/i);
+                const mPlainNum = s.match(/(?:jadi|menjadi|sekitar|sebesar|dana|uang|budget|nabung|sisihkan)\s*(\d{7,9})\b/i);
                 if (mPlainNum) {
-                    targetNominal = parseInt(mPlainNum[1]);
+                    extractedNominal = parseInt(mPlainNum[1]);
                 }
             }
         }
 
+        // Ekstraksi tahun / bulan spesifik jika disebutkan
+        let specYear = null;
+        let specMonth = null;
+        const mYr = s.match(/tahun\s*(?:ke[- ]?)?(\d+)/i) || s.match(/thn\s*(?:ke[- ]?)?(\d+)/i);
+        if (mYr && parseInt(mYr[1]) > 0) {
+            specYear = parseInt(mYr[1]);
+            specMonth = (specYear - 1) * 12 + 1;
+        }
+        const mMo = s.match(/bulan\s*(?:ke[- ]?)?(\d+)/i) || s.match(/bln\s*(?:ke[- ]?)?(\d+)/i);
+        if (mMo && parseInt(mMo[1]) > 0) {
+            specMonth = parseInt(mMo[1]);
+            specYear = Math.ceil(specMonth / 12);
+        }
+
+        // 1. CEK INTENT: ANTI NAIK / PERTAHANKAN ANGSURAN AWAL (FLAT GUARD)
+        const isAntiNaik = /(?:jangan|tidak|gak|nggak|anti|cegah|redam|tahan)\s*(?:sampai\s*)?(?:pernah\s*)?(?:angsuran|cicilan|bunga)?\s*(?:naik|melonjak|bengkak|floating)/i.test(s)
+                        || /(?:pertahankan|jaga|kunci)\s*(?:angsuran|cicilan)\s*(?:tetap|flat|sama|awal)/i.test(s);
+        if (isAntiNaik && !extractedNominal) {
+            const targetPmt = Math.max(500000, Math.round((baseFirstPmt || 3500000) / 50000) * 50000);
+            return {
+                type: 'ANGSURAN',
+                isAntiNaik: true,
+                targetNominal: targetPmt,
+                targetYear: specYear || defaultJumpYear,
+                startMonth: specMonth || defaultJumpMonth,
+                label: `🛡️ Perisai Anti-Naik: Jaga Angsuran Tetap ~Rp ${new Intl.NumberFormat('id-ID').format(targetPmt)} / bln (Mulai Thn ke-${specYear || defaultJumpYear})`
+            };
+        }
+
+        // 2. CEK INTENT: CUSTOMER PUNYA DANA / BUDGET TERTENTU ("Punya dana 25 juta/thn", "Ada uang 100 juta")
+        const hasBudgetKeyword = /(?:punya|ada|sisihkan|nabung|menabung|alokasi|modal|budget|dana|tabungan|uang|bonus)\b/i.test(s);
+        const isExplicitTargetAngsuran = /(?:angsuran|cicilan|tagihan).*?(?:menjadi|jadi|sekitar|turun|tetap)/i.test(s)
+                                      || /(?:menjadi|jadi|sekitar|turun\s*ke)\s*\d+(?:[.,]\d+)?\s*(?:juta|jt)/i.test(s);
+        if (extractedNominal && extractedNominal > 0 && hasBudgetKeyword && !isExplicitTargetAngsuran) {
+            const isPerBulan = /(?:per\s*bulan|tiap\s*bulan|sebulan|bulanan)/i.test(s);
+            const isPerTahun = /(?:per\s*tahun|tiap\s*tahun|setahun|tahunan|tiap\s*akhir\s*tahun|bonus\s*tahunan)/i.test(s);
+            let budgetMode = 'LUMPSUM';
+            let annualAmt = extractedNominal;
+            if (isPerBulan) {
+                budgetMode = 'ANNUAL';
+                annualAmt = extractedNominal * 12;
+            } else if (isPerTahun) {
+                budgetMode = 'ANNUAL';
+                annualAmt = extractedNominal;
+            }
+            const lumpMonth = specMonth ? Math.max(1, (specYear ? specYear * 12 : specMonth)) : Math.max(12, defaultJumpMonth - 1);
+            const label = budgetMode === 'ANNUAL'
+                ? `💰 Optimalisasi Budget Rutin: Rp ${new Intl.NumberFormat('id-ID').format(annualAmt)} / Tahun`
+                : `💰 Optimalisasi Dana Segar: Rp ${new Intl.NumberFormat('id-ID').format(extractedNominal)} (Bulan ke-${lumpMonth})`;
+            return {
+                type: 'BUDGET',
+                budgetMode: budgetMode,
+                budgetAmount: budgetMode === 'ANNUAL' ? annualAmt : extractedNominal,
+                lumpMonth: lumpMonth,
+                startMonth: defaultJumpMonth,
+                targetYear: defaultJumpYear,
+                label: label
+            };
+        }
+
+        // 3. CEK INTENT: HYBRID / REKOMENDASI TERBAIK OTOMATIS
+        const isHybridMaster = /(?:rekomendasi|strategi|opsi|saran)\s*(?:terbaik|paling\s*untung|paling\s*hemat|optimal|pintar|kreatif)/i.test(s)
+                            || (/(?:cicilan|angsuran)\s*(?:ringan|turun|murah)/i.test(s) && /(?:cepat\s*lunas|potong\s*tenor|hemat\s*bunga)/i.test(s));
+        if (isHybridMaster && !extractedNominal) {
+            return {
+                type: 'HYBRID_MASTER',
+                startMonth: defaultJumpMonth,
+                targetYear: defaultJumpYear,
+                label: `🧠 Rekomendasi Master AI: Kombinasi Hemat Bunga, Cicilan Ringan & Cepat Lunas`
+            };
+        }
+
+        // 4. CEK INTENT: TARGET ANGSURAN BULANAN ("angsuran tahun ke 4 dan seterusnya menjadi sekitar 3 juta")
+        const hasAngsuranKeyword = /angsuran|cicilan|tagihan|bayar bulanan|per bulan|sebulan|cicil/i.test(s);
         const hasTenorTargetKeyword = /(?:lunas|selesai|beres|pangkas|potong|hemat|lebih cepat|separuh|setengah)\s*(?:dalam|di|pada|ke)?\s*\d*\s*(?:tahun|thn|bulan|bln)/i.test(s);
 
-        if (targetNominal && targetNominal > 0 && (hasAngsuranKeyword || !hasTenorTargetKeyword)) {
-            // --- MODE TARGET ANGSURAN ---
-            let targetYear = null;
-            let startMonth = null;
+        if (extractedNominal && extractedNominal > 0 && (hasAngsuranKeyword || !hasTenorTargetKeyword)) {
+            let targetYear = specYear || defaultJumpYear;
+            let startMonth = specMonth || defaultJumpMonth;
 
-            // Cek tahun: "tahun ke 4", "thn 4", "tahun 4", "tahun ke-4"
-            const mYr = s.match(/tahun\s*(?:ke[- ]?)?(\d+)/i) || s.match(/thn\s*(?:ke[- ]?)?(\d+)/i);
-            if (mYr && parseInt(mYr[1]) > 0) {
-                targetYear = parseInt(mYr[1]);
-                startMonth = (targetYear - 1) * 12 + 1;
-            }
-
-            // Cek bulan: "bulan ke 37", "bln 37"
-            const mMo = s.match(/bulan\s*(?:ke[- ]?)?(\d+)/i) || s.match(/bln\s*(?:ke[- ]?)?(\d+)/i);
-            if (mMo && parseInt(mMo[1]) > 0) {
-                startMonth = parseInt(mMo[1]);
-                targetYear = Math.ceil(startMonth / 12);
-            }
-
-            // Jika tidak ditentukan tahun/bulan, cari titik lonjakan suku bunga
-            if (!startMonth) {
-                if (tiers && tiers.length > 1 && tiers[1].start > 1) {
-                    startMonth = tiers[1].start;
-                    targetYear = Math.ceil(startMonth / 12);
-                } else if (floatingFixedMonths && floatingFixedMonths > 0) {
-                    startMonth = floatingFixedMonths + 1;
-                    targetYear = Math.ceil(startMonth / 12);
-                } else {
-                    targetYear = 4;
-                    startMonth = 37;
-                }
-            }
-
-            // Batasi targetYear tidak melebihi tenor pinjaman
             const maxYear = Math.ceil(currentTenorMonths / 12);
             if (targetYear >= maxYear) {
                 targetYear = Math.max(2, Math.floor(maxYear / 2));
                 startMonth = (targetYear - 1) * 12 + 1;
             }
 
-            const label = `🎯 Target Angsuran: ~Rp ${new Intl.NumberFormat('id-ID').format(targetNominal)} / bln (Mulai Tahun ke-${targetYear} / Bln ${startMonth})`;
+            const label = `🎯 Target Angsuran: ~Rp ${new Intl.NumberFormat('id-ID').format(extractedNominal)} / bln (Mulai Tahun ke-${targetYear} & Seterusnya)`;
 
             return {
                 type: 'ANGSURAN',
-                targetNominal: targetNominal,
+                targetNominal: extractedNominal,
                 targetYear: targetYear,
                 startMonth: startMonth,
                 label: label
             };
         }
 
-        // --- MODE TARGET TENOR (PERCEPATAN LUNAS) ---
+        // 5. MODE TARGET TENOR (PERCEPATAN LUNAS)
         let targetMonths = null;
         let label = '';
 
-        // 1. Cek pola: "lunas [X] tahun" / "lunas dalam [X] thn"
         const mYear = s.match(/(?:lunas|selesai|beres|target|habis)\s*(?:dalam|di|pada|ke|selama)?\s*(\d+)\s*(?:tahun|thn|th)/i)
                    || s.match(/(\d+)\s*(?:tahun|thn|th)\s*(?:lunas|selesai|beres|habis)/i);
         if (mYear && parseInt(mYear[1]) > 0) {
@@ -4687,7 +4766,6 @@
             label = `🎯 Target Lunas: ${y} Tahun (${targetMonths} Bulan)`;
         }
 
-        // 2. Cek pola: "lunas [X] bulan"
         if (!targetMonths) {
             const mMonth = s.match(/(?:lunas|selesai|beres|target|habis)\s*(?:dalam|di|pada|ke|selama)?\s*(\d+)\s*(?:bulan|bln)/i);
             if (mMonth && parseInt(mMonth[1]) > 0) {
@@ -4697,7 +4775,6 @@
             }
         }
 
-        // 3. Cek pola: "pangkas / lebih cepat [X] tahun"
         if (!targetMonths) {
             const mFaster = s.match(/(\d+)\s*(?:tahun|thn|th)\s*(?:lebih cepat|dipercepat)/i)
                          || s.match(/(?:pangkas|kurangi|potong|hemat)\s*(\d+)\s*(?:tahun|thn|th)/i);
@@ -4709,14 +4786,12 @@
             }
         }
 
-        // 4. Cek pola: "separuh" / "setengah" / "50%"
         if (!targetMonths && (s.includes('separuh') || s.includes('setengah') || s.includes('50%'))) {
             targetMonths = Math.max(12, Math.round(currentTenorMonths / 2));
             const y = (targetMonths / 12).toFixed(1).replace('.0', '');
             label = `🎯 Target Separuh Tenor: ${y} Tahun (${targetMonths} Bulan)`;
         }
 
-        // 5. Cek angka bebas (misal hanya ketik "10" atau "7")
         if (!targetMonths) {
             const mNum = s.match(/\b(\d+)\b/);
             if (mNum && parseInt(mNum[1]) > 0) {
@@ -4731,7 +4806,6 @@
             }
         }
 
-        // Fallback default jika tidak ada angka
         if (!targetMonths) {
             targetMonths = Math.max(12, Math.round(currentTenorMonths * 0.5));
             const y = (targetMonths / 12).toFixed(1).replace('.0', '');
@@ -4763,12 +4837,17 @@
             return (singleRate / 100) / 12;
         }
 
-        // Normalisasi extraInput
+        // Normalisasi extraInput (mendukung multi-row di bulan berbeda maupun efek campuran)
         const extraMap = {};
         if (Array.isArray(extraInput)) {
             extraInput.forEach(x => {
                 if (x && x.month && x.amount > 0) {
-                    extraMap[x.month] = { amount: x.amount, effect: x.effect || 'KURANGI_TENOR' };
+                    if (!extraMap[x.month]) {
+                        extraMap[x.month] = { amount: x.amount, effect: x.effect || 'KURANGI_TENOR' };
+                    } else {
+                        extraMap[x.month].amount += x.amount;
+                        if (x.effect === 'KURANGI_ANGSURAN') extraMap[x.month].effect = 'KURANGI_ANGSURAN';
+                    }
                 }
             });
         } else if (extraInput && typeof extraInput === 'object') {
@@ -4815,6 +4894,7 @@
         }
 
         let saldo = plafon;
+        let saldoBasisAngsuran = plafon;
         let currPmt = stdPmtMap[1] || hitungPMT(plafon, getRateMo(1), tenor);
         let currTierIdx = -1;
         let totalBunga = 0;
@@ -4841,14 +4921,14 @@
                 if (tIdx !== currTierIdx) {
                     currTierIdx = tIdx;
                     if (modeKurangiAngsuran) {
-                        currPmt = hitungPMT(saldo, rMo, sisaTenor);
+                        currPmt = hitungPMT(Math.max(saldo, saldoBasisAngsuran), rMo, sisaTenor);
                     } else {
                         currPmt = stdPmtMap[m] || hitungPMT(saldo, rMo, sisaTenor);
                     }
                 }
             } else if (jenis === 'FLOATING') {
                 if (floatingFixedMonths > 0 && m === floatingFixedMonths + 1) {
-                    currPmt = modeKurangiAngsuran ? hitungPMT(saldo, (floatingRate / 100) / 12, sisaTenor) : stdPmtMap[m];
+                    currPmt = modeKurangiAngsuran ? hitungPMT(Math.max(saldo, saldoBasisAngsuran), (floatingRate / 100) / 12, sisaTenor) : stdPmtMap[m];
                 }
             } else if (jenis === 'EFEKTIF') {
                 currPmt = (plafon / tenor) + (saldo * rMo);
@@ -4862,12 +4942,17 @@
             totalBunga += bunga;
             saldo -= pokok;
 
+            const bungaBasis = saldoBasisAngsuran * rMo;
+            const pokokBasis = (jenis === 'EFEKTIF') ? (plafon / tenor) : Math.max(0, currPmt - bungaBasis);
+            saldoBasisAngsuran = Math.max(0, saldoBasisAngsuran - Math.min(saldoBasisAngsuran, pokokBasis));
+
             const extra = extraMap[m];
             if (extra && extra.amount > 0) {
                 const actualExtra = Math.min(extra.amount, saldo);
                 saldo -= actualExtra;
                 if (extra.effect === 'KURANGI_ANGSURAN') {
                     modeKurangiAngsuran = true;
+                    saldoBasisAngsuran = saldo;
                     if (saldo > 0 && sisaTenor > 1) {
                         const nextRateMo = getRateMo(m + 1);
                         currPmt = hitungPMT(saldo, nextRateMo, sisaTenor - 1);
@@ -4947,24 +5032,60 @@
         // Visual loading state
         const btnSubmit = document.getElementById('btnAiSubmit');
         if (btnSubmit) {
-            btnSubmit.innerHTML = '⏳ Menghitung...';
+            btnSubmit.innerHTML = '⏳ Menganalisis...';
             btnSubmit.style.opacity = '0.7';
         }
 
         setTimeout(() => {
             try {
-                // Parse target & deteksi intent (ANGSURAN vs TENOR)
-                const intent = parseAiTarget(promptText || 'saya mau kpr lunas 10 tahun', tenor, tiers, floatingFixedMonths);
-                const targetLabel = intent.label;
-
                 // Baseline simulasi standar tanpa injeksi ekstra
                 const baseSim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, {});
                 const baseBunga = baseSim.totalBunga;
+                const baseFirstPmt = Math.round(baseSim.getPmtAt(1));
+
+                // Parse intent cerdas
+                const intent = parseAiTarget(promptText || 'saya mau kpr lunas 10 tahun', tenor, tiers, floatingFixedMonths, baseFirstPmt);
+                const targetLabel = intent.label;
                 const options = [];
+                const fmt = (n) => new Intl.NumberFormat('id-ID').format(Math.round(n));
+
+                // Helper cari nominal injeksi tunggal / seragam untuk capai target PMT pada bulan tertentu
+                function seekForTargetPmt(candidateMonths, checkMonth, targetPmtVal, existingRows = []) {
+                    let lo = 0, hi = plafon, best = plafon;
+                    for (let it = 0; it < 30; it++) {
+                        const mid = (lo + hi) / 2;
+                        const testRows = [...existingRows, ...candidateMonths.map(m => ({ month: m, amount: mid, effect: 'KURANGI_ANGSURAN' }))];
+                        const sim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, testRows);
+                        const pmt = (sim.lunasMonth < checkMonth) ? 0 : sim.getPmtAt(checkMonth);
+                        if (pmt <= targetPmtVal) {
+                            best = mid;
+                            hi = mid;
+                        } else {
+                            lo = mid;
+                        }
+                    }
+                    return Math.min(plafon, Math.ceil(best / 100000) * 100000);
+                }
+
+                // Bangun teks diagnosa struktur bunga saat ini
+                let jumpInfoParts = [];
+                if (jenis === 'BERJENJANG' && tiers.length > 1) {
+                    tiers.forEach((t, idx) => {
+                        const pAtStart = Math.round(baseSim.getPmtAt(t.start));
+                        jumpInfoParts.push(`Tier ${idx + 1} (Bln ${t.start}-${t.end}, <strong>${t.rate}%</strong>): <strong>Rp ${fmt(pAtStart)}/bln</strong>`);
+                    });
+                } else if (jenis === 'FLOATING' && floatingFixedMonths > 0) {
+                    jumpInfoParts.push(`Fixed Promo (Bln 1-${floatingFixedMonths}, <strong>${floatingFixedRate}%</strong>): <strong>Rp ${fmt(baseFirstPmt)}/bln</strong>`);
+                    jumpInfoParts.push(`Floating (Bln ${floatingFixedMonths + 1}-${tenor}, <strong>${floatingRate}%</strong>): <strong>Rp ${fmt(baseSim.getPmtAt(floatingFixedMonths + 1))}/bln</strong>`);
+                } else {
+                    jumpInfoParts.push(`Angsuran Reguler: <strong>Rp ${fmt(baseFirstPmt)}/bln</strong> selama ${tenor} bulan`);
+                }
+                const bungaRatioPct = Math.round((baseBunga / plafon) * 100);
+                let advisorHtml = '';
 
                 if (intent.type === 'ANGSURAN') {
                     // =========================================================
-                    // MODE: TARGET PENURUNAN ANGSURAN BULANAN
+                    // MODE 1: TARGET PENURUNAN ANGSURAN & ANTI-LONJAKAN BUNGA
                     // =========================================================
                     const targetNominal = intent.targetNominal;
                     const targetYear = intent.targetYear;
@@ -4972,21 +5093,8 @@
                     const injMonth = Math.max(1, startMonth - 1);
                     const basePmtAtStart = Math.round(baseSim.getPmtAt(startMonth));
 
-                    // --- OPSI 1: Injeksi Tunggal di Akhir Tahun Sebelumnya (1x Bayar) ---
-                    let low1 = 0, high1 = plafon, bestSingle = plafon;
-                    for (let iter = 0; iter < 30; iter++) {
-                        const mid = (low1 + high1) / 2;
-                        const testList = [{ month: injMonth, amount: mid, effect: 'KURANGI_ANGSURAN' }];
-                        const sim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, testList);
-                        const pmt = (sim.lunasMonth < startMonth) ? 0 : sim.getPmtAt(startMonth);
-                        if (pmt <= targetNominal) {
-                            bestSingle = mid;
-                            high1 = mid;
-                        } else {
-                            low1 = mid;
-                        }
-                    }
-                    const cleanSingle = Math.min(plafon, Math.ceil(bestSingle / 100000) * 100000);
+                    // --- OPSI 1: ⚡ Injeksi Tunggal Pra-Kenaikan (1x Bayar di Akhir Thn Sebelumnya) ---
+                    const cleanSingle = seekForTargetPmt([injMonth], startMonth, targetNominal);
                     const singleRows = [{ month: injMonth, amount: cleanSingle, effect: 'KURANGI_ANGSURAN' }];
                     const simSingle = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, singleRows);
                     const actualPmtSingle = Math.round(simSingle.getPmtAt(startMonth));
@@ -4996,10 +5104,10 @@
                     options.push({
                         type: 'ANGSURAN',
                         id: 'angsuran_single',
-                        title: `⚡ Opsi 1: Injeksi Tunggal di Akhir Thn ke-${targetYear - 1}`,
-                        badge: 'Hanya 1x Pembayaran',
+                        title: `⚡ Opsi 1: Injeksi Tunggal Pra-Kenaikan`,
+                        badge: 'Simpel • 1x Bayar',
                         badgeClass: 'badge-blue',
-                        desc: `Cukup 1 kali injeksi dana ekstra sebesar <strong>Rp ${new Intl.NumberFormat('id-ID').format(cleanSingle)}</strong> pada <strong>Bulan ke-${injMonth}</strong> (akhir Tahun ke-${targetYear - 1}). Mulai Bulan ke-${startMonth} (Tahun ke-${targetYear}) dan seterusnya, angsuran bulanan Anda langsung stabil di <strong>~Rp ${new Intl.NumberFormat('id-ID').format(actualPmtSingle)}/bln</strong> (turun ~Rp ${new Intl.NumberFormat('id-ID').format(hematBulanSingle)}/bln dari angsuran normal).`,
+                        desc: `Cukup 1x injeksi sebesar <strong>Rp ${fmt(cleanSingle)}</strong> tepat pada <strong>Bulan ke-${injMonth}</strong> (akhir Thn ke-${targetYear - 1}). Memasuki Bulan ke-${startMonth} (Thn ke-${targetYear}), angsuran langsung turun dari Rp ${fmt(basePmtAtStart)} menjadi <strong>~Rp ${fmt(actualPmtSingle)}/bln</strong> (hemat Rp ${fmt(hematBulanSingle)}/bln).`,
                         targetAngsuran: actualPmtSingle,
                         targetYear: targetYear,
                         hematPerBln: hematBulanSingle,
@@ -5009,29 +5117,114 @@
                         rows: singleRows
                     });
 
-                    // --- OPSI 2: Injeksi Bertahap Tiap Tahun Menuju Target ---
-                    const annualMonths = [];
-                    for (let m = 12; m < startMonth; m += 12) {
-                        annualMonths.push(m);
-                    }
-                    if (annualMonths.length === 0) {
-                        annualMonths.push(injMonth);
+                    // --- OPSI 2: 🔒 Kunci Mati Semua Tier Berikutnya ("Seterusnya Tetap ~Rp Target") ---
+                    // Cek apakah ada kenaikan tier lanjutan setelah startMonth (misal Tier 3 di Bln 73)
+                    const laterTiers = (jenis === 'BERJENJANG' && tiers.length > 1)
+                        ? tiers.filter(t => t.start > startMonth && t.start <= tenor)
+                        : [];
+
+                    if (laterTiers.length > 0) {
+                        let multiLockRows = [{ month: injMonth, amount: cleanSingle, effect: 'KURANGI_ANGSURAN' }];
+                        laterTiers.forEach(lt => {
+                            const shieldMonth = Math.max(1, lt.start - 1);
+                            const simBefore = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, multiLockRows);
+                            const pmtAtLaterTier = simBefore.getPmtAt(lt.start);
+                            if (pmtAtLaterTier > targetNominal + 15000) {
+                                const extraShield = seekForTargetPmt([shieldMonth], lt.start, targetNominal, multiLockRows);
+                                if (extraShield > 0) {
+                                    multiLockRows.push({ month: shieldMonth, amount: extraShield, effect: 'KURANGI_ANGSURAN' });
+                                }
+                            }
+                        });
+                        const simMulti = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, multiLockRows);
+                        const lastTierStart = laterTiers[laterTiers.length - 1].start;
+                        const actualPmtMulti = Math.round(simMulti.getPmtAt(lastTierStart));
+                        const basePmtLastTier = Math.round(baseSim.getPmtAt(lastTierStart));
+                        const totalModalMulti = multiLockRows.reduce((acc, r) => acc + r.amount, 0);
+                        const hematBungaMulti = Math.max(0, baseBunga - simMulti.totalBunga);
+                        const detailLockStr = multiLockRows.map(r => `Bln ${r.month}: Rp ${fmt(r.amount)}`).join(' + ');
+
+                        options.push({
+                            type: 'ANGSURAN',
+                            id: 'angsuran_multilock',
+                            title: `🔒 Opsi 2: Kunci Mati Semua Tier s/d Lunas`,
+                            badge: 'Anti Naik Lagi s/d Lunas',
+                            badgeClass: 'badge-emerald',
+                            desc: `Karena suku bunga naik lagi di periode berikutnya (${laterTiers.map(t => 'Bln ' + t.start + ' @ ' + t.rate + '%').join(', ')}), AI memasang <strong>${multiLockRows.length} tahap perisai</strong> (${detailLockStr}) agar cicilan dari Thn ke-${targetYear} <strong>sampai lunas tidak pernah naik lagi</strong> dan terkunci di <strong>~Rp ${fmt(actualPmtMulti)}/bln</strong>!`,
+                            targetAngsuran: actualPmtMulti,
+                            targetYear: targetYear,
+                            hematPerBln: Math.max(0, basePmtLastTier - actualPmtMulti),
+                            totalEkstra: totalModalMulti,
+                            detailEkstra: `${multiLockRows.length}x perisai tier`,
+                            hematBunga: hematBungaMulti,
+                            rows: multiLockRows
+                        });
+                    } else {
+                        // Jika tidak ada tier lanjutan, berikan Opsi Semi-Tahunan Ringan
+                        const semiMonths = [];
+                        for (let m = 6; m < startMonth; m += 6) semiMonths.push(m);
+                        if (semiMonths.length === 0) semiMonths.push(injMonth);
+                        const cleanSemi = seekForTargetPmt(semiMonths, startMonth, targetNominal);
+                        const semiRows = semiMonths.map(m => ({ month: m, amount: cleanSemi, effect: 'KURANGI_ANGSURAN' }));
+                        const simSemi = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, semiRows);
+                        const actualPmtSemi = Math.round(simSemi.getPmtAt(startMonth));
+                        options.push({
+                            type: 'ANGSURAN',
+                            id: 'angsuran_semi',
+                            title: `🛡️ Opsi 2: Cicil Ekstra Tiap Semester`,
+                            badge: 'Setoran Paling Ringan',
+                            badgeClass: 'badge-emerald',
+                            desc: `Injeksi ringan setiap 6 bulan sebesar <strong>Rp ${fmt(cleanSemi)}</strong> (${semiMonths.map(m => 'Bln ' + m).join(', ')}). Angsuran berangsur turun setiap semester hingga stabil di <strong>~Rp ${fmt(actualPmtSemi)}/bln</strong> pada Tahun ke-${targetYear}.`,
+                            targetAngsuran: actualPmtSemi,
+                            targetYear: targetYear,
+                            hematPerBln: Math.max(0, basePmtAtStart - actualPmtSemi),
+                            totalEkstra: cleanSemi * semiMonths.length,
+                            detailEkstra: `${semiMonths.length}x @ Rp ${fmt(cleanSemi)}`,
+                            hematBunga: Math.max(0, baseBunga - simSemi.totalBunga),
+                            rows: semiRows
+                        });
                     }
 
-                    let lowA = 0, highA = plafon, bestAnnual = plafon;
-                    for (let iter = 0; iter < 30; iter++) {
-                        const mid = (lowA + highA) / 2;
-                        const testList = annualMonths.map(m => ({ month: m, amount: mid, effect: 'KURANGI_ANGSURAN' }));
-                        const sim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, testList);
-                        const pmt = (sim.lunasMonth < startMonth) ? 0 : sim.getPmtAt(startMonth);
-                        if (pmt <= targetNominal) {
-                            bestAnnual = mid;
-                            highA = mid;
-                        } else {
-                            lowA = mid;
-                        }
+                    // --- OPSI 3: ❄️ Strategi Hybrid Snowball (Cicilan Turun ke Target + Lunas Lebih Cepat!) ---
+                    // Gunakan penghematan cicilan bulanan (hematBulanSingle * 12) untuk suntik KURANGI_TENOR tiap tahun setelah startMonth!
+                    const annualCashflowSaved = Math.max(5000000, Math.round((hematBulanSingle * 12) / 500000) * 500000);
+                    const snowballRows = [{ month: injMonth, amount: cleanSingle, effect: 'KURANGI_ANGSURAN' }];
+                    let tempSim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, snowballRows);
+                    for (let mSnow = startMonth + 11; mSnow < tenor - 6; mSnow += 12) {
+                        if (mSnow >= tempSim.lunasMonth) break;
+                        snowballRows.push({ month: mSnow, amount: annualCashflowSaved, effect: 'KURANGI_TENOR' });
+                        tempSim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, snowballRows);
                     }
-                    const cleanAnnual = Math.min(plafon, Math.ceil(bestAnnual / 100000) * 100000);
+                    const simSnow = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, snowballRows);
+                    const totalEkstraSnow = snowballRows.reduce((a, b) => a + b.amount, 0);
+                    const hematBungaSnow = Math.max(0, baseBunga - simSnow.totalBunga);
+                    const snowReinvestCount = snowballRows.length - 1;
+
+                    options.push({
+                        type: 'HYBRID',
+                        id: 'angsuran_snowball',
+                        title: `❄️ Opsi 3: Hybrid Snowball (Turun Cicilan + Potong Tenor)`,
+                        badge: 'Kreatif • 2 Manfaat Sekaligus',
+                        badgeClass: 'badge-amber',
+                        desc: `<strong>Strategi Efek Bola Salju:</strong> Di Bulan ke-${injMonth}, suntik <strong>Rp ${fmt(cleanSingle)}</strong> (<em>Kurangi Angsuran</em>) agar cicilan Thn ke-${targetYear} turun ke <strong>~Rp ${fmt(actualPmtSingle)}/bln</strong>. Lalu selisih penghematan cicilan Anda (~Rp ${fmt(annualCashflowSaved)}/thn) ditabung kembali tiap tahun (${snowReinvestCount}x <em>Kurangi Tenor</em>) sehingga KPR juga <strong>lunas ${((tenor - simSnow.lunasMonth)/12).toFixed(1).replace('.0','')} tahun lebih cepat</strong>!`,
+                        targetAngsuran: actualPmtSingle,
+                        targetYear: targetYear,
+                        hematPerBln: hematBulanSingle,
+                        targetLunasBulan: simSnow.lunasMonth,
+                        targetLunasTahun: (simSnow.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                        hematBulan: tenor - simSnow.lunasMonth,
+                        hematTahun: ((tenor - simSnow.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                        totalEkstra: totalEkstraSnow,
+                        detailEkstra: `1x Turun Cicilan + ${snowReinvestCount}x Potong Tenor`,
+                        hematBunga: hematBungaSnow,
+                        rows: snowballRows
+                    });
+
+                    // --- OPSI 4: 🗓️ Tabungan Pokok Bertahap Tiap Tahun (Cicil Ekstra Thn 1 s/d Thn Target-1) ---
+                    const annualMonths = [];
+                    for (let m = 12; m < startMonth; m += 12) annualMonths.push(m);
+                    if (annualMonths.length === 0) annualMonths.push(injMonth);
+                    const cleanAnnual = seekForTargetPmt(annualMonths, startMonth, targetNominal);
                     const annualRows = annualMonths.map(m => ({ month: m, amount: cleanAnnual, effect: 'KURANGI_ANGSURAN' }));
                     const simAnnual = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, annualRows);
                     const actualPmtAnnual = Math.round(simAnnual.getPmtAt(startMonth));
@@ -5041,80 +5234,311 @@
                     options.push({
                         type: 'ANGSURAN',
                         id: 'angsuran_annual',
-                        title: `🗓️ Opsi 2: Injeksi Bertahap Tiap Tahun`,
-                        badge: 'Paling Hemat Bunga',
+                        title: `🗓️ Opsi 4: Tabungan Pokok Tahunan Pra-Kenaikan`,
+                        badge: 'Cicil Bertahap Sejak Thn 1',
                         badgeClass: 'badge-purple',
-                        desc: `Bagi beban injeksi menjadi ${annualMonths.length} kali pembayaran tahunan sebesar <strong>Rp ${new Intl.NumberFormat('id-ID').format(cleanAnnual)}</strong> (${annualMonths.map(m => 'Bln ' + m).join(', ')}). Baki debet tergerus sejak dini sehingga cicilan turun bertahap dan tepat di Tahun ke-${targetYear} stabil di <strong>~Rp ${new Intl.NumberFormat('id-ID').format(actualPmtAnnual)}/bln</strong> dengan total hemat bunga optimal!`,
+                        desc: `Daripada menyiapkan dana besar sekaligus di akhir Tahun ke-${targetYear - 1}, cicil pengurangan pokok sebanyak ${annualMonths.length}x setiap akhir tahun sebesar <strong>Rp ${fmt(cleanAnnual)}/thn</strong> (${annualMonths.map(m => 'Bln ' + m).join(', ')}). Angsuran sudah mulai turun sejak tahun ke-2 hingga mencapai <strong>~Rp ${fmt(actualPmtAnnual)}/bln</strong> di Tahun ke-${targetYear}.`,
                         targetAngsuran: actualPmtAnnual,
                         targetYear: targetYear,
                         hematPerBln: hematBulanAnnual,
                         totalEkstra: cleanAnnual * annualMonths.length,
-                        detailEkstra: `${annualMonths.length}x @ Rp ${new Intl.NumberFormat('id-ID').format(cleanAnnual)}`,
+                        detailEkstra: `${annualMonths.length}x @ Rp ${fmt(cleanAnnual)}`,
                         hematBunga: hematBungaAnnual,
                         rows: annualRows
                     });
 
-                    // --- OPSI 3: Injeksi Semi-Tahunan Ringan (Tiap 6 Bulan) ---
-                    const semiMonths = [];
-                    for (let m = 6; m < startMonth; m += 6) {
-                        semiMonths.push(m);
-                    }
-                    if (semiMonths.length === 0) {
-                        semiMonths.push(injMonth);
-                    }
+                    advisorHtml = `
+                        <div class="ai-advisor-insight-title">🧠 Analisis & Diagnosa Konsultan Finansial AI</div>
+                        <div>• <strong>Profil KPR Tanpa Pelunasan:</strong> ${jumpInfoParts.join(' → ')}. Total akumulasi bunga normal mencapai <strong>Rp ${fmt(baseBunga)}</strong> (${bungaRatioPct}% dari plafon awal).</div>
+                        <div style="margin-top:3px;">• <strong>Solusi Cerdas AI:</strong> Untuk menekan angsuran Tahun ke-${targetYear} (normalnya <strong>Rp ${fmt(basePmtAtStart)}/bln</strong>) menjadi <strong>~Rp ${fmt(targetNominal)}/bln</strong>, pilih <strong>Opsi 1</strong> jika ingin 1x bayar, <strong>Opsi 2</strong> jika ingin mengunci mati angsuran di seluruh kenaikan tier berikutnya sampai lunas, atau <strong>Opsi 3 (Hybrid Snowball)</strong> untuk menurunkan cicilan sekaligus memangkas tenor <strong>${((tenor - simSnow.lunasMonth)/12).toFixed(1).replace('.0','')} tahun lebih cepat</strong>!</div>
+                    `;
 
-                    let lowS = 0, highS = plafon, bestSemi = plafon;
-                    for (let iter = 0; iter < 30; iter++) {
-                        const mid = (lowS + highS) / 2;
-                        const testList = semiMonths.map(m => ({ month: m, amount: mid, effect: 'KURANGI_ANGSURAN' }));
-                        const sim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, testList);
-                        const pmt = (sim.lunasMonth < startMonth) ? 0 : sim.getPmtAt(startMonth);
-                        if (pmt <= targetNominal) {
-                            bestSemi = mid;
-                            highS = mid;
-                        } else {
-                            lowS = mid;
+                } else if (intent.type === 'BUDGET') {
+                    // =========================================================
+                    // MODE 2: OPTIMALISASI DANA / BUDGET CUSTOMER (4 ALTERNATIF)
+                    // =========================================================
+                    const bAmt = intent.budgetAmount;
+                    const isAnnual = (intent.budgetMode === 'ANNUAL');
+                    const lMonth = intent.lumpMonth;
+
+                    // Opsi 1: Fokus Potong Tenor (KURANGI_TENOR)
+                    const rowsTenor = [];
+                    if (isAnnual) {
+                        let tempS = baseSim;
+                        for (let m = 12; m < tenor; m += 12) {
+                            if (m >= tempS.lunasMonth) break;
+                            rowsTenor.push({ month: m, amount: bAmt, effect: 'KURANGI_TENOR' });
+                            tempS = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsTenor);
                         }
+                    } else {
+                        rowsTenor.push({ month: lMonth, amount: bAmt, effect: 'KURANGI_TENOR' });
                     }
-                    const cleanSemi = Math.min(plafon, Math.ceil(bestSemi / 100000) * 100000);
-                    const semiRows = semiMonths.map(m => ({ month: m, amount: cleanSemi, effect: 'KURANGI_ANGSURAN' }));
-                    const simSemi = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, semiRows);
-                    const actualPmtSemi = Math.round(simSemi.getPmtAt(startMonth));
-                    const hematBulanSemi = Math.max(0, basePmtAtStart - actualPmtSemi);
-                    const hematBungaSemi = Math.max(0, baseBunga - simSemi.totalBunga);
+                    const simT = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsTenor);
+                    const totalModT = rowsTenor.reduce((a, b) => a + b.amount, 0);
+
+                    options.push({
+                        type: 'TENOR',
+                        id: 'budget_tenor',
+                        title: `⏩ Opsi 1: Fokus Percepat Lunas (100% Potong Tenor)`,
+                        badge: 'Bebas Utang Paling Cepat',
+                        badgeClass: 'badge-emerald',
+                        desc: isAnnual
+                            ? `Alokasikan budget rutin <strong>Rp ${fmt(bAmt)}/thn</strong> sepenuhnya pada efek <em>Kurangi Tenor</em> (${rowsTenor.length}x setoran). Cicilan bulanan tetap, namun KPR Anda lunas <strong>${((tenor - simT.lunasMonth)/12).toFixed(1).replace('.0','')} tahun lebih cepat</strong>!`
+                            : `Suntikkan dana <strong>Rp ${fmt(bAmt)}</strong> pada Bulan ke-${lMonth} dengan efek <em>Kurangi Tenor</em>. Memotong masa cicilan selama <strong>${tenor - simT.lunasMonth} bulan</strong> dan menghemat bunga secara masif.`,
+                        targetLunasBulan: simT.lunasMonth,
+                        targetLunasTahun: (simT.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                        hematBulan: tenor - simT.lunasMonth,
+                        hematTahun: ((tenor - simT.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                        totalEkstra: totalModT,
+                        hematBunga: Math.max(0, baseBunga - simT.totalBunga),
+                        rows: rowsTenor
+                    });
+
+                    // Opsi 2: Fokus Ringankan Cicilan Bulanan (KURANGI_ANGSURAN)
+                    const rowsAngs = [];
+                    const checkMo = isAnnual ? intent.startMonth : Math.min(tenor, lMonth + 1);
+                    if (isAnnual) {
+                        const maxM = Math.max(36, intent.startMonth + 24);
+                        for (let m = 12; m <= maxM && m < tenor; m += 12) {
+                            rowsAngs.push({ month: m, amount: bAmt, effect: 'KURANGI_ANGSURAN' });
+                        }
+                    } else {
+                        rowsAngs.push({ month: lMonth, amount: bAmt, effect: 'KURANGI_ANGSURAN' });
+                    }
+                    const simA = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsAngs);
+                    const afterCheckMo = rowsAngs[rowsAngs.length - 1].month + 1;
+                    const pmtNewA = Math.round(simA.getPmtAt(Math.min(tenor, afterCheckMo)));
+                    const pmtBaseA = Math.round(baseSim.getPmtAt(Math.min(tenor, afterCheckMo)));
+                    const totalModA = rowsAngs.reduce((a, b) => a + b.amount, 0);
 
                     options.push({
                         type: 'ANGSURAN',
-                        id: 'angsuran_semi',
-                        title: `🛡️ Opsi 3: Injeksi Semi-Tahunan Ringan`,
-                        badge: 'Nominal Per Periode Terkecil',
-                        badgeClass: 'badge-amber',
-                        desc: `Injeksi berkala setiap 6 bulan sebesar <strong>Rp ${new Intl.NumberFormat('id-ID').format(cleanSemi)}</strong> (${semiMonths.map(m => 'Bln ' + m).join(', ')}). Sangat bersahabat bagi cash-flow keluarga karena nominal per transaksi kecil dan cicilan terus melandai setiap semester hingga stabil di <strong>~Rp ${new Intl.NumberFormat('id-ID').format(actualPmtSemi)}/bln</strong> pada Tahun ke-${targetYear}.`,
-                        targetAngsuran: actualPmtSemi,
-                        targetYear: targetYear,
-                        hematPerBln: hematBulanSemi,
-                        totalEkstra: cleanSemi * semiMonths.length,
-                        detailEkstra: `${semiMonths.length}x @ Rp ${new Intl.NumberFormat('id-ID').format(cleanSemi)}`,
-                        hematBunga: hematBungaSemi,
-                        rows: semiRows
+                        id: 'budget_angsuran',
+                        title: `📉 Opsi 2: Fokus Ringankan Angsuran Bulanan`,
+                        badge: 'Cashflow Bulanan Lega',
+                        badgeClass: 'badge-blue',
+                        desc: `Gunakan dana ekstra pada efek <em>Kurangi Angsuran</em> (${rowsAngs.map(r => 'Bln ' + r.month).join(', ')}). Menurunkan beban tagihan bulanan Anda dari Rp ${fmt(pmtBaseA)} menjadi <strong>~Rp ${fmt(pmtNewA)}/bln</strong> (hemat Rp ${fmt(Math.max(0, pmtBaseA - pmtNewA))}/bln).`,
+                        targetAngsuran: pmtNewA,
+                        targetYear: Math.ceil(afterCheckMo / 12),
+                        hematPerBln: Math.max(0, pmtBaseA - pmtNewA),
+                        totalEkstra: totalModA,
+                        detailEkstra: `${rowsAngs.length}x setoran`,
+                        hematBunga: Math.max(0, baseBunga - simA.totalBunga),
+                        rows: rowsAngs
                     });
+
+                    // Opsi 3: Kombinasi Hybrid 50:50 (Turun Cicilan Dulu, Lalu Potong Tenor)
+                    const rowsHyb = [];
+                    if (isAnnual) {
+                        for (let m = 12; m < tenor; m += 12) {
+                            const eff = (m < intent.startMonth) ? 'KURANGI_ANGSURAN' : 'KURANGI_TENOR';
+                            rowsHyb.push({ month: m, amount: bAmt, effect: eff });
+                            const sCheck = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsHyb);
+                            if (m >= sCheck.lunasMonth) break;
+                        }
+                    } else {
+                        const half = Math.round((bAmt / 2) / 100000) * 100000;
+                        rowsHyb.push({ month: lMonth, amount: half, effect: 'KURANGI_ANGSURAN' });
+                        rowsHyb.push({ month: Math.min(tenor - 1, lMonth + 12), amount: bAmt - half, effect: 'KURANGI_TENOR' });
+                    }
+                    const simH = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsHyb);
+                    const pmtHyb = Math.round(simH.getPmtAt(intent.startMonth));
+                    const pmtBaseH = Math.round(baseSim.getPmtAt(intent.startMonth));
+                    const totalModH = rowsHyb.reduce((a, b) => a + b.amount, 0);
+
+                    options.push({
+                        type: 'HYBRID',
+                        id: 'budget_hybrid',
+                        title: `⚖️ Opsi 3: Strategi Hybrid Seimbang (Dua Efek)`,
+                        badge: 'Kombinasi Paling Populer',
+                        badgeClass: 'badge-amber',
+                        desc: `Setoran awal dipakai untuk <em>Kurangi Angsuran</em> agar cicilan Tahun ke-${intent.targetYear} ringan di <strong>~Rp ${fmt(pmtHyb)}/bln</strong>, lalu setoran berikutnya dialihkan ke <em>Kurangi Tenor</em> sehingga KPR juga lunas <strong>${((tenor - simH.lunasMonth)/12).toFixed(1).replace('.0','')} tahun lebih cepat</strong>!`,
+                        targetAngsuran: pmtHyb,
+                        targetYear: intent.targetYear,
+                        hematPerBln: Math.max(0, pmtBaseH - pmtHyb),
+                        targetLunasBulan: simH.lunasMonth,
+                        targetLunasTahun: (simH.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                        hematBulan: tenor - simH.lunasMonth,
+                        hematTahun: ((tenor - simH.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                        totalEkstra: totalModH,
+                        detailEkstra: `${rowsHyb.length}x kombinasi`,
+                        hematBunga: Math.max(0, baseBunga - simH.totalBunga),
+                        rows: rowsHyb
+                    });
+
+                    // Opsi 4: Strategi Timing Puncak Bunga (Sniper Sebelum Bunga Naik)
+                    const sniperMonth = Math.max(12, intent.startMonth - 1);
+                    const sniperAmt = isAnnual ? bAmt * Math.max(1, Math.floor(sniperMonth / 12)) : bAmt;
+                    const rowsSniper = [{ month: sniperMonth, amount: sniperAmt, effect: 'KURANGI_TENOR' }];
+                    const simSnip = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsSniper);
+
+                    options.push({
+                        type: 'TENOR',
+                        id: 'budget_sniper',
+                        title: `🎯 Opsi 4: Sniper Transisi Bunga (Bln ke-${sniperMonth})`,
+                        badge: 'Efisiensi Bunga Maksimal',
+                        badgeClass: 'badge-purple',
+                        desc: `Kumpulkan dana di instrumen deposito/SBN terlebih dahulu, lalu tembakkan sekaligus sebesar <strong>Rp ${fmt(sniperAmt)}</strong> tepat di <strong>Bulan ke-${sniperMonth}</strong> (sebelum bunga naik). Memangkas <strong>${tenor - simSnip.lunasMonth} bulan</strong> dengan hanya 1x transaksi!`,
+                        targetLunasBulan: simSnip.lunasMonth,
+                        targetLunasTahun: (simSnip.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                        hematBulan: tenor - simSnip.lunasMonth,
+                        hematTahun: ((tenor - simSnip.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                        totalEkstra: sniperAmt,
+                        hematBunga: Math.max(0, baseBunga - simSnip.totalBunga),
+                        rows: rowsSniper
+                    });
+
+                    advisorHtml = `
+                        <div class="ai-advisor-insight-title">🧠 Analisis Alokasi Dana Konsultan AI</div>
+                        <div>• <strong>Perbandingan 4 Skenario Penggunaan Dana:</strong> Dengan budget yang sama, <strong>Opsi 1</strong> memberikan penghematan bunga terbesar (<strong>Rp ${fmt(Math.max(0, baseBunga - simT.totalBunga))}</strong>) dan mempercepat lunas <strong>${((tenor - simT.lunasMonth)/12).toFixed(1).replace('.0','')} tahun</strong>, sedangkan <strong>Opsi 2</strong> memprioritaskan kelonggaran arus kas bulanan Anda. Pilih <strong>Opsi 3 (Hybrid)</strong> jika Anda menginginkan kedua manfaat tersebut sekaligus!</div>
+                    `;
+
+                } else if (intent.type === 'HYBRID_MASTER') {
+                    // =========================================================
+                    // MODE 3: REKOMENDASI MASTER AI (4 STRATEGI JUARA LINTAS KATEGORI)
+                    // =========================================================
+                    const halfTenor = Math.max(24, Math.round(tenor * 0.5));
+                    const startMo = intent.startMonth;
+                    const injMo = Math.max(12, startMo - 1);
+
+                    // Master 1: Perisai Anti-Naik (Kunci Angsuran Awal)
+                    const targetFlat = Math.round(baseFirstPmt / 50000) * 50000;
+                    const shieldAmt = seekForTargetPmt([injMo], startMo, targetFlat);
+                    const rowsM1 = [{ month: injMo, amount: shieldAmt, effect: 'KURANGI_ANGSURAN' }];
+                    const simM1 = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsM1);
+                    const pmtM1 = Math.round(simM1.getPmtAt(startMo));
+                    const basePmtJump = Math.round(baseSim.getPmtAt(startMo));
+
+                    options.push({
+                        type: 'ANGSURAN',
+                        id: 'master_shield',
+                        title: `🛡️ Strategi 1: Perisai Anti-Lonjakan Bunga`,
+                        badge: 'Cicilan Tetap Ringan',
+                        badgeClass: 'badge-blue',
+                        desc: `Menahan lonjakan cicilan saat bunga naik di Bulan ke-${startMo}. Dengan injeksi <strong>Rp ${fmt(shieldAmt)}</strong> di Bulan ke-${injMo}, angsuran Anda tidak jadi naik ke Rp ${fmt(basePmtJump)}/bln, melainkan tetap terjaga di <strong>~Rp ${fmt(pmtM1)}/bln</strong>!`,
+                        targetAngsuran: pmtM1,
+                        targetYear: intent.targetYear,
+                        hematPerBln: Math.max(0, basePmtJump - pmtM1),
+                        totalEkstra: shieldAmt,
+                        detailEkstra: '1x perisai',
+                        hematBunga: Math.max(0, baseBunga - simM1.totalBunga),
+                        rows: rowsM1
+                    });
+
+                    // Master 2: Hybrid Snowball (Turun Cicilan + Lunas Cepat)
+                    const snowReinvest = Math.max(10000000, Math.round(((basePmtJump - pmtM1) * 12) / 500000) * 500000);
+                    const rowsM2 = [{ month: injMo, amount: shieldAmt, effect: 'KURANGI_ANGSURAN' }];
+                    let tmpM2 = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsM2);
+                    for (let m = startMo + 11; m < tenor - 6; m += 12) {
+                        if (m >= tmpM2.lunasMonth) break;
+                        rowsM2.push({ month: m, amount: snowReinvest, effect: 'KURANGI_TENOR' });
+                        tmpM2 = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsM2);
+                    }
+                    const simM2 = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsM2);
+                    const totM2 = rowsM2.reduce((a, b) => a + b.amount, 0);
+
+                    options.push({
+                        type: 'HYBRID',
+                        id: 'master_snowball',
+                        title: `❄️ Strategi 2: Hybrid Snowball (Paling Kreatif)`,
+                        badge: 'Rekomendasi Terbaik CFP',
+                        badgeClass: 'badge-amber',
+                        desc: `Kombinasi juara: Suntik <strong>Rp ${fmt(shieldAmt)}</strong> di Bln ${injMo} (<em>Kurangi Angsuran</em>) agar cicilan turun ke <strong>~Rp ${fmt(pmtM1)}/bln</strong>, lalu tabung selisih hemat cicilan Anda (Rp ${fmt(snowReinvest)}/thn) untuk <em>Kurangi Tenor</em> sehingga lunas <strong>${((tenor - simM2.lunasMonth)/12).toFixed(1).replace('.0','')} tahun lebih cepat</strong>!`,
+                        targetAngsuran: pmtM1,
+                        targetYear: intent.targetYear,
+                        hematPerBln: Math.max(0, basePmtJump - pmtM1),
+                        targetLunasBulan: simM2.lunasMonth,
+                        targetLunasTahun: (simM2.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                        hematBulan: tenor - simM2.lunasMonth,
+                        hematTahun: ((tenor - simM2.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                        totalEkstra: totM2,
+                        detailEkstra: `Kombinasi 2 Efek`,
+                        hematBunga: Math.max(0, baseBunga - simM2.totalBunga),
+                        rows: rowsM2
+                    });
+
+                    // Master 3: Bebas Utang Separuh Tenor (Bonus Tahunan)
+                    const m3Months = [];
+                    for (let m = 12; m < halfTenor; m += 12) m3Months.push(m);
+                    let lo3 = 0, hi3 = plafon, bestM3 = 0;
+                    for (let it = 0; it < 28; it++) {
+                        const mid = (lo3 + hi3) / 2;
+                        const rTest = m3Months.map(m => ({ month: m, amount: mid, effect: 'KURANGI_TENOR' }));
+                        const s = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rTest);
+                        if (s.lunasMonth <= halfTenor) { bestM3 = mid; hi3 = mid; } else { lo3 = mid; }
+                    }
+                    const cleanM3 = Math.ceil(bestM3 / 100000) * 100000;
+                    const rowsM3 = m3Months.map(m => ({ month: m, amount: cleanM3, effect: 'KURANGI_TENOR' }));
+                    const simM3 = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsM3);
+
+                    options.push({
+                        type: 'TENOR',
+                        id: 'master_half',
+                        title: `🎯 Strategi 3: Lunas Separuh Tenor (${Math.round(halfTenor/12)} Thn)`,
+                        badge: 'Pangkas 50% Waktu',
+                        badgeClass: 'badge-emerald',
+                        desc: `Alokasikan THR/Bonus tahunan sebesar <strong>Rp ${fmt(cleanM3)}/thn</strong> setiap akhir tahun (${m3Months.map(m => 'Bln ' + m).join(', ')}). Memotong separuh umur KPR Anda dan menyelamatkan ratusan juta bunga bank.`,
+                        targetLunasBulan: simM3.lunasMonth,
+                        targetLunasTahun: (simM3.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                        hematBulan: tenor - simM3.lunasMonth,
+                        hematTahun: ((tenor - simM3.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                        totalEkstra: cleanM3 * m3Months.length,
+                        hematBunga: Math.max(0, baseBunga - simM3.totalBunga),
+                        rows: rowsM3
+                    });
+
+                    // Master 4: Step-Up Karier (Setoran Awal Ringan, Naik 15%/Thn)
+                    let lo4 = 0, hi4 = plafon, bestBase4 = 0;
+                    for (let it = 0; it < 28; it++) {
+                        const mid = (lo4 + hi4) / 2;
+                        const rTest = m3Months.map((m, idx) => ({ month: m, amount: mid * Math.pow(1.15, idx), effect: 'KURANGI_TENOR' }));
+                        const s = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rTest);
+                        if (s.lunasMonth <= halfTenor) { bestBase4 = mid; hi4 = mid; } else { lo4 = mid; }
+                    }
+                    const rowsM4 = m3Months.map((m, idx) => ({
+                        month: m,
+                        amount: Math.ceil((bestBase4 * Math.pow(1.15, idx)) / 100000) * 100000,
+                        effect: 'KURANGI_TENOR'
+                    }));
+                    const simM4 = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, rowsM4);
+                    const totM4 = rowsM4.reduce((a, b) => a + b.amount, 0);
+
+                    options.push({
+                        type: 'TENOR',
+                        id: 'master_career',
+                        title: `📈 Strategi 4: Step-Up Karier (Mulai Ringan)`,
+                        badge: 'Mengikuti Kenaikan Gaji',
+                        badgeClass: 'badge-purple',
+                        desc: `Setoran ekstra Tahun ke-1 dimulai sangat ringan hanya <strong>Rp ${fmt(rowsM4[0]?.amount || 0)}</strong>, lalu meningkat bertahap ~15%/tahun mengikuti kenaikan gaji hingga <strong>Rp ${fmt(rowsM4[rowsM4.length-1]?.amount || 0)}</strong>. Lunas dalam <strong>${(simM4.lunasMonth/12).toFixed(1).replace('.0','')} tahun</strong> tanpa membebani kas awal!`,
+                        targetLunasBulan: simM4.lunasMonth,
+                        targetLunasTahun: (simM4.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                        hematBulan: tenor - simM4.lunasMonth,
+                        hematTahun: ((tenor - simM4.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                        totalEkstra: totM4,
+                        hematBunga: Math.max(0, baseBunga - simM4.totalBunga),
+                        rows: rowsM4
+                    });
+
+                    advisorHtml = `
+                        <div class="ai-advisor-insight-title">🧠 4 Rekomendasi Master Perencana Keuangan AI</div>
+                        <div>• <strong>Diagnosa KPR Anda:</strong> ${jumpInfoParts.join(' → ')}. Total bunga berjalan jika tanpa pelunasan ekstra mencapai <strong>Rp ${fmt(baseBunga)}</strong> (${bungaRatioPct}% dari pokok).</div>
+                        <div style="margin-top:3px;">• <strong>Panduan Memilih:</strong> Pilih <strong>Strategi 1</strong> untuk mengamankan arus kas bulanan, <strong>Strategi 2 (Hybrid Snowball)</strong> untuk menurunkan cicilan sekaligus melunasi cepat, atau <strong>Strategi 4 (Step-Up Karier)</strong> jika ingin mulai menabung ekstra dari nominal kecil terlebih dahulu.</div>
+                    `;
 
                 } else {
                     // =========================================================
-                    // MODE: TARGET PERCEPATAN TENOR (KPR CEPAT LUNAS)
+                    // MODE 4: TARGET PERCEPATAN TENOR (4 OPSI KREATIF)
                     // =========================================================
                     let validTarget = intent.targetMonths;
                     if (validTarget >= tenor) {
                         validTarget = Math.max(12, Math.round(tenor * 0.5));
                     }
 
-                    // --- OPSI 1: Bonus Tahunan Rutin ---
                     const annualMonths = [];
-                    for (let m = 12; m < validTarget; m += 12) {
-                        annualMonths.push(m);
-                    }
+                    for (let m = 12; m < validTarget; m += 12) annualMonths.push(m);
                     if (annualMonths.length === 0) annualMonths.push(Math.round(validTarget / 2));
 
+                    // --- OPSI 1: 🎯 Bonus Tahunan Terukur (Rutin Seragam) ---
                     let low = 0, high = plafon, bestAnnual = 0;
                     for (let iter = 0; iter < 28; iter++) {
                         const mid = (low + high) / 2;
@@ -5130,22 +5554,17 @@
                     }
 
                     const cleanAnnual = Math.ceil(bestAnnual / 100000) * 100000;
-                    const annualMap = {};
-                    const annualRows = [];
-                    annualMonths.forEach(m => {
-                        annualMap[m] = cleanAnnual;
-                        annualRows.push({ month: m, amount: cleanAnnual, effect: 'KURANGI_TENOR' });
-                    });
-                    const simAnnual = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, annualMap);
+                    const annualRows = annualMonths.map(m => ({ month: m, amount: cleanAnnual, effect: 'KURANGI_TENOR' }));
+                    const simAnnual = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, annualRows);
                     const hematAnnual = Math.max(0, baseBunga - simAnnual.totalBunga);
 
                     options.push({
                         type: 'TENOR',
                         id: 'annual',
                         title: '🎯 Opsi 1: Bonus Tahunan Terukur',
-                        badge: 'Paling Teratur & Terencana',
+                        badge: 'Disiplin & Terencana',
                         badgeClass: 'badge-purple',
-                        desc: `Pelunasan ekstra seragam sebesar <strong>Rp ${new Intl.NumberFormat('id-ID').format(cleanAnnual)}</strong> setiap akhir tahun (${annualMonths.map(m => 'Bln ' + m).join(', ')}). Sangat cocok mengalokasikan Bonus Tahunan / THR tanpa mengganggu cicilan bulanan.`,
+                        desc: `Setoran ekstra seragam sebesar <strong>Rp ${fmt(cleanAnnual)}/thn</strong> setiap akhir tahun (${annualMonths.map(m => 'Bln ' + m).join(', ')}). Sangat pas mengalokasikan THR / Bonus Tahunan tanpa mengganggu anggaran bulanan.`,
                         targetLunasBulan: simAnnual.lunasMonth,
                         targetLunasTahun: (simAnnual.lunasMonth / 12).toFixed(1).replace('.0', ''),
                         hematBulan: tenor - simAnnual.lunasMonth,
@@ -5155,65 +5574,67 @@
                         rows: annualRows
                     });
 
-                    // --- OPSI 2: Injeksi Tunggal di Tengah Tenor ---
-                    const midMonth = Math.min(60, Math.max(12, Math.round(validTarget / 2)));
-                    low = 0; high = plafon; let bestSingle = 0;
+                    // --- OPSI 2: 📈 Step-Up Karier (Setoran Awal Ringan, Naik 15%/Thn) ---
+                    let loStep = 0, hiStep = plafon, bestStepBase = 0;
                     for (let iter = 0; iter < 28; iter++) {
-                        const mid = (low + high) / 2;
-                        const sMap = {}; sMap[midMonth] = mid;
-                        const sim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, sMap);
+                        const mid = (loStep + hiStep) / 2;
+                        const stepRowsTest = annualMonths.map((m, i) => ({ month: m, amount: mid * Math.pow(1.15, i), effect: 'KURANGI_TENOR' }));
+                        const sim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, stepRowsTest);
                         if (sim.lunasMonth <= validTarget && sim.sisaSaldo <= 10) {
-                            bestSingle = mid;
-                            high = mid;
+                            bestStepBase = mid;
+                            hiStep = mid;
                         } else {
-                            low = mid;
+                            loStep = mid;
                         }
                     }
-
-                    const cleanSingle = Math.ceil(bestSingle / 500000) * 500000;
-                    const singleMap = {}; singleMap[midMonth] = cleanSingle;
-                    const simSingle = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, singleMap);
-                    const hematSingle = Math.max(0, baseBunga - simSingle.totalBunga);
+                    const stepRows = annualMonths.map((m, i) => ({
+                        month: m,
+                        amount: Math.ceil((bestStepBase * Math.pow(1.15, i)) / 100000) * 100000,
+                        effect: 'KURANGI_TENOR'
+                    }));
+                    const simStep = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, stepRows);
+                    const totalStepEkstra = stepRows.reduce((a, b) => a + b.amount, 0);
+                    const hematStep = Math.max(0, baseBunga - simStep.totalBunga);
+                    const firstAmt = stepRows[0]?.amount || cleanAnnual;
+                    const lastAmt = stepRows[stepRows.length - 1]?.amount || cleanAnnual;
 
                     options.push({
                         type: 'TENOR',
-                        id: 'single',
-                        title: '⚡ Opsi 2: Injeksi Tunggal di Tengah Tenor',
-                        badge: 'Hanya 1 Kali Pembayaran',
-                        badgeClass: 'badge-blue',
-                        desc: `Cukup 1 kali pelunasan besar sebesar <strong>Rp ${new Intl.NumberFormat('id-ID').format(cleanSingle)}</strong> pada <strong>Bulan ke-${midMonth}</strong> (Tahun ke-${Math.round(midMonth/12)}). Setelah itu, cicilan bulanan normal berlanjut hingga lunas tepat waktu.`,
-                        targetLunasBulan: simSingle.lunasMonth,
-                        targetLunasTahun: (simSingle.lunasMonth / 12).toFixed(1).replace('.0', ''),
-                        hematBulan: tenor - simSingle.lunasMonth,
-                        hematTahun: ((tenor - simSingle.lunasMonth) / 12).toFixed(1).replace('.0', ''),
-                        totalEkstra: cleanSingle,
-                        hematBunga: hematSingle,
-                        rows: [{ month: midMonth, amount: cleanSingle, effect: 'KURANGI_TENOR' }]
+                        id: 'career_stepup',
+                        title: '📈 Opsi 2: Step-Up Karier (Mulai Ringan)',
+                        badge: 'Tahun Awal Lebih Enteng',
+                        badgeClass: 'badge-emerald',
+                        desc: `Menyesuaikan kenaikan penghasilan tahunan (+15%/thn): Tahun ke-1 cukup setor <strong>Rp ${fmt(firstAmt)}</strong> (lebih ringan Rp ${fmt(Math.max(0, cleanAnnual - firstAmt))} dari Opsi 1), lalu naik bertahap hingga <strong>Rp ${fmt(lastAmt)}</strong> di tahun terakhir.`,
+                        targetLunasBulan: simStep.lunasMonth,
+                        targetLunasTahun: (simStep.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                        hematBulan: tenor - simStep.lunasMonth,
+                        hematTahun: ((tenor - simStep.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                        totalEkstra: totalStepEkstra,
+                        hematBunga: hematStep,
+                        rows: stepRows
                     });
 
-                    // --- OPSI 3: Pertahanan Suku Bunga Berjenjang / Semi-Tahunan ---
+                    // --- OPSI 3: 🛡️ Sniper Transisi Bunga (Hantam Pokok Sebelum Bunga Naik) ---
                     let opt3Months = [];
-                    let opt3Title = '🛡️ Opsi 3: Redam Kenaikan Suku Bunga';
-                    let opt3Badge = 'Proteksi Bunga Naik';
+                    let opt3Title = '🛡️ Opsi 3: Sniper Transisi Suku Bunga';
+                    let opt3Badge = 'Proteksi Lonjakan Bunga';
                     let opt3BadgeClass = 'badge-amber';
                     let opt3Desc = '';
 
                     if (jenis === 'BERJENJANG' && tiers.length > 1) {
                         tiers.forEach(t => {
-                            if (t.end < validTarget && !opt3Months.includes(t.end)) {
-                                opt3Months.push(t.end);
-                            }
+                            if (t.end < validTarget && !opt3Months.includes(t.end)) opt3Months.push(t.end);
                         });
-                        if (opt3Months.length === 0) opt3Months = [24, 48, 72].filter(m => m < validTarget);
-                        opt3Desc = `Pelunasan ekstra difokuskan tepat di akhir tier suku bunga (${opt3Months.map(m => 'Bln ' + m).join(', ')}). Baki debet diperkecil sebelum bunga bank naik ke tingkat yang lebih tinggi, meminimalkan biaya bunga secara drastis.`;
+                        if (opt3Months.length === 0) opt3Months = [Math.min(36, Math.round(validTarget * 0.4)), Math.min(72, Math.round(validTarget * 0.75))].filter((v, i, a) => v > 0 && v < validTarget && a.indexOf(v) === i);
+                        opt3Desc = `Menembak pokok pinjaman tepat di bulan terakhir sebelum tier bunga naik (${opt3Months.map(m => 'Bln ' + m).join(', ')}) sebesar <strong>Rp __AMT__</strong> per transisi, sehingga bunga tier tinggi dihitung dari sisa pokok yang sudah jauh mengecil!`;
                     } else {
-                        opt3Title = '🔄 Opsi 3: Pelunasan Bertahap Tiap 6 Bulan';
-                        opt3Badge = 'Nominal Lebih Ringan';
+                        opt3Title = '🔄 Opsi 3: Injeksi Ringan Tiap Semester';
+                        opt3Badge = 'Cicilan Ekstra Kecil';
                         for (let m = 6; m < validTarget; m += 6) opt3Months.push(m);
-                        opt3Desc = `Pelunasan ekstra dicicil berkala tiap 6 bulan (${opt3Months.map(m => 'Bln ' + m).join(', ')}), sehingga nominal per transaksi jauh lebih ringan dan terjangkau dibanding sekali setahun.`;
+                        opt3Desc = `Dicicil ringan setiap 6 bulan (${opt3Months.slice(0, 5).map(m => 'Bln ' + m).join(', ')}...) sebesar <strong>Rp __AMT__</strong> per semester agar arus kas bulanan lebih longgar.`;
                     }
 
-                    if (opt3Months.length === 0) opt3Months = [12, 24, 36].filter(m => m < validTarget);
+                    if (opt3Months.length === 0) opt3Months = [Math.max(6, Math.round(validTarget / 2))];
                     low = 0; high = plafon; let bestOpt3 = 0;
                     for (let iter = 0; iter < 28; iter++) {
                         const mid = (low + high) / 2;
@@ -5229,14 +5650,10 @@
                     }
 
                     const cleanOpt3 = Math.ceil(bestOpt3 / 100000) * 100000;
-                    const opt3Map = {};
-                    const opt3Rows = [];
-                    opt3Months.forEach(m => {
-                        opt3Map[m] = cleanOpt3;
-                        opt3Rows.push({ month: m, amount: cleanOpt3, effect: 'KURANGI_TENOR' });
-                    });
-                    const simOpt3 = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, opt3Map);
+                    const opt3Rows = opt3Months.map(m => ({ month: m, amount: cleanOpt3, effect: 'KURANGI_TENOR' }));
+                    const simOpt3 = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, opt3Rows);
                     const hematOpt3 = Math.max(0, baseBunga - simOpt3.totalBunga);
+                    opt3Desc = opt3Desc.replace('__AMT__', fmt(cleanOpt3));
 
                     options.push({
                         type: 'TENOR',
@@ -5253,10 +5670,52 @@
                         hematBunga: hematOpt3,
                         rows: opt3Rows
                     });
+
+                    // --- OPSI 4: ⚡ Injeksi Tunggal Sekali Pukul (Lump-Sum) ---
+                    const midMonth = Math.min(36, Math.max(12, Math.round(validTarget * 0.35)));
+                    low = 0; high = plafon; let bestSingle = 0;
+                    for (let iter = 0; iter < 28; iter++) {
+                        const mid = (low + high) / 2;
+                        const sMap = {}; sMap[midMonth] = mid;
+                        const sim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, sMap);
+                        if (sim.lunasMonth <= validTarget && sim.sisaSaldo <= 10) {
+                            bestSingle = mid;
+                            high = mid;
+                        } else {
+                            low = mid;
+                        }
+                    }
+
+                    const cleanSingle = Math.ceil(bestSingle / 500000) * 500000;
+                    const singleRows = [{ month: midMonth, amount: cleanSingle, effect: 'KURANGI_TENOR' }];
+                    const simSingle = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, singleRows);
+                    const hematSingle = Math.max(0, baseBunga - simSingle.totalBunga);
+
+                    options.push({
+                        type: 'TENOR',
+                        id: 'single',
+                        title: '⚡ Opsi 4: Lump-Sum Sekali Pukul',
+                        badge: 'Hanya 1x Transaksi',
+                        badgeClass: 'badge-blue',
+                        desc: `Cukup 1 kali pelunasan sebesar <strong>Rp ${fmt(cleanSingle)}</strong> pada <strong>Bulan ke-${midMonth}</strong> (Tahun ke-${(midMonth/12).toFixed(1).replace('.0','')}). Cocok bagi Anda yang merencanakan pencairan deposito, investasi, atau penjualan aset.`,
+                        targetLunasBulan: simSingle.lunasMonth,
+                        targetLunasTahun: (simSingle.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                        hematBulan: tenor - simSingle.lunasMonth,
+                        hematTahun: ((tenor - simSingle.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                        totalEkstra: cleanSingle,
+                        hematBunga: hematSingle,
+                        rows: singleRows
+                    });
+
+                    advisorHtml = `
+                        <div class="ai-advisor-insight-title">🧠 Analisis & Strategi Percepatan Konsultan AI</div>
+                        <div>• <strong>Profil KPR Saat Ini:</strong> ${jumpInfoParts.join(' → ')}. Tanpa pelunasan dipercepat, total bunga mencapai <strong>Rp ${fmt(baseBunga)}</strong> (${bungaRatioPct}% dari pokok).</div>
+                        <div style="margin-top:3px;">• <strong>Rekomendasi AI:</strong> Untuk melunasi KPR dalam <strong>${(validTarget/12).toFixed(1).replace('.0','')} tahun</strong>, pilih <strong>Opsi 1</strong> jika mengandalkan THR/bonus tetap, <strong>Opsi 2 (Step-Up Karier)</strong> agar setoran tahun pertama lebih ringan (mulai Rp ${fmt(firstAmt)}), atau <strong>Opsi 3 (Sniper Transisi)</strong> untuk menghantam pokok tepat sebelum suku bunga naik!</div>
+                    `;
                 }
 
                 _lastGeneratedAiOptions = options;
-                renderAiOptionCards(options, targetLabel);
+                renderAiOptionCards(options, targetLabel, advisorHtml);
 
             } catch (err) {
                 console.error("AI Generation Error:", err);
@@ -5267,17 +5726,26 @@
                     btnSubmit.style.opacity = '1';
                 }
             }
-        }, 300);
+        }, 250);
     }
 
-    function renderAiOptionCards(options, targetLabel) {
+    function renderAiOptionCards(options, targetLabel, advisorHtml) {
         const container = document.getElementById('aiResultsContainer');
         const grid = document.getElementById('aiCardsGrid');
         const labelEl = document.getElementById('aiDetectedTargetText');
+        const insightEl = document.getElementById('aiAdvisorInsightBox');
 
         if (!container || !grid) return;
 
         if (labelEl) labelEl.innerText = targetLabel || '-';
+        if (insightEl) {
+            if (advisorHtml) {
+                insightEl.innerHTML = advisorHtml;
+                insightEl.style.display = 'block';
+            } else {
+                insightEl.style.display = 'none';
+            }
+        }
         grid.innerHTML = '';
 
         options.forEach((opt, idx) => {
@@ -5285,8 +5753,36 @@
             card.className = 'ai-option-card';
             card.id = `aiOptionCard_${idx}`;
 
+            const roiVal = (opt.totalEkstra > 0) ? (opt.hematBunga / opt.totalEkstra).toFixed(2).replace('.', ',') : '0';
+            const roiRowHtml = `
+                <div class="ai-stat-row" style="border-top: 1px dashed rgba(148,163,184,0.18); padding-top: 4px; margin-top: 2px;">
+                    <span class="ai-stat-lbl">📈 Efisiensi ROI Bunga:</span>
+                    <span class="ai-stat-val" style="color:#FBBF24;">1 Jt Modal = Hemat ${roiVal} Jt</span>
+                </div>
+            `;
+
             let statsHtml = '';
-            if (opt.type === 'ANGSURAN') {
+            if (opt.type === 'HYBRID') {
+                statsHtml = `
+                    <div class="ai-stat-row">
+                        <span class="ai-stat-lbl">🎯 Angsuran Baru:</span>
+                        <span class="ai-stat-val text-blue-400">~${formatRp(opt.targetAngsuran)} / bln</span>
+                    </div>
+                    <div class="ai-stat-row">
+                        <span class="ai-stat-lbl">⏳ Lunas Dipercepat:</span>
+                        <span class="ai-stat-val text-emerald-400">Bln ${opt.targetLunasBulan} (Hemat ${opt.hematTahun} Thn)</span>
+                    </div>
+                    <div class="ai-stat-row">
+                        <span class="ai-stat-lbl">💰 Total Hemat Bunga:</span>
+                        <span class="ai-stat-val green">${formatRp(opt.hematBunga)}</span>
+                    </div>
+                    <div class="ai-stat-row">
+                        <span class="ai-stat-lbl">💳 Total Modal Ekstra:</span>
+                        <span class="ai-stat-val text-slate-300">${formatRp(opt.totalEkstra)}</span>
+                    </div>
+                    ${roiRowHtml}
+                `;
+            } else if (opt.type === 'ANGSURAN') {
                 statsHtml = `
                     <div class="ai-stat-row">
                         <span class="ai-stat-lbl">🎯 Target Angsuran:</span>
@@ -5304,6 +5800,7 @@
                         <span class="ai-stat-lbl">💳 Total Modal Ekstra:</span>
                         <span class="ai-stat-val text-slate-300">${formatRp(opt.totalEkstra)} (${opt.detailEkstra})</span>
                     </div>
+                    ${roiRowHtml}
                 `;
             } else {
                 statsHtml = `
@@ -5323,6 +5820,7 @@
                         <span class="ai-stat-lbl">💳 Total Modal Ekstra:</span>
                         <span class="ai-stat-val text-slate-300">${formatRp(opt.totalEkstra)}</span>
                     </div>
+                    ${roiRowHtml}
                 `;
             }
 
@@ -5412,7 +5910,9 @@
         });
 
         // Tampilkan notifikasi toast sukses sesuai tipe strategi
-        if (opt.type === 'ANGSURAN') {
+        if (opt.type === 'HYBRID') {
+            tampilkanToastSukses(`✨ Strategi <strong>${opt.title}</strong> berhasil diterapkan!<br>Angsuran turun menjadi <strong>~${formatRp(opt.targetAngsuran)}/bln</strong> & lunas dipercepat menjadi <strong>${opt.targetLunasTahun} Tahun</strong> (Hemat bunga <strong>${formatRp(opt.hematBunga)}</strong>).`);
+        } else if (opt.type === 'ANGSURAN') {
             tampilkanToastSukses(`✨ Strategi <strong>${opt.title}</strong> berhasil diterapkan!<br>Angsuran mulai Tahun ke-${opt.targetYear} kini disimulasikan menjadi <strong>~${formatRp(opt.targetAngsuran)}/bln</strong> (Hemat cicilan ~${formatRp(opt.hematPerBln)}/bln & hemat bunga <strong>${formatRp(opt.hematBunga)}</strong>).`);
         } else {
             tampilkanToastSukses(`✨ Strategi <strong>${opt.title}</strong> berhasil diterapkan!<br>KPR Anda kini disimulasikan lunas dalam <strong>${opt.targetLunasTahun} Tahun (${opt.targetLunasBulan} Bulan)</strong> dengan penghematan bunga <strong>${formatRp(opt.hematBunga)}</strong>.`);
