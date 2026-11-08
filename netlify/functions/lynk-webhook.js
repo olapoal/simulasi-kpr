@@ -99,10 +99,12 @@ exports.handler = async function(event, context) {
         }
 
         // Filter Proteksi Multi-Produk:
-        // Jika nama produk disebutkan dan sama sekali tidak berkaitan dengan KPR / Simulasi / Aplikasi, lewati transaksi
+        // Lynk.id mengirimkan semua transaksi ke satu webhook akun.
+        // Di sini kita filter: Hanya pembeli produk [KPR] yang diberi akses lisensi.
+        // Produk lain (Ebook, Template, dsb) akan otomatis dilewati secara aman.
         if (productName) {
             const pLower = productName.toLowerCase();
-            const isKprProduct = pLower.includes("kpr") || pLower.includes("simulasi") || pLower.includes("aplikasi") || pLower.includes("hitung");
+            const isKprProduct = pLower.includes("kpr");
             if (!isKprProduct) {
                 console.log(`Transaksi diabaikan karena bukan produk KPR: ${productName}`);
                 return {

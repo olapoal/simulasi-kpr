@@ -64,7 +64,13 @@ function syncLynkOrders() {
         const productName = itemMatch ? itemMatch[1].trim() : "[KPR] Aplikasi Simulasi Hitung KPR";
         const messageId = msg.getId();
 
-        Logger.log("Memproses Order: " + customerName + " (" + customerEmail + ")");
+        // Filter Proteksi Produk: Hanya proses dan kirim jika produk berkaitan dengan [KPR]
+        if (!productName.toLowerCase().includes("kpr")) {
+          Logger.log("Bukan produk KPR, dilewati secara aman: " + productName);
+          continue;
+        }
+
+        Logger.log("Memproses Order KPR: " + customerName + " (" + customerEmail + ")");
 
         // Siapkan payload webhook
         const payload = {
