@@ -2519,12 +2519,11 @@
             <div class="form-group">
                 <label title="Pilih Metode Perhitungan Suku Bunga">Skema Suku Bunga</label>
                 <select id="jenisCicilan" onchange="toggleJenisCicilan()">
-                    <option value="" selected>-- Pilih Skema Suku Bunga --</option>
-                    <option value="BERJENJANG">✨ Suku Bunga Berjenjang (Step-up)</option>
-                    <option value="FLOATING">🌊 Suku Bunga Floating (Mengambang)</option>
-                    <option value="ANUITAS">📊 Anuitas Efektif (Bunga Tetap)</option>
-                    <option value="EFEKTIF">📉 Efektif (Pokok Tetap)</option>
-                    <option value="FLAT">➖ Suku Bunga Flat</option>
+                    <option value="" selected>-- Pilih Skema Suku Bunga KPR --</option>
+                    <option value="FLOATING">🌊 KPR Fixed & Floating (Standar Bank Indonesia)</option>
+                    <option value="BERJENJANG">✨ KPR Bunga Berjenjang (Step-Up Bertahap)</option>
+                    <option value="ANUITAS">📊 KPR Bunga Tetap (Fixed Sepanjang Tenor - Anuitas)</option>
+                    <option value="EFEKTIF">📉 KPR Bunga Efektif (Pokok Tetap, Angsuran Menurun)</option>
                 </select>
             </div>
         </div>
@@ -2545,7 +2544,7 @@
                 <div id="noSchemeCardView" style="display:flex; padding:38px 16px; text-align:center; color:#94A3B8; font-size:13px; flex-direction:column; align-items:center; justify-content:center; gap:8px;">
                     <span style="font-size:28px;">🎯</span>
                     <strong style="color:#E2E8F0; font-size:14px;">Belum Ada Skema Suku Bunga Terpilih</strong>
-                    <span style="color:#64748B; font-size:12px; max-width:360px; line-height:1.5;">Silakan pilih salah satu <strong>Skema Suku Bunga</strong> pada menu di atas terlebih dahulu untuk menentukan metode perhitungan pinjaman Anda.</span>
+                    <span style="color:#64748B; font-size:12px; max-width:420px; line-height:1.5;">Pilih skema suku bunga KPR standar Indonesia pada menu di atas (<strong>Fixed & Floating</strong>, <strong>Bunga Berjenjang</strong>, <strong>Fixed Sepanjang Tenor</strong>, atau <strong>Bunga Efektif</strong>).</span>
                 </div>
 
                 <!-- VIEW A: TABLE TIERS (Untuk BERJENJANG) -->
@@ -2611,7 +2610,7 @@
                     </div>
 
                     <div style="background:rgba(59,130,246,0.1); border-left:3px solid #3B82F6; padding:10px 12px; border-radius:6px; font-size:12px; color:#BFDBFE; line-height:1.5;">
-                        🌊 <strong>Karakteristik Suku Bunga Floating:</strong> Menggunakan metode <em>Anuitas Mengambang</em>. Suku bunga mengambang dapat ditinjau berkala mengikuti suku bunga acuan pasar atau kebijakan perbankan.
+                        🌊 <strong>Karakteristik KPR Fixed & Floating:</strong> Skema standar paling populer di perbankan Indonesia (BCA, Mandiri, BNI, BTN, dll). Nasabah menikmati bunga promo fixed di awal (misal 1–5 tahun), kemudian suku bunga mengambang (<em>floating</em>) sesuai suku bunga acuan pasar atau SBDK bank. Perhitungan menggunakan metode Anuitas Baki Debet.
                     </div>
                 </div>
 
@@ -3034,7 +3033,7 @@
             if (viewSingle) viewSingle.style.display = 'none';
             if (viewNoScheme) viewNoScheme.style.display = 'flex';
         } else if (jenis === 'BERJENJANG') {
-            if (titleEl) titleEl.innerText = '2. Periode Bunga Berjenjang (Step-up)';
+            if (titleEl) titleEl.innerText = '2. Suku Bunga Berjenjang (Step-Up Bertahap)';
             if (btnsEl) btnsEl.style.display = 'flex';
             if (viewTier) viewTier.style.display = 'block';
             if (viewFloating) viewFloating.style.display = 'none';
@@ -3046,7 +3045,7 @@
                 tampilkanEmptyTierPrompt();
             }
         } else if (jenis === 'FLOATING') {
-            if (titleEl) titleEl.innerText = '2. Suku Bunga Floating (Mengambang)';
+            if (titleEl) titleEl.innerText = '2. Suku Bunga Fixed & Floating (Standar Bank Indonesia)';
             if (btnsEl) btnsEl.style.display = 'none';
             if (viewTier) viewTier.style.display = 'none';
             if (viewFloating) viewFloating.style.display = 'flex';
@@ -3063,7 +3062,7 @@
                 wrap.style.display = months > 0 ? 'block' : 'none';
             }
         } else {
-            // ANUITAS, EFEKTIF, FLAT
+            // ANUITAS, EFEKTIF, FLAT (fallback)
             if (btnsEl) btnsEl.style.display = 'none';
             if (viewTier) viewTier.style.display = 'none';
             if (viewFloating) viewFloating.style.display = 'none';
@@ -3071,8 +3070,8 @@
             if (viewNoScheme) viewNoScheme.style.display = 'none';
 
             if (jenis === 'ANUITAS') {
-                if (titleEl) titleEl.innerText = '2. Suku Bunga Anuitas Efektif (Bunga Tetap)';
-                if (singleRateLabel) singleRateLabel.innerText = '📊 Suku Bunga Anuitas Tetap (% p.a.)';
+                if (titleEl) titleEl.innerText = '2. Suku Bunga Tetap (Fixed Sepanjang Tenor - Anuitas)';
+                if (singleRateLabel) singleRateLabel.innerText = '📊 Suku Bunga Fixed Tetap (% p.a.)';
                 if (singleRateInput && (!singleRateInput.value || parseFloat(singleRateInput.value) <= 0)) {
                     singleRateInput.value = '7.50';
                 }
@@ -3080,10 +3079,10 @@
                     singleExplainer.style.background = 'rgba(59,130,246,0.1)';
                     singleExplainer.style.borderLeft = '3px solid #3B82F6';
                     singleExplainer.style.color = '#BFDBFE';
-                    singleExplainer.innerHTML = '📊 <strong>Karakteristik Anuitas Efektif:</strong> Jumlah total angsuran per bulan <strong>selalu sama persis</strong> setiap bulan. Di awal masa kredit porsi pembayaran bunga lebih besar, lalu seiring berjalannya waktu dan saldo pokok yang terus berkurang, porsi pokok akan semakin membesar.';
+                    singleExplainer.innerHTML = '📊 <strong>Karakteristik KPR Bunga Tetap (Fixed / Anuitas):</strong> Suku bunga dan total angsuran bulanan <strong>selalu sama persis</strong> dari awal hingga lunas. Standar untuk <strong>KPR Subsidi Pemerintah (FLPP)</strong> bunga 5% tetap atau promo bank fixed jangka panjang. Perhitungan menggunakan metode Anuitas Baki Debet.';
                 }
             } else if (jenis === 'EFEKTIF') {
-                if (titleEl) titleEl.innerText = '2. Suku Bunga Efektif (Pokok Tetap)';
+                if (titleEl) titleEl.innerText = '2. Suku Bunga Efektif (Pokok Tetap, Angsuran Menurun)';
                 if (singleRateLabel) singleRateLabel.innerText = '📉 Suku Bunga Efektif (% p.a.)';
                 if (singleRateInput && (!singleRateInput.value || parseFloat(singleRateInput.value) <= 0)) {
                     singleRateInput.value = '7.50';
@@ -3092,19 +3091,19 @@
                     singleExplainer.style.background = 'rgba(16,185,129,0.1)';
                     singleExplainer.style.borderLeft = '3px solid #10B981';
                     singleExplainer.style.color = '#A7F3D0';
-                    singleExplainer.innerHTML = '📉 <strong>Karakteristik Efektif (Pokok Tetap):</strong> Porsi angsuran pokok dibagi rata sama persis setiap bulan (<em>Plafon / Tenor</em>). Bunga dihitung dari sisa saldo pokok, sehingga <strong>total angsuran bulanan akan terus MENURUN</strong> setiap bulan (awal cicilan paling tinggi, akhir cicilan paling rendah). Total bunga keseluruhan lebih hemat daripada Anuitas.';
+                    singleExplainer.innerHTML = '📉 <strong>Karakteristik KPR Bunga Efektif (Sliding Rate):</strong> Porsi angsuran pokok dibagi rata setiap bulan (<em>Plafon ÷ Tenor</em>). Bunga dihitung dari sisa saldo pokok sehingga <strong>total angsuran bulanan akan terus MENURUN</strong> setiap bulan (awal cicilan paling tinggi, akhir cicilan paling rendah). Total beban bunga keseluruhan lebih hemat dibanding Anuitas.';
                 }
             } else if (jenis === 'FLAT') {
-                if (titleEl) titleEl.innerText = '2. Suku Bunga Flat';
-                if (singleRateLabel) singleRateLabel.innerText = '➖ Suku Bunga Flat (% p.a.)';
+                if (titleEl) titleEl.innerText = '2. Suku Bunga Flat (Bukan Standar KPR)';
+                if (singleRateLabel) singleRateLabel.innerText = '⚠️ Suku Bunga Flat (% p.a.)';
                 if (singleRateInput && (!singleRateInput.value || parseFloat(singleRateInput.value) <= 0)) {
                     singleRateInput.value = '5.00';
                 }
                 if (singleExplainer) {
-                    singleExplainer.style.background = 'rgba(245,158,11,0.1)';
-                    singleExplainer.style.borderLeft = '3px solid #F59E0B';
-                    singleExplainer.style.color = '#FDE68A';
-                    singleExplainer.innerHTML = '➖ <strong>Karakteristik Suku Bunga Flat:</strong> Porsi pokok dan bunga dihitung tetap dari <strong>total plafon awal pinjaman</strong> (bukan dari sisa saldo). Total angsuran flat tetap sama setiap bulan, namun total akumulasi bunga yang dibayarkan jauh lebih besar dibanding skema lainnya.';
+                    singleExplainer.style.background = 'rgba(239,68,68,0.1)';
+                    singleExplainer.style.borderLeft = '3px solid #EF4444';
+                    singleExplainer.style.color = '#FCA5A5';
+                    singleExplainer.innerHTML = '⚠️ <strong>Pemberitahuan Regulasi:</strong> Suku Bunga Flat <strong>tidak digunakan</strong> dalam produk KPR perbankan di Indonesia (sesuai regulasi Bank Indonesia & OJK). Bunga flat hanya berlaku untuk kredit kendaraan (KKB) atau KTA. Silakan beralih ke skema KPR Fixed & Floating atau Bunga Tetap (Anuitas).';
                 }
             }
         }
