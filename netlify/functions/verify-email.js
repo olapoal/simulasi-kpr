@@ -81,7 +81,54 @@ exports.handler = async function(event, context) {
             console.warn("Netlify Blobs check notice:", blobsErr.message);
         }
 
-        // 2. Cek dari STATIC_VERIFIED (Jaminan instan untuk pembeli terverifikasi)
+        // 2. Cek dari Google Sheet Database Live
+        const GOOGLE_SHEET_ID = (process.env.GOOGLE_SHEET_ID || "1O5MRP-Nov0zJd2LKeWnlUfRcRowlxDMbkcCwnBZWvIo").trim();
+        if (GOOGLE_SHEET_ID) {
+            try {
+                const sheetUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv`;
+                const resSheet = await fetch(sheetUrl);
+                if (resSheet.ok) {
+                    const csvText = await resSheet.text();
+                    const lines = csvText.split(/\r?\n/);
+                    for (const line of lines) {
+                        const lowerLine = line.toLowerCase();
+                        if (lowerLine.includes(email)) {
+                            // Coba ambil nama pembeli dari kolom CSV jika ada
+                            const cols = line.split(",").map(c => c.replace(/^"|"$/g, "").trim());
+                            // Biasanya format: [Timestamp, Nama, Email, Phone, ...]
+                            const possibleName = cols.find(c => c && !c.includes("@") && isNaN(c) && c.length > 2) || "Pembeli Terverifikasi";
+
+                            // Auto-sync ke Netlify Blobs agar lebih cepat di request berikutnya
+                            if (store) {
+                                try {
+                                    await store.setJSON(email, {
+                                        email: email,
+                                        name: possibleName,
+                                        order_id: "[KPR] GOOGLE-SHEET-SYNC",
+                                        created_at: new Date().toISOString()
+                                    });
+                                } catch (e) {}
+                            }
+
+                            return {
+                                statusCode: 200,
+                                headers: corsHeaders,
+                                body: JSON.stringify({
+                                    valid: true,
+                                    email: email,
+                                    name: possibleName,
+                                    orderId: "[KPR] GOOGLE-SHEET-SYNC"
+                                })
+                            };
+                        }
+                    }
+                }
+            } catch (sheetErr) {
+                console.warn("Google Sheet sync notice:", sheetErr.message);
+            }
+        }
+
+        // 3. Cek dari STATIC_VERIFIED (Jaminan instan untuk pembeli terverifikasi)
         if (STATIC_VERIFIED[email]) {
             const staticData = STATIC_VERIFIED[email];
 
