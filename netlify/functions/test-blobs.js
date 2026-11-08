@@ -1,12 +1,17 @@
 exports.handler = async function(event, context) {
     let result = {};
     try {
-        const { getStore } = require("@netlify/blobs");
-        result.getStoreType = typeof getStore;
-        result.env_keys = Object.keys(process.env).filter(k => k.toLowerCase().includes("blob") || k.toLowerCase().includes("netlify"));
+        const { getStore, connectLambda } = require("@netlify/blobs");
+        result.hasConnectLambda = typeof connectLambda;
+        if (typeof connectLambda === "function") {
+            connectLambda(event);
+        }
+        
+        result.event_keys = Object.keys(event);
+        result.blobs_in_event = !!event.blobs;
         
         const store = getStore("buyers");
-        await store.set("test_key", "test_val");
+        await store.set("test_key", "test_val_ok");
         const val = await store.get("test_key");
         result.success = true;
         result.val = val;
