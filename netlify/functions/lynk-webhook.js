@@ -104,6 +104,7 @@ exports.handler = async function(event, context) {
 
         // 1. Simpan ke Netlify Blobs (Database Bawaan Netlify - Prioritas Utama)
         let savedToBlobs = false;
+        let blobsErrorMessage = "";
         try {
             const { getStore } = require("@netlify/blobs");
             const store = getStore("buyers");
@@ -111,6 +112,7 @@ exports.handler = async function(event, context) {
             savedToBlobs = true;
             console.log(`Berhasil menyimpan ${email} ke Netlify Blobs`);
         } catch (blobsErr) {
+            blobsErrorMessage = blobsErr ? blobsErr.message : "unknown";
             console.warn("Netlify Blobs write notice:", blobsErr.message);
         }
 
@@ -146,7 +148,8 @@ exports.handler = async function(event, context) {
                 message: `Akses berhasil diaktifkan untuk email: ${email}`,
                 email: email,
                 orderId: orderId,
-                storage: savedToBlobs ? "Netlify Blobs" : "Fallback"
+                storage: savedToBlobs ? "Netlify Blobs" : "Fallback",
+                blobsError: blobsErrorMessage
             })
         };
 
