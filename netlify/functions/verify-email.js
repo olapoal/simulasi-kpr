@@ -93,18 +93,35 @@ exports.handler = async function(event, context) {
                     for (const line of lines) {
                         const lowerLine = line.toLowerCase();
                         if (lowerLine.includes(email)) {
-                            // Coba ambil nama pembeli dari kolom CSV jika ada
-                            const cols = line.split(",").map(c => c.replace(/^"|"$/g, "").trim());
-                            // Biasanya format: [Timestamp, Nama, Email, Phone, ...]
-                            const possibleName = cols.find(c => c && !c.includes("@") && isNaN(c) && c.length > 2) || "Pembeli Terverifikasi";
+                            // Parse CSV line dengan aman mengatasi tanda kutip
+                            const cols = [];
+                            let current = "";
+                            let inQuotes = false;
+                            for (let i = 0; i < line.length; i++) {
+                                const ch = line[i];
+                                if (ch === '"') inQuotes = !inQuotes;
+                                else if (ch === ',' && !inQuotes) {
+                                    cols.push(current.trim());
+                                    current = "";
+                                } else {
+                                    current += ch;
+                                }
+                            }
+                            cols.push(current.trim());
 
-                            // Auto-sync ke Netlify Blobs agar lebih cepat di request berikutnya
+                            // Lynk.id CSV Header Mapping:
+                            // cols[0]: Judul Barang, cols[14]: Tanggal, cols[15]: Status, cols[16]: Buyer Email, cols[17]: Buyer Name, cols[18]: Phone, cols[25]: Ref
+                            const buyerName = cols[17] || cols.find(c => c && !c.includes("@") && isNaN(c) && c.length > 2) || "Pembeli Lynk.id";
+                            const refId = cols[25] || "LYNK-ORDER";
+
+                            // Auto-sync ke Netlify Blobs agar tersimpan permanen
                             if (store) {
                                 try {
                                     await store.setJSON(email, {
                                         email: email,
-                                        name: possibleName,
-                                        order_id: "[KPR] GOOGLE-SHEET-SYNC",
+                                        name: buyerName,
+                                        phone: cols[18] || "",
+                                        order_id: `[KPR] ${refId}`,
                                         created_at: new Date().toISOString()
                                     });
                                 } catch (e) {}
@@ -116,8 +133,8 @@ exports.handler = async function(event, context) {
                                 body: JSON.stringify({
                                     valid: true,
                                     email: email,
-                                    name: possibleName,
-                                    orderId: "[KPR] GOOGLE-SHEET-SYNC"
+                                    name: buyerName,
+                                    orderId: `[KPR] ${refId}`
                                 })
                             };
                         }

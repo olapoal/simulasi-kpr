@@ -146,7 +146,51 @@ exports.handler = async function(event, context) {
                 }
             }
 
-            // B. Jika Blobs kosong, coba Supabase (jika ada)
+            // B. Coba dari Google Sheet Database Live
+            const GOOGLE_SHEET_ID = (process.env.GOOGLE_SHEET_ID || "1O5MRP-Nov0zJd2LKeWnlUfRcRowlxDMbkcCwnBZWvIo").trim();
+            if (GOOGLE_SHEET_ID) {
+                try {
+                    const sheetUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv`;
+                    const resSheet = await fetch(sheetUrl);
+                    if (resSheet.ok) {
+                        const csvText = await resSheet.text();
+                        const lines = csvText.split(/\r?\n/).filter(Boolean);
+                        // Skip header row
+                        for (let i = 1; i < lines.length; i++) {
+                            const line = lines[i];
+                            const cols = [];
+                            let cur = "";
+                            let inQ = false;
+                            for (let c = 0; c < line.length; c++) {
+                                const ch = line[c];
+                                if (ch === '"') inQ = !inQ;
+                                else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ""; }
+                                else { cur += ch; }
+                            }
+                            cols.push(cur.trim());
+
+                            // Lynk.id Sheet format: cols[16] = email, cols[17] = name, cols[18] = phone, cols[25] = ref
+                            const email = (cols[16] || "").toLowerCase().trim();
+                            if (email && email.includes("@")) {
+                                const exists = buyersList.some(b => (b.email || "").toLowerCase() === email);
+                                if (!exists) {
+                                    buyersList.push({
+                                        email: email,
+                                        name: cols[17] || "Pembeli Lynk.id",
+                                        phone: cols[18] || "",
+                                        order_id: cols[25] ? `[KPR] ${cols[25]}` : "[KPR] LYNK-ORDER",
+                                        created_at: cols[14] || new Date().toISOString()
+                                    });
+                                }
+                            }
+                        }
+                    }
+                } catch (sheetErr) {
+                    console.warn("Google Sheet list notice:", sheetErr.message);
+                }
+            }
+
+            // C. Jika Blobs kosong, coba Supabase (jika ada)
             const supabaseUrl = process.env.SUPABASE_URL;
             const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
             if (buyersList.length === 0 && supabaseUrl && supabaseKey) {
