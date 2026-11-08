@@ -1,6 +1,24 @@
 // netlify/functions/verify-email.js
 // Endpoint untuk memvalidasi apakah email customer sudah menyelesaikan pembelian di Lynk.id
 
+const { getStore, connectLambda } = require("@netlify/blobs");
+
+// Daftar email yang selalu diverifikasi (Owner & Tester/Pembeli Terverifikasi)
+const STATIC_VERIFIED = {
+    "alrizal.a.n@gmail.com": {
+        name: "Alrizal Akbar Nusantara",
+        orderId: "[KPR] LYNK-TEST-ORDER"
+    },
+    "olapoal.artgallery@gmail.com": {
+        name: "Admin / Pemilik",
+        orderId: "VIP-OWNER"
+    },
+    "admin@kpr.com": {
+        name: "Super Admin",
+        orderId: "VIP-ADMIN"
+    }
+};
+
 exports.handler = async function(event, context) {
     const corsHeaders = {
         "Access-Control-Allow-Origin": "*",
@@ -22,6 +40,14 @@ exports.handler = async function(event, context) {
     }
 
     try {
+        if (typeof connectLambda === "function") {
+            try {
+                connectLambda(event);
+            } catch (e) {
+                console.warn("connectLambda notice:", e.message);
+            }
+        }
+
         const body = JSON.parse(event.body || "{}");
         const email = (body.email || "").trim().toLowerCase();
 
@@ -33,10 +59,10 @@ exports.handler = async function(event, context) {
             };
         }
 
-        // 1. Cek dari Netlify Blobs (Database Bawaan Netlify - Prioritas Utama)
+        // 1. Cek dari Netlify Blobs (Database Utama)
+        let store = null;
         try {
-            const { getStore } = require("@netlify/blobs");
-            const store = getStore("buyers");
+            store = getStore("buyers");
             const buyerData = await store.get(email, { type: "json" });
 
             if (buyerData) {
@@ -55,7 +81,36 @@ exports.handler = async function(event, context) {
             console.warn("Netlify Blobs check notice:", blobsErr.message);
         }
 
-        // 2. Cek dari Supabase Database jika ada env variables (Opsional / Fallback)
+        // 2. Cek dari STATIC_VERIFIED (Jaminan instan untuk pembeli terverifikasi)
+        if (STATIC_VERIFIED[email]) {
+            const staticData = STATIC_VERIFIED[email];
+
+            // Auto-sync ke Netlify Blobs jika store aktif
+            if (store) {
+                try {
+                    await store.setJSON(email, {
+                        email: email,
+                        name: staticData.name,
+                        phone: "",
+                        order_id: staticData.orderId,
+                        created_at: new Date().toISOString()
+                    });
+                } catch (e) {}
+            }
+
+            return {
+                statusCode: 200,
+                headers: corsHeaders,
+                body: JSON.stringify({
+                    valid: true,
+                    email: email,
+                    name: staticData.name,
+                    orderId: staticData.orderId
+                })
+            };
+        }
+
+        // 3. Cek dari Supabase Database jika ada env variables (Opsional / Fallback)
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
 
@@ -91,7 +146,7 @@ exports.handler = async function(event, context) {
             }
         }
 
-        // 3. Cek dari Environment Variable ADMIN_EMAILS (Email admin / tester manual)
+        // 4. Cek dari Environment Variable ADMIN_EMAILS (Email admin / tester manual)
         const adminEmails = (process.env.ADMIN_EMAILS || "olapoal.artgallery@gmail.com,admin@kpr.com")
             .toLowerCase()
             .split(",")
@@ -104,7 +159,8 @@ exports.handler = async function(event, context) {
                 body: JSON.stringify({
                     valid: true,
                     email: email,
-                    name: "Pengguna Terverifikasi"
+                    name: "Pengguna Terverifikasi",
+                    orderId: "VIP-ADMIN"
                 })
             };
         }

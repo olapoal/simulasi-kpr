@@ -1,10 +1,12 @@
 // netlify/functions/lynk-webhook.js
 // Endpoint ini menerima notifikasi saat customer selesai membayar di Lynk.id
 
+const { getStore, connectLambda } = require("@netlify/blobs");
+
 exports.handler = async function(event, context) {
     const corsHeaders = {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Headers": "Content-Type, x-admin-key",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Content-Type": "application/json"
     };
@@ -22,68 +24,97 @@ exports.handler = async function(event, context) {
     }
 
     try {
+        if (typeof connectLambda === "function") {
+            try {
+                connectLambda(event);
+            } catch (e) {
+                console.warn("connectLambda notice:", e.message);
+            }
+        }
+
         const payload = JSON.parse(event.body || "{}");
         console.log("Lynk.id webhook incoming payload:", JSON.stringify(payload));
 
-        // Ekstraksi data customer dari berbagai format payload Lynk.id
+        // Ekstraksi data customer dari berbagai format payload Lynk.id (Webhook resmi Lynk.id maupun GAS forwarder)
+        const msgData = payload.data?.message_data || payload.data || {};
+        const customer = msgData.customer || payload.customer || {};
+
         const email = (
+            customer.email ||
             payload.customer_email ||
             payload.email ||
-            payload.data?.customer_email ||
-            payload.data?.email ||
+            msgData.customer_email ||
+            msgData.email ||
             payload.buyer_email ||
-            payload.customer?.email ||
             ""
         ).trim().toLowerCase();
 
         const name = (
+            customer.name ||
             payload.customer_name ||
             payload.name ||
-            payload.data?.customer_name ||
-            payload.data?.name ||
-            payload.customer?.name ||
+            msgData.customer_name ||
+            msgData.name ||
+            payload.buyer_name ||
             "Pembeli Lynk.id"
         );
 
-        const orderId = (
-            payload.order_id ||
-            payload.transaction_id ||
-            payload.id ||
-            payload.data?.order_id ||
-            payload.data?.id ||
-            `LYNK-${Date.now()}`
-        );
-
         const phone = (
+            customer.phone ||
             payload.customer_phone ||
             payload.phone ||
-            payload.data?.customer_phone ||
-            payload.data?.phone ||
+            msgData.customer_phone ||
+            msgData.phone ||
             ""
         );
 
-        const productName = (
+        const orderId = (
+            msgData.refId ||
+            payload.order_id ||
+            payload.transaction_id ||
+            payload.id ||
+            msgData.order_id ||
+            msgData.id ||
+            `LYNK-${Date.now()}`
+        );
+
+        // Ekstraksi Produk
+        let productName = (
             payload.product_name ||
             payload.product ||
             payload.title ||
             payload.item_name ||
-            payload.data?.product_name ||
-            payload.data?.title ||
+            msgData.product_name ||
+            msgData.title ||
             ""
         );
 
-        // Filter Proteksi Multi-Produk: Jika ada nama produk tapi bukan produk [KPR], lewati transaksi ini
-        if (productName && !productName.toUpperCase().includes("[KPR]") && !productName.toLowerCase().includes("kpr")) {
-            console.log(`Transaksi diabaikan karena bukan produk KPR: ${productName}`);
-            return {
-                statusCode: 200,
-                headers: corsHeaders,
-                body: JSON.stringify({
-                    success: false,
-                    ignored: true,
-                    message: `Transaksi diabaikan: produk '${productName}' bukan produk KPR.`
-                })
-            };
+        // Cek jika produk ada di array items (format resmi Lynk.id)
+        const items = msgData.items || payload.items;
+        if (Array.isArray(items) && items.length > 0) {
+            const titles = items.map(it => it.title || it.name || "").filter(Boolean);
+            if (titles.length > 0) {
+                productName = titles.join(", ");
+            }
+        }
+
+        // Filter Proteksi Multi-Produk:
+        // Jika nama produk disebutkan dan sama sekali tidak berkaitan dengan KPR / Simulasi / Aplikasi, lewati transaksi
+        if (productName) {
+            const pLower = productName.toLowerCase();
+            const isKprProduct = pLower.includes("kpr") || pLower.includes("simulasi") || pLower.includes("aplikasi") || pLower.includes("hitung");
+            if (!isKprProduct) {
+                console.log(`Transaksi diabaikan karena bukan produk KPR: ${productName}`);
+                return {
+                    statusCode: 200,
+                    headers: corsHeaders,
+                    body: JSON.stringify({
+                        success: false,
+                        ignored: true,
+                        message: `Transaksi diabaikan: produk '${productName}' bukan produk KPR.`
+                    })
+                };
+            }
         }
 
         if (!email || !email.includes("@")) {
@@ -99,14 +130,14 @@ exports.handler = async function(event, context) {
             name: name,
             phone: phone,
             order_id: productName ? `[KPR] ${orderId}` : String(orderId),
+            product_name: productName || "[KPR] Aplikasi Simulasi Hitung KPR",
             created_at: new Date().toISOString()
         };
 
-        // 1. Simpan ke Netlify Blobs (Database Bawaan Netlify - Prioritas Utama)
+        // 1. Simpan ke Netlify Blobs (Database Utama Bawaan Netlify)
         let savedToBlobs = false;
         let blobsErrorMessage = "";
         try {
-            const { getStore } = require("@netlify/blobs");
             const store = getStore("buyers");
             await store.setJSON(email, buyerRecord);
             savedToBlobs = true;
@@ -148,8 +179,7 @@ exports.handler = async function(event, context) {
                 message: `Akses berhasil diaktifkan untuk email: ${email}`,
                 email: email,
                 orderId: orderId,
-                storage: savedToBlobs ? "Netlify Blobs" : "Fallback",
-                blobsError: blobsErrorMessage
+                storage: savedToBlobs ? "Netlify Blobs" : "Fallback"
             })
         };
 
@@ -158,7 +188,7 @@ exports.handler = async function(event, context) {
         return {
             statusCode: 500,
             headers: corsHeaders,
-            body: JSON.stringify({ error: err.message })
+            body: JSON.stringify({ error: "Internal Server Error", details: err.message })
         };
     }
 };

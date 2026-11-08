@@ -1,6 +1,8 @@
 // netlify/functions/admin-buyers.js
 // Endpoint API aman untuk Admin Panel mengelola data pembeli lisensi & ganti password admin via Netlify Blobs
 
+const { getStore, connectLambda } = require("@netlify/blobs");
+
 exports.handler = async function(event, context) {
     const corsHeaders = {
         "Access-Control-Allow-Origin": "*",
@@ -22,6 +24,14 @@ exports.handler = async function(event, context) {
     }
 
     try {
+        if (typeof connectLambda === "function") {
+            try {
+                connectLambda(event);
+            } catch (e) {
+                console.warn("connectLambda notice:", e.message);
+            }
+        }
+
         const body = JSON.parse(event.body || "{}");
         const action = body.action || "list";
         const adminKey = event.headers["x-admin-key"] || body.admin_key || "";
@@ -30,7 +40,6 @@ exports.handler = async function(event, context) {
         let buyersStore = null;
         let settingsStore = null;
         try {
-            const { getStore } = require("@netlify/blobs");
             buyersStore = getStore("buyers");
             settingsStore = getStore("settings");
         } catch (e) {
