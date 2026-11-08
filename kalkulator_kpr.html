@@ -2379,6 +2379,363 @@
             border-color: rgba(239, 68, 68, 0.5);
             color: #FCA5A5;
         }
+
+        /* ✨ AI SMART PLANNER ASSISTANT COMPONENT ✨ */
+        .btn-ai-sparkle {
+            background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%) !important;
+            color: #FFFFFF !important;
+            border: 1px solid #A78BFA !important;
+            box-shadow: 0 0 14px rgba(124, 58, 237, 0.45) !important;
+            font-weight: 700 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            transition: all 0.25s ease !important;
+            cursor: pointer;
+        }
+        .btn-ai-sparkle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.7) !important;
+            border-color: #C4B5FD !important;
+        }
+
+        .ai-planner-card {
+            background: linear-gradient(145deg, rgba(30, 27, 75, 0.55) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 24px -2px rgba(124, 58, 237, 0.2);
+            transition: all 0.3s ease;
+        }
+        .ai-planner-card:hover {
+            border-color: rgba(139, 92, 246, 0.65);
+        }
+
+        .ai-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .ai-badge-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .ai-badge-pill {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.3));
+            border: 1px solid #8B5CF6;
+            color: #DDD6FE;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            letter-spacing: 0.3px;
+        }
+
+        .ai-card-desc {
+            font-size: 11px;
+            color: #94A3B8;
+        }
+
+        .ai-toggle-btn {
+            background: transparent;
+            border: none;
+            color: #94A3B8;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .ai-toggle-btn:hover {
+            color: #F8FAFC;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .ai-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .ai-input-field-wrap {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .ai-input-icon {
+            position: absolute;
+            left: 12px;
+            font-size: 13px;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .ai-prompt-input {
+            width: 100%;
+            height: 40px !important;
+            background: #0B0F19 !important;
+            border: 1px solid #4338CA !important;
+            border-radius: 6px !important;
+            color: #F8FAFC !important;
+            font-size: 12px !important;
+            padding: 0 12px 0 34px !important;
+            transition: all 0.2s ease !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
+        }
+        .ai-prompt-input:focus {
+            border-color: #8B5CF6 !important;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.4) !important;
+            outline: none !important;
+        }
+
+        .btn-ai-submit {
+            height: 40px;
+            padding: 0 16px;
+            background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+            border: 1px solid #A78BFA;
+            border-radius: 6px;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(124, 58, 237, 0.4);
+        }
+        .btn-ai-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.6);
+            background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+        }
+
+        .ai-chips-bar {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .ai-chips-tag {
+            font-size: 10.5px;
+            color: #64748B;
+            font-weight: 600;
+        }
+
+        .ai-chip-pill {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #C4B5FD;
+            font-size: 10.5px;
+            padding: 3px 9px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .ai-chip-pill:hover {
+            background: rgba(139, 92, 246, 0.35);
+            color: #FFFFFF;
+            border-color: #A78BFA;
+            transform: translateY(-1px);
+        }
+
+        .ai-results-container {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(139, 92, 246, 0.25);
+            animation: fadeInAi 0.3s ease;
+        }
+
+        @keyframes fadeInAi {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ai-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .ai-results-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #E2E8F0;
+        }
+
+        .ai-results-target {
+            font-size: 11px;
+            color: #C4B5FD;
+            font-weight: 700;
+            background: rgba(139, 92, 246, 0.2);
+            padding: 3px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(139, 92, 246, 0.35);
+        }
+
+        .ai-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 10px;
+        }
+
+        .ai-option-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+        .ai-option-card:hover {
+            border-color: #8B5CF6;
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+            transform: translateY(-2px);
+        }
+        .ai-option-card.active-applied {
+            border-color: #10B981 !important;
+            background: rgba(16, 185, 129, 0.08) !important;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.25) !important;
+        }
+
+        .ai-opt-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .ai-opt-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #F8FAFC;
+            line-height: 1.35;
+        }
+
+        .ai-opt-badge {
+            font-size: 9.5px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .ai-opt-badge.badge-blue { background: rgba(59, 130, 246, 0.2); color: #93C5FD; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .ai-opt-badge.badge-purple { background: rgba(139, 92, 246, 0.2); color: #C4B5FD; border: 1px solid rgba(139, 92, 246, 0.4); }
+        .ai-opt-badge.badge-amber { background: rgba(245, 158, 11, 0.2); color: #FCD34D; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+        .ai-opt-desc {
+            font-size: 11px;
+            color: #94A3B8;
+            line-height: 1.45;
+        }
+
+        .ai-opt-stats {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 11px;
+        }
+
+        .ai-stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-stat-lbl {
+            color: #94A3B8;
+        }
+
+        .ai-stat-val {
+            font-weight: 700;
+            color: #F8FAFC;
+        }
+        .ai-stat-val.green {
+            color: #34D399;
+        }
+
+        .btn-apply-ai {
+            width: 100%;
+            padding: 8px 10px;
+            background: #1E293B;
+            border: 1px solid #475569;
+            color: #F8FAFC;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .btn-apply-ai:hover {
+            background: #10B981;
+            border-color: #10B981;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+        }
+        .btn-apply-ai.is-active {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10B981;
+            color: #6EE7B7;
+            cursor: default;
+        }
+
+        /* Toast Notifikasi Sukses */
+        .ai-toast-msg {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #064E3B;
+            color: #ECFDF5;
+            border: 1px solid #10B981;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            pointer-events: none;
+            max-width: 90vw;
+            text-align: center;
+        }
+        .ai-toast-msg.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
     </style>
     <!-- Script Cek Status Lisensi Secepat Mungkin untuk Mencegah Glitch Tampilan -->
     <script>
@@ -2637,8 +2994,60 @@
             <div class="sub-panel">
                 <div class="sub-panel-header">
                     <span class="sub-panel-title" style="color:#34D399;">3. Pelunasan Dipercepat Sebagian</span>
-                    <button class="btn btn-sm" onclick="addExtraRow()">+ Tambah Pelunasan</button>
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <button type="button" class="btn btn-sm btn-ai-sparkle" onclick="toggleAiPlannerBox()" id="btnAiToggle" title="Rekomendasi Pelunasan Pintar dengan AI">
+                            ✨ Generate by AI
+                        </button>
+                        <button type="button" class="btn btn-sm" onclick="addExtraRow()">+ Tambah Pelunasan</button>
+                    </div>
                 </div>
+
+                <!-- ✨ AI SMART PLANNER ASSISTANT CARD ✨ -->
+                <div id="aiPlannerBox" class="ai-planner-card">
+                    <div class="ai-card-top">
+                        <div class="ai-badge-wrap">
+                            <span class="ai-badge-pill">✨ Asisten AI</span>
+                            <span class="ai-card-desc">Ketik target Anda, contoh: <em>"saya mau kpr lunas 10 tahun"</em></span>
+                        </div>
+                        <button type="button" class="ai-toggle-btn" onclick="toggleAiPlannerBox()" id="btnAiMinimize" title="Sembunyikan / Tampilkan Form AI">✕</button>
+                    </div>
+
+                    <div id="aiBodyWrap">
+                        <div class="ai-input-row">
+                            <div class="ai-input-field-wrap">
+                                <span class="ai-input-icon">💬</span>
+                                <input type="text" id="aiPromptInput" class="ai-prompt-input" 
+                                    placeholder='Ketik target, misal: "saya mau kpr lunas 10 tahun" atau "lunas 7 tahun pakai bonus tahunan"' 
+                                    onkeydown="if(event.key==='Enter') jalankanAiRekomendasi()">
+                            </div>
+                            <button type="button" class="btn-ai-submit" onclick="jalankanAiRekomendasi()" id="btnAiSubmit">
+                                <span>🚀 Rekomendasikan</span>
+                            </button>
+                        </div>
+
+                        <!-- Quick Inspiration Chips -->
+                        <div class="ai-chips-bar">
+                            <span class="ai-chips-tag">Inspirasi Target:</span>
+                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('saya mau kpr lunas 10 tahun')">🎯 Lunas 10 Tahun</button>
+                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('mau lunas 7 tahun pakai bonus tahunan')">⚡ Lunas 7 Tahun (Tahunan)</button>
+                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('lunas 5 tahun lebih cepat')">⏩ Pangkas Tenor 5 Tahun</button>
+                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('pelunasan 1x di tahun ke-5 agar cepat lunas')">💰 Injeksi di Tahun ke-5</button>
+                            <button type="button" class="ai-chip-pill" onclick="isiAiPrompt('saya mau cicilan cepat lunas separuh tenor')">🚀 Separuh Tenor</button>
+                        </div>
+
+                        <!-- Area Hasil Opsi AI (Otomatis Muncul) -->
+                        <div id="aiResultsContainer" style="display:none;" class="ai-results-container">
+                            <div class="ai-results-header">
+                                <span class="ai-results-title">💡 Rekomendasi Strategi Pelunasan AI:</span>
+                                <span class="ai-results-target" id="aiDetectedTargetText">-</span>
+                            </div>
+                            <div id="aiCardsGrid" class="ai-cards-grid">
+                                <!-- Kartu-kartu opsi strategi AI di-generate otomatis via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <table class="config-table">
                     <thead>
                         <tr>
@@ -4155,6 +4564,540 @@
         const area = document.getElementById('tableScrollArea');
         if (area) area.scrollTop = 0;
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==========================================================================
+       ✨ ASISTEN AI REKOMENDASI PELUNASAN KPR DIPERCEPAT (FINANCIAL AI ENGINE) ✨
+       ========================================================================== */
+
+    let _lastGeneratedAiOptions = [];
+
+    function toggleAiPlannerBox(forceState) {
+        const box = document.getElementById('aiPlannerBox');
+        if (!box) return;
+        if (typeof forceState === 'boolean') {
+            box.style.display = forceState ? 'block' : 'none';
+        } else {
+            box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+        }
+        const btnToggle = document.getElementById('btnAiToggle');
+        if (btnToggle) {
+            btnToggle.innerHTML = (box.style.display === 'none') ? '✨ Buka AI Rekomendasi' : '✨ Generate by AI';
+        }
+        if (box.style.display !== 'none') {
+            document.getElementById('aiPromptInput')?.focus();
+        }
+    }
+
+    function isiAiPrompt(teks) {
+        const input = document.getElementById('aiPromptInput');
+        if (input) {
+            input.value = teks;
+            jalankanAiRekomendasi();
+        }
+    }
+
+    function parseAiTarget(inputStr, currentTenorMonths) {
+        const s = (inputStr || '').toLowerCase().trim();
+        let targetMonths = null;
+        let label = '';
+
+        // 1. Cek pola: "lunas [X] tahun" / "lunas dalam [X] thn"
+        const mYear = s.match(/(?:lunas|selesai|beres|target|habis)\s*(?:dalam|di|pada|ke|selama)?\s*(\d+)\s*(?:tahun|thn|th)/i)
+                   || s.match(/(\d+)\s*(?:tahun|thn|th)\s*(?:lunas|selesai|beres|habis)/i);
+        if (mYear && parseInt(mYear[1]) > 0) {
+            const y = parseInt(mYear[1]);
+            targetMonths = y * 12;
+            label = `🎯 Target Lunas: ${y} Tahun (${targetMonths} Bulan)`;
+        }
+
+        // 2. Cek pola: "lunas [X] bulan"
+        if (!targetMonths) {
+            const mMonth = s.match(/(?:lunas|selesai|beres|target|habis)\s*(?:dalam|di|pada|ke|selama)?\s*(\d+)\s*(?:bulan|bln)/i);
+            if (mMonth && parseInt(mMonth[1]) > 0) {
+                targetMonths = parseInt(mMonth[1]);
+                const y = (targetMonths / 12).toFixed(1).replace('.0', '');
+                label = `🎯 Target Lunas: ${targetMonths} Bulan (~${y} Tahun)`;
+            }
+        }
+
+        // 3. Cek pola: "pangkas / lebih cepat [X] tahun"
+        if (!targetMonths) {
+            const mFaster = s.match(/(\d+)\s*(?:tahun|thn|th)\s*(?:lebih cepat|dipercepat)/i)
+                         || s.match(/(?:pangkas|kurangi|potong|hemat)\s*(\d+)\s*(?:tahun|thn|th)/i);
+            if (mFaster && parseInt(mFaster[1]) > 0) {
+                const cutY = parseInt(mFaster[1]);
+                targetMonths = Math.max(12, currentTenorMonths - (cutY * 12));
+                const y = Math.round(targetMonths / 12);
+                label = `🎯 Target Pangkas ${cutY} Tahun: Lunas dalam ${y} Tahun (${targetMonths} Bulan)`;
+            }
+        }
+
+        // 4. Cek pola: "separuh" / "setengah" / "50%"
+        if (!targetMonths && (s.includes('separuh') || s.includes('setengah') || s.includes('50%'))) {
+            targetMonths = Math.max(12, Math.round(currentTenorMonths / 2));
+            const y = (targetMonths / 12).toFixed(1).replace('.0', '');
+            label = `🎯 Target Separuh Tenor: ${y} Tahun (${targetMonths} Bulan)`;
+        }
+
+        // 5. Cek angka bebas (misal hanya ketik "10" atau "7")
+        if (!targetMonths) {
+            const mNum = s.match(/\b(\d+)\b/);
+            if (mNum && parseInt(mNum[1]) > 0) {
+                const num = parseInt(mNum[1]);
+                if (num <= 50) {
+                    targetMonths = num * 12;
+                    label = `🎯 Target Lunas: ${num} Tahun (${targetMonths} Bulan)`;
+                } else {
+                    targetMonths = num;
+                    label = `🎯 Target Lunas: ${targetMonths} Bulan`;
+                }
+            }
+        }
+
+        // Fallback default jika tidak ada angka
+        if (!targetMonths) {
+            targetMonths = Math.max(12, Math.round(currentTenorMonths * 0.5));
+            const y = (targetMonths / 12).toFixed(1).replace('.0', '');
+            label = `🎯 Rekomendasi Optimal: ${y} Tahun (${targetMonths} Bulan)`;
+        }
+
+        return { targetMonths, label };
+    }
+
+    function simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, extraMap) {
+        function getRateMo(m) {
+            if (jenis === 'BERJENJANG') {
+                for (let i = 0; i < tiers.length; i++) {
+                    const t = tiers[i];
+                    if (m >= t.start && m <= t.end) return (t.rate / 100) / 12;
+                }
+                if (tiers.length > 0) return (tiers[tiers.length - 1].rate / 100) / 12;
+                return (10.0 / 100) / 12;
+            } else if (jenis === 'FLOATING') {
+                if (floatingFixedMonths > 0 && m <= floatingFixedMonths) {
+                    return (floatingFixedRate / 100) / 12;
+                }
+                return (floatingRate / 100) / 12;
+            }
+            return (singleRate / 100) / 12;
+        }
+
+        let saldo = plafon;
+        let currPmt = hitungPMT(plafon, getRateMo(1), tenor);
+        let currTierIdx = -1;
+        let totalBunga = 0;
+
+        for (let m = 1; m <= tenor; m++) {
+            if (saldo <= 0.01) {
+                return { lunasMonth: m - 1, totalBunga: totalBunga, sisaSaldo: 0 };
+            }
+            const rMo = getRateMo(m);
+            const sisaTenor = tenor - m + 1;
+
+            if (jenis === 'BERJENJANG') {
+                let tIdx = -1;
+                tiers.forEach((t, i) => { if (m >= t.start && m <= t.end) tIdx = i; });
+                if (tIdx === -1 && tiers.length > 0) tIdx = (m < tiers[0].start) ? 0 : (tiers.length - 1);
+                if (tIdx !== currTierIdx) {
+                    currTierIdx = tIdx;
+                    currPmt = hitungPMT(saldo, rMo, sisaTenor);
+                }
+            } else if (jenis === 'FLOATING') {
+                if (floatingFixedMonths > 0 && m === floatingFixedMonths + 1) {
+                    currPmt = hitungPMT(saldo, (floatingRate / 100) / 12, sisaTenor);
+                }
+            } else if (jenis === 'EFEKTIF') {
+                currPmt = (plafon / tenor) + (saldo * rMo);
+            }
+
+            let bunga = saldo * rMo;
+            let pokok = (jenis === 'EFEKTIF') ? (plafon / tenor) : (currPmt - bunga);
+            if (pokok > saldo) pokok = saldo;
+            totalBunga += bunga;
+            saldo -= pokok;
+
+            const extra = extraMap[m] || 0;
+            if (extra > 0) {
+                const actualExtra = Math.min(extra, saldo);
+                saldo -= actualExtra;
+            }
+
+            if (saldo <= 0.01) {
+                return { lunasMonth: m, totalBunga: totalBunga, sisaSaldo: 0 };
+            }
+        }
+        return { lunasMonth: tenor, totalBunga: totalBunga, sisaSaldo: saldo };
+    }
+
+    function jalankanAiRekomendasi() {
+        const promptInput = document.getElementById('aiPromptInput');
+        const promptText = (promptInput?.value || '').trim();
+
+        const plafon = parseRp(document.getElementById('plafon')?.value);
+        const tenor = parseInt(document.getElementById('tenor')?.value) || 0;
+        const jenis = document.getElementById('jenisCicilan')?.value;
+
+        if (!plafon || plafon <= 0 || !tenor || tenor <= 0) {
+            alert("⚠️ Mohon isi Plafon Pokok dan Tenor Pinjaman pada Panel 1 terlebih dahulu.");
+            document.getElementById('plafon')?.focus();
+            return;
+        }
+
+        if (!jenis) {
+            alert("⚠️ Mohon pilih Skema Suku Bunga pada Panel 1 terlebih dahulu (misal: Suku Bunga Berjenjang, Floating, atau Fixed).");
+            document.getElementById('jenisCicilan')?.focus();
+            return;
+        }
+
+        // Ambil tiers berjenjang jika skema berjenjang
+        let tiers = [];
+        if (jenis === 'BERJENJANG') {
+            document.querySelectorAll('#tierTbody tr:not(#emptyTierRow)').forEach(tr => {
+                const s = parseInt(tr.querySelector('.t-start')?.value) || 0;
+                const e = parseInt(tr.querySelector('.t-end')?.value) || 0;
+                const r = parseFloat(tr.querySelector('.t-rate')?.value) || 0;
+                const n = tr.querySelector('.t-name')?.value || `Bln ${s}-${e}`;
+                if (s > 0 && e >= s) tiers.push({ start: s, end: e, rate: r, name: n });
+            });
+            tiers.sort((a, b) => a.start - b.start);
+
+            if (tiers.length === 0) {
+                muatDefaultTiers(tenor);
+                hitungKPR();
+                document.querySelectorAll('#tierTbody tr:not(#emptyTierRow)').forEach(tr => {
+                    const s = parseInt(tr.querySelector('.t-start')?.value) || 0;
+                    const e = parseInt(tr.querySelector('.t-end')?.value) || 0;
+                    const r = parseFloat(tr.querySelector('.t-rate')?.value) || 0;
+                    const n = tr.querySelector('.t-name')?.value || `Bln ${s}-${e}`;
+                    if (s > 0 && e >= s) tiers.push({ start: s, end: e, rate: r, name: n });
+                });
+            }
+        }
+
+        const singleRate = parseFloat(document.getElementById('singleRate')?.value) || 7.5;
+        const floatingRate = parseFloat(document.getElementById('floatingRate')?.value) || 11.0;
+        const floatingFixedMonths = parseInt(document.getElementById('floatingFixedMonths')?.value) || 0;
+        const floatingFixedRate = parseFloat(document.getElementById('floatingFixedRate')?.value) || 5.75;
+
+        // Visual loading state
+        const btnSubmit = document.getElementById('btnAiSubmit');
+        if (btnSubmit) {
+            btnSubmit.innerHTML = '⏳ Menghitung...';
+            btnSubmit.style.opacity = '0.7';
+        }
+
+        setTimeout(() => {
+            try {
+                // Parse target
+                const { targetMonths, label: targetLabel } = parseAiTarget(promptText || 'saya mau kpr lunas 10 tahun', tenor);
+                let validTarget = targetMonths;
+                if (validTarget >= tenor) {
+                    validTarget = Math.max(12, Math.round(tenor * 0.5));
+                }
+
+                // Baseline
+                const baseSim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, {});
+                const baseBunga = baseSim.totalBunga;
+
+                const options = [];
+
+                // -------------------------------------------------------------
+                // OPSI 1: 🎯 Bonus Tahunan Rutin (Lump Sum Akhir Tahun)
+                // -------------------------------------------------------------
+                const annualMonths = [];
+                for (let m = 12; m < validTarget; m += 12) {
+                    annualMonths.push(m);
+                }
+                if (annualMonths.length === 0) annualMonths.push(Math.round(validTarget / 2));
+
+                let low = 0, high = plafon, bestAnnual = 0;
+                for (let iter = 0; iter < 28; iter++) {
+                    const mid = (low + high) / 2;
+                    const eMap = {};
+                    annualMonths.forEach(m => eMap[m] = mid);
+                    const sim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, eMap);
+                    if (sim.lunasMonth <= validTarget && sim.sisaSaldo <= 10) {
+                        bestAnnual = mid;
+                        high = mid;
+                    } else {
+                        low = mid;
+                    }
+                }
+
+                const cleanAnnual = Math.ceil(bestAnnual / 100000) * 100000;
+                const annualMap = {};
+                const annualRows = [];
+                annualMonths.forEach(m => {
+                    annualMap[m] = cleanAnnual;
+                    annualRows.push({ month: m, amount: cleanAnnual, effect: 'KURANGI_TENOR' });
+                });
+                const simAnnual = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, annualMap);
+                const hematAnnual = Math.max(0, baseBunga - simAnnual.totalBunga);
+
+                options.push({
+                    id: 'annual',
+                    title: '🎯 Opsi 1: Bonus Tahunan Terukur',
+                    badge: 'Paling Teratur & Terencana',
+                    badgeClass: 'badge-purple',
+                    desc: `Pelunasan ekstra seragam sebesar <strong>Rp ${new Intl.NumberFormat('id-ID').format(cleanAnnual)}</strong> setiap akhir tahun (${annualMonths.map(m => 'Bln ' + m).join(', ')}). Sangat cocok mengalokasikan Bonus Tahunan / THR tanpa mengganggu cicilan bulanan.`,
+                    targetLunasBulan: simAnnual.lunasMonth,
+                    targetLunasTahun: (simAnnual.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                    hematBulan: tenor - simAnnual.lunasMonth,
+                    hematTahun: ((tenor - simAnnual.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                    totalEkstra: cleanAnnual * annualMonths.length,
+                    hematBunga: hematAnnual,
+                    rows: annualRows
+                });
+
+                // -------------------------------------------------------------
+                // OPSI 2: ⚡ Injeksi Tunggal di Tengah Tenor (Sekaligus)
+                // -------------------------------------------------------------
+                const midMonth = Math.min(60, Math.max(12, Math.round(validTarget / 2)));
+                low = 0; high = plafon; let bestSingle = 0;
+                for (let iter = 0; iter < 28; iter++) {
+                    const mid = (low + high) / 2;
+                    const sMap = {}; sMap[midMonth] = mid;
+                    const sim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, sMap);
+                    if (sim.lunasMonth <= validTarget && sim.sisaSaldo <= 10) {
+                        bestSingle = mid;
+                        high = mid;
+                    } else {
+                        low = mid;
+                    }
+                }
+
+                const cleanSingle = Math.ceil(bestSingle / 500000) * 500000;
+                const singleMap = {}; singleMap[midMonth] = cleanSingle;
+                const simSingle = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, singleMap);
+                const hematSingle = Math.max(0, baseBunga - simSingle.totalBunga);
+
+                options.push({
+                    id: 'single',
+                    title: '⚡ Opsi 2: Injeksi Tunggal di Tengah Tenor',
+                    badge: 'Hanya 1 Kali Pembayaran',
+                    badgeClass: 'badge-blue',
+                    desc: `Cukup 1 kali pelunasan besar sebesar <strong>Rp ${new Intl.NumberFormat('id-ID').format(cleanSingle)}</strong> pada <strong>Bulan ke-${midMonth}</strong> (Tahun ke-${Math.round(midMonth/12)}). Setelah itu, cicilan bulanan normal berlanjut hingga lunas tepat waktu.`,
+                    targetLunasBulan: simSingle.lunasMonth,
+                    targetLunasTahun: (simSingle.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                    hematBulan: tenor - simSingle.lunasMonth,
+                    hematTahun: ((tenor - simSingle.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                    totalEkstra: cleanSingle,
+                    hematBunga: hematSingle,
+                    rows: [{ month: midMonth, amount: cleanSingle, effect: 'KURANGI_TENOR' }]
+                });
+
+                // -------------------------------------------------------------
+                // OPSI 3: 🛡️ Pertahanan Suku Bunga Berjenjang (Step-Up Defense)
+                // -------------------------------------------------------------
+                let opt3Months = [];
+                let opt3Title = '🛡️ Opsi 3: Redam Kenaikan Suku Bunga';
+                let opt3Badge = 'Proteksi Bunga Naik';
+                let opt3BadgeClass = 'badge-amber';
+                let opt3Desc = '';
+
+                if (jenis === 'BERJENJANG' && tiers.length > 1) {
+                    tiers.forEach(t => {
+                        if (t.end < validTarget && !opt3Months.includes(t.end)) {
+                            opt3Months.push(t.end);
+                        }
+                    });
+                    if (opt3Months.length === 0) opt3Months = [24, 48, 72].filter(m => m < validTarget);
+                    opt3Desc = `Pelunasan ekstra difokuskan tepat di akhir tier suku bunga (${opt3Months.map(m => 'Bln ' + m).join(', ')}). Baki debet diperkecil sebelum bunga bank naik ke tingkat yang lebih tinggi, meminimalkan biaya bunga secara drastis.`;
+                } else {
+                    opt3Title = '🔄 Opsi 3: Pelunasan Bertahap Tiap 6 Bulan';
+                    opt3Badge = 'Nominal Lebih Ringan';
+                    for (let m = 6; m < validTarget; m += 6) opt3Months.push(m);
+                    opt3Desc = `Pelunasan ekstra dicicil berkala tiap 6 bulan (${opt3Months.map(m => 'Bln ' + m).join(', ')}), sehingga nominal per transaksi jauh lebih ringan dan terjangkau dibanding sekali setahun.`;
+                }
+
+                if (opt3Months.length === 0) opt3Months = [12, 24, 36].filter(m => m < validTarget);
+                low = 0; high = plafon; let bestOpt3 = 0;
+                for (let iter = 0; iter < 28; iter++) {
+                    const mid = (low + high) / 2;
+                    const eMap = {};
+                    opt3Months.forEach(m => eMap[m] = mid);
+                    const sim = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, eMap);
+                    if (sim.lunasMonth <= validTarget && sim.sisaSaldo <= 10) {
+                        bestOpt3 = mid;
+                        high = mid;
+                    } else {
+                        low = mid;
+                    }
+                }
+
+                const cleanOpt3 = Math.ceil(bestOpt3 / 100000) * 100000;
+                const opt3Map = {};
+                const opt3Rows = [];
+                opt3Months.forEach(m => {
+                    opt3Map[m] = cleanOpt3;
+                    opt3Rows.push({ month: m, amount: cleanOpt3, effect: 'KURANGI_TENOR' });
+                });
+                const simOpt3 = simulateInternalKpr(plafon, tenor, jenis, tiers, singleRate, floatingRate, floatingFixedMonths, floatingFixedRate, opt3Map);
+                const hematOpt3 = Math.max(0, baseBunga - simOpt3.totalBunga);
+
+                options.push({
+                    id: 'tier_hedge',
+                    title: opt3Title,
+                    badge: opt3Badge,
+                    badgeClass: opt3BadgeClass,
+                    desc: opt3Desc,
+                    targetLunasBulan: simOpt3.lunasMonth,
+                    targetLunasTahun: (simOpt3.lunasMonth / 12).toFixed(1).replace('.0', ''),
+                    hematBulan: tenor - simOpt3.lunasMonth,
+                    hematTahun: ((tenor - simOpt3.lunasMonth) / 12).toFixed(1).replace('.0', ''),
+                    totalEkstra: cleanOpt3 * opt3Months.length,
+                    hematBunga: hematOpt3,
+                    rows: opt3Rows
+                });
+
+                _lastGeneratedAiOptions = options;
+                renderAiOptionCards(options, targetLabel);
+
+            } catch (err) {
+                console.error("AI Generation Error:", err);
+                alert("Terjadi kendala saat menganalisis strategi AI. Silakan coba sesuaikan teks target Anda.");
+            } finally {
+                if (btnSubmit) {
+                    btnSubmit.innerHTML = '<span>🚀 Rekomendasikan</span>';
+                    btnSubmit.style.opacity = '1';
+                }
+            }
+        }, 300);
+    }
+
+    function renderAiOptionCards(options, targetLabel) {
+        const container = document.getElementById('aiResultsContainer');
+        const grid = document.getElementById('aiCardsGrid');
+        const labelEl = document.getElementById('aiDetectedTargetText');
+
+        if (!container || !grid) return;
+
+        if (labelEl) labelEl.innerText = targetLabel || '-';
+        grid.innerHTML = '';
+
+        options.forEach((opt, idx) => {
+            const card = document.createElement('div');
+            card.className = 'ai-option-card';
+            card.id = `aiOptionCard_${idx}`;
+
+            card.innerHTML = `
+                <div>
+                    <div class="ai-opt-head">
+                        <span class="ai-opt-title">${opt.title}</span>
+                        <span class="ai-opt-badge ${opt.badgeClass}">${opt.badge}</span>
+                    </div>
+                    <p class="ai-opt-desc" style="margin-top:6px;">${opt.desc}</p>
+                </div>
+
+                <div class="ai-opt-stats">
+                    <div class="ai-stat-row">
+                        <span class="ai-stat-lbl">🎯 Target Lunas:</span>
+                        <span class="ai-stat-val text-blue-400">Bln ${opt.targetLunasBulan} (${opt.targetLunasTahun} Thn)</span>
+                    </div>
+                    <div class="ai-stat-row">
+                        <span class="ai-stat-lbl">⏳ Pangkas Waktu:</span>
+                        <span class="ai-stat-val text-emerald-400">Hemat ${opt.hematTahun} Thn (${opt.hematBulan} Bln)</span>
+                    </div>
+                    <div class="ai-stat-row">
+                        <span class="ai-stat-lbl">💰 Hemat Bunga:</span>
+                        <span class="ai-stat-val green">${formatRp(opt.hematBunga)}</span>
+                    </div>
+                    <div class="ai-stat-row">
+                        <span class="ai-stat-lbl">💳 Total Dana Ekstra:</span>
+                        <span class="ai-stat-val text-slate-300">${formatRp(opt.totalEkstra)}</span>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-apply-ai" onclick="terapkanOpsiAi(${idx})">
+                    <span>🚀 Terapkan Strategi Ini</span>
+                </button>
+            `;
+            grid.appendChild(card);
+        });
+
+        container.style.display = 'block';
+    }
+
+    function terapkanOpsiAi(idx) {
+        const opt = _lastGeneratedAiOptions[idx];
+        if (!opt || !opt.rows || opt.rows.length === 0) return;
+
+        const tbody = document.getElementById('extraTbody');
+        if (!tbody) return;
+
+        // Kosongkan baris pelunasan lama
+        tbody.innerHTML = '';
+
+        // Masukkan baris baru dari rekomendasi AI
+        opt.rows.forEach(r => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <div class="stepper-wrap">
+                        <input type="number" class="e-month stepper-input" value="${r.month}" min="1" max="600">
+                        <div class="stepper-btns">
+                            <button type="button" class="stepper-btn" onclick="stepEl(this, 1)">▲</button>
+                            <button type="button" class="stepper-btn down" onclick="stepEl(this, -1)">▼</button>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="stepper-wrap" style="width:100%;">
+                        <input type="number" class="e-mult stepper-input" value="" min="1" max="120" placeholder="x Kali" oninput="onMultiplierInput(this)" title="Kelipatan angsuran bulanan">
+                        <div class="stepper-btns">
+                            <button type="button" class="stepper-btn" onclick="stepMultiplier(this, 1)" title="Tambah 1x Angsuran">▲</button>
+                            <button type="button" class="stepper-btn down" onclick="stepMultiplier(this, -1)" title="Kurang 1x Angsuran">▼</button>
+                        </div>
+                    </div>
+                </td>
+                <td><input type="text" class="e-amount" value="${new Intl.NumberFormat('id-ID').format(r.amount)}" onkeyup="formatRupiahInput(this)" placeholder="Rp 0"></td>
+                <td>
+                    <select class="e-effect">
+                        <option value="" disabled>-- Pilih Efek Pelunasan --</option>
+                        <option value="KURANGI_TENOR" selected>Kurangi Tenor (Hemat Waktu & Bunga)</option>
+                        <option value="KURANGI_ANGSURAN">Kurangi Angsuran Bulanan</option>
+                    </select>
+                </td>
+                <td style="text-align:center;"><button class="btn-del" onclick="deleteRow(this)">✕</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        sortExtraRows();
+        saveToLocalStorage();
+        hitungKPR();
+
+        // Tandai card yang aktif
+        document.querySelectorAll('.ai-option-card').forEach((c, i) => {
+            if (i === idx) {
+                c.classList.add('active-applied');
+                const btn = c.querySelector('.btn-apply-ai');
+                if (btn) btn.innerHTML = '<span>✓ Sedang Diterapkan</span>';
+            } else {
+                c.classList.remove('active-applied');
+                const btn = c.querySelector('.btn-apply-ai');
+                if (btn) btn.innerHTML = '<span>🚀 Terapkan Strategi Ini</span>';
+            }
+        });
+
+        // Tampilkan notifikasi toast sukses
+        tampilkanToastSukses(`✨ Strategi <strong>${opt.title}</strong> berhasil diterapkan! KPR Anda kini disimulasikan lunas dalam <strong>${opt.targetLunasTahun} Tahun (${opt.targetLunasBulan} Bulan)</strong> dengan penghematan bunga <strong>${formatRp(opt.hematBunga)}</strong>.`);
+    }
+
+    function tampilkanToastSukses(htmlMsg) {
+        let toast = document.getElementById('aiToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'aiToast';
+            toast.className = 'ai-toast-msg';
+            document.body.appendChild(toast);
+        }
+        toast.innerHTML = htmlMsg;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4500);
     }
 
     function updateChart(rows) {
